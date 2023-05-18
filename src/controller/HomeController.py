@@ -1,6 +1,8 @@
 from view.HomeView import HomeView
 from model.HomeModel import HomeModel
 from view.TraceVisualizerView import TraceVisualizerView
+from model.TraceVisualizerModel import TraceVisualizerModel
+from controller.TraceVisualizerController import TraceVisualizerController
 
 class HomeController:
     def __init__(self, view, model):
@@ -17,3 +19,5 @@ class HomeController:
 
         # Create a new TraceVisualizerView and pass the retrieved commits to it
         self.traceVisualizerView = TraceVisualizerView(commits)
+        self.traceVisualizerModel = TraceVisualizerModel()
+        self.traceVisualizerController = TraceVisualizerController(self.traceVisualizerView, self.traceVisualizerModel, self.view)
