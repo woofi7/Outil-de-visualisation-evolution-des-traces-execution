@@ -23,7 +23,7 @@ class HomeController:
         print(from_date)
         print(to_date)
         repoName = searchText.split("/")[-1].split(".")[0]
-        repoPath = "./repo/" + repoName
+        repoPath = "../repo/" + repoName
         self.model.cloneRepo(searchText,repoPath)  # Clone the repository using the model
         commits = self.model.getCommits(repoPath, from_date, to_date)  # Retrieve commits based on the search text using the model
         self.view.close()  # Close the current view
