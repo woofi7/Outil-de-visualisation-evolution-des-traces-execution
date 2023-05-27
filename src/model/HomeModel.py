@@ -1,6 +1,7 @@
 from pydriller import Repository
 from PyQt6.QtCore import QDate, Qt
 from datetime import datetime
+from git import Repo
 
 SEARCHED_STRING = "LOG4J"
 
@@ -11,7 +12,7 @@ class HomeModel:
         to_date_obj = datetime.strptime(to_date, '%Y-%m-%d')
         dt1 = datetime(from_date_obj.year, from_date_obj.month, from_date_obj.day)
         dt2 = datetime(to_date_obj.year, to_date_obj.month, to_date_obj.day)
-        for commit in Repository(repoUrl, since=dt1, to=dt2).traverse_commits():
+        for commit in Repository(repoUrl, since=dt1, to=dt2, only_modifications_with_file_types=['.py']).traverse_commits():
             # Traverse through the commits in the repository
             for modification in commit.modified_files:
                 # Iterate over the modified files in each commit
@@ -22,3 +23,7 @@ class HomeModel:
                     result.append([commit.hash[:7], modification.filename, modification.added_lines, modification.deleted_lines])
                     # Append commit information to the result list
         return result  # Return the list of commits that match the criteria
+    
+    def cloneRepo(self,repoUrl,repoPath):
+        repoName = repoUrl.split("/")[-1].split(".")[0]
+        Repo.clone_from(repoUrl, repoPath + "/" + repoName)

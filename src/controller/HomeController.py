@@ -22,7 +22,10 @@ class HomeController:
         to_date = self.view.to_calendar.selectedDate().toString(Qt.DateFormat.ISODate)
         print(from_date)
         print(to_date)
-        commits = self.model.getCommits(searchText, from_date, to_date)  # Retrieve commits based on the search text using the model
+        repoName = searchText.split("/")[-1].split(".")[0]
+        repoPath = "./repo/" + repoName
+        self.model.cloneRepo(searchText,repoPath)  # Clone the repository using the model
+        commits = self.model.getCommits(repoPath, from_date, to_date)  # Retrieve commits based on the search text using the model
         self.view.close()  # Close the current view
 
         # Create a new TraceVisualizerView and pass the retrieved commits to it
