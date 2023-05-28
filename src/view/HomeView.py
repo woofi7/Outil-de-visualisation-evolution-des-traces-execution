@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLineEdit, QLabel, QCalendarWidget
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QCalendarWidget, QHBoxLayout, QComboBox
 
 class HomeView(QWidget):
     def __init__(self):
@@ -11,12 +11,20 @@ class HomeView(QWidget):
         layout = QVBoxLayout(self)
 
         #Create the search label
-        searchLabel = QLabel("Please enter the repository URL")
+        searchLabel = QLabel("Please enter the repository")
         layout.addWidget(searchLabel)
 
-        # Create the search input field
-        self.searchInput = QLineEdit()
-        layout.addWidget(self.searchInput)
+        # Create allow the user to look for present repositories
+        self.repoList = QComboBox(self)
+        layout.addWidget(self.repoList)
+
+        # Create the buttons for the repositories
+        layoutForRepoButton = QHBoxLayout()
+        self.newRepoButton = QPushButton("new")
+        self.deleteRepoButton = QPushButton("delete")
+        layoutForRepoButton.addWidget(self.newRepoButton)
+        layoutForRepoButton.addWidget(self.deleteRepoButton)
+        layout.addLayout(layoutForRepoButton)
 
         # Widget pour afficher les dates sélectionnées
         self.from_date_label = QLabel("FROM: ")
@@ -33,14 +41,14 @@ class HomeView(QWidget):
         self.to_calendar = QCalendarWidget(self)
         layout.addWidget(self.to_calendar)
 
-        # Bouton pour sélectionner les dates
-        self.select_button = QPushButton("Select Dates")
-        #select_button.clicked.connect(self.on_select_button_clicked)
-        layout.addWidget(self.select_button)
-
         self.setLayout(layout)
 
         # Create the search button
         self.searchButton = QPushButton("Search")
         layout.addWidget(self.searchButton)
         self.show()
+
+    def setRepos(self, repos):
+        self.repos = repos
+        for repo in repos:
+            self.repoList.addItem(repo)
