@@ -35,7 +35,7 @@ class HomeController:
         self.model.git_pull(repoPath)
 
         # Retrieve commits based on the selected dates using the model
-        commits = self.model.getCommits(repoPath, from_date, to_date)
+        commits = self.model.get_log_instructions(repoPath, from_date, to_date)
 
         # Close the current view
         self.view.close()

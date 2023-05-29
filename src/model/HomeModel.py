@@ -7,9 +7,10 @@ import os
 import stat
 
 SEARCHED_STRING = ["always","catching", "critical", "debug", "error", "fatal", "info", "warn", "trace", "log", "trace"]
+SEARCHED_FILES = ['.java', '.py']
 
 class HomeModel:
-    def getCommits(self, repo_url, from_date, to_date):
+    def get_log_instructions(self, repo_url, from_date, to_date):
         result = []  # Initialize an empty list to store the result
         
         # Convert the input dates to datetime objects
@@ -20,15 +21,30 @@ class HomeModel:
         dt1 = datetime(from_date_obj.year, from_date_obj.month, from_date_obj.day)
         dt2 = datetime(to_date_obj.year, to_date_obj.month, to_date_obj.day)
 
-        for commit in Repository(repo_url, since=dt1, to=dt2, order='reverse').traverse_commits():
+        for commit in Repository(repo_url, since=dt1, to=dt2,only_modifications_with_file_types=SEARCHED_FILES).traverse_commits():
             # Traverse through the commits in the repository
             for modification in commit.modified_files:
-                # Iterate over the modified files in each commit
-                if modification.source_code is not None and any(word in modification.source_code for word in SEARCHED_STRING):
-                    # If the searched string is found, add the commit details to the result list
-                    result.append([commit.hash[:7], modification.filename, modification.added_lines, modification.deleted_lines])
+                added_good_modification_bool, added_good_modification = self.__locate_log_instructions(modification.diff_parsed["added"], SEARCHED_STRING)
+                removed_good_modification_bool, removed_good_modification = self.__locate_log_instructions(modification.diff_parsed["deleted"], SEARCHED_STRING)
+                if(added_good_modification_bool):
+                    print(added_good_modification)
+                elif (removed_good_modification_bool):
+                    print(removed_good_modification)
         
         return result  # Return the list of commits that match the criteria
+    
+    def __locate_log_instructions(self, modifications_list, target_strings):
+        my_tuple = None
+        for t in modifications_list:
+            if isinstance(t, tuple) and any(element in t for element in target_strings):
+                my_tuple = t
+                break
+        if my_tuple:
+            bool = True
+            return bool, my_tuple
+        else:
+            bool = False
+            return bool, None
 
     def get_repos(self, repoPath):
         folder_names = []
