@@ -41,7 +41,8 @@ class HomeController:
         self.view.close()
 
         # Create a new TraceVisualizerView and pass the retrieved commits to it
-        self.traceVisualizerView = TraceVisualizerView(commits)
+        self.traceVisualizerView = TraceVisualizerView()
+        self.traceVisualizerView.setCommits(commits)
         self.traceVisualizerModel = TraceVisualizerModel()
         self.traceVisualizerController = TraceVisualizerController(self.traceVisualizerView, self.traceVisualizerModel, self.view)
 

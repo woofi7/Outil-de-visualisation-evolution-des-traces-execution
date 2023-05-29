@@ -1,30 +1,57 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidget, QTextEdit
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidget, QHBoxLayout, QGridLayout, QTabWidget, QComboBox
+from PyQt6 import QtCore,QtWidgets
+import sys
+import matplotlib
+matplotlib.use('QtAgg')
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
 
 class TraceVisualizerView(QWidget):
 
-    def __init__(self, commits):
+    def __init__(self):
         super().__init__()
         self.setWindowTitle("Trace Visualizer")
         self.setGeometry(100, 100, 800, 600)
         self.setMaximumSize(800, 600)
 
-        layout = QVBoxLayout(self)  # Create a vertical layout for the widget
+        self_layout = QHBoxLayout(self)
+        left_layout = QVBoxLayout()
+        right_layout = QVBoxLayout()
+        self_layout.addLayout(left_layout)
+        self_layout.addLayout(right_layout)
 
-        label = QLabel("Hello, Trace Visualizer!", self)  # Create a label widget
-        layout.addWidget(label)  # Add the label to the layout
+        # Left Layout
+        label = QLabel("Current log instructions")  # Create a label widget
+        self.commits_list = QListWidget()
+        left_layout.addWidget(label)  # Add the label to the layout
+        left_layout.addWidget(self.commits_list)
 
-        self.trace_list = QListWidget(self)  # Create a QListWidget widget
-        layout.addWidget(self.trace_list)  # Add the QListWidget to the layout
+        # Right Layout
+        filters_label = QLabel("Filters")
+        filters = QComboBox()
+        filters.addItems(["All", "Added", "Deleted", "Modified"])
+        right_layout.addWidget(filters_label)
+        right_layout.addWidget(filters)
 
-        # code_display = QTextEdit(self)  # Create a QTextEdit widget
-        # code_display.setReadOnly(True)  # Set the QTextEdit widget as read-only
-        # layout.addWidget(code_display)  # Add the QTextEdit to the layout
-
-        self.commit_windows = []  # Liste pour stocker les instances de CommitWindow
-
-        for commit in commits:
-            # Add each commit information as an item to the QListWidget
-            self.trace_list.addItem(f"Commit: {commit[0]}, File: {commit[1]}, "
-                f"Added Lines: {commit[2]}, Deleted Lines: {commit[3]}")
+        # Plot
+        canvas, axes = self._create_plot(6, 6, 100)
+        axes.plot([0,1,2,3,4], [10,1,20,3,40])
+        toolbar = NavigationToolbar(canvas)
+        right_layout.addWidget(toolbar)
+        right_layout.addWidget(canvas)
 
         self.show()  # Show the widget
+
+    def _create_plot(self,width, height, dpi):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        axes = fig.add_subplot(111)
+        canvas = FigureCanvasQTAgg(fig)
+        return canvas, axes
+        
+
+    def setCommits(self, commits):
+        for commit in commits:
+            # Add each commit information as an item to the QListWidget
+            self.commits_list.addItem(f"Commit: {commit[0]}, File: {commit[1]}, "
+                f"Added Lines: {commit[2]}, Deleted Lines: {commit[3]}")

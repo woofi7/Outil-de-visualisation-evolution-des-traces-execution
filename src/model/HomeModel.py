@@ -6,7 +6,7 @@ import shutil
 import os
 import stat
 
-SEARCHED_STRING = "LOG4J"
+SEARCHED_STRING = ["always","catching", "critical", "debug", "error", "fatal", "info", "warn", "trace", "log", "trace"]
 
 class HomeModel:
     def getCommits(self, repo_url, from_date, to_date):
@@ -24,7 +24,7 @@ class HomeModel:
             # Traverse through the commits in the repository
             for modification in commit.modified_files:
                 # Iterate over the modified files in each commit
-                if modification.source_code is not None:
+                if modification.source_code is not None and any(word in modification.source_code for word in SEARCHED_STRING):
                     # If the searched string is found, add the commit details to the result list
                     result.append([commit.hash[:7], modification.filename, modification.added_lines, modification.deleted_lines])
         
