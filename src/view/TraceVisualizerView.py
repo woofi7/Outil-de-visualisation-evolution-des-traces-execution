@@ -6,6 +6,7 @@ matplotlib.use('QtAgg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
+from model.LogInstruction import LogInstruction
 
 class TraceVisualizerView(QWidget):
 
@@ -13,7 +14,7 @@ class TraceVisualizerView(QWidget):
         super().__init__()
         self.setWindowTitle("Trace Visualizer")
         self.setGeometry(100, 100, 800, 600)
-        self.setMaximumSize(800, 600)
+        # self.setMaximumSize(800, 600)
 
         self_layout = QHBoxLayout(self)
         left_layout = QVBoxLayout()
@@ -50,8 +51,8 @@ class TraceVisualizerView(QWidget):
         return canvas, axes
         
 
-    def setCommits(self, commits):
-        for commit in commits:
+    def set_log_instruction(self, log_instructions):
+        for log_instruction in log_instructions:
             # Add each commit information as an item to the QListWidget
-            self.commits_list.addItem(f"Commit: {commit[0]}, File: {commit[1]}, "
-                f"Added Lines: {commit[2]}, Deleted Lines: {commit[3]}")
+            if(log_instruction.instruction is not None):
+                self.commits_list.addItem(log_instruction.instruction.replace("  ","") + "\tnumber of time modified : " + str(len(log_instruction.modifications)))

@@ -1,7 +1,11 @@
 class LogInstruction:
     def __init__(self, instruction, modifications):
         self.instruction = instruction
-        self.modifications = modifications
+        if modifications is None:
+            self.modifications = []
+        else:
+            self.modifications = modifications
     
     def add_modification(self, modification):
-        self.modifications.append(modification)
+        if(self.modifications is not None):
+            self.modifications.append(modification)
