@@ -26,7 +26,7 @@ class HomeView(QWidget):
         layoutForRepoButton.addWidget(self.deleteRepoButton)
         layout.addLayout(layoutForRepoButton)
 
-        layout.addWidget(QLabel("Please enter the path in the repository ex: /src/ (leave empty for all)"))
+        layout.addWidget(QLabel("Please enter the path in the repository ex: src\model (leave empty for all)"))
         self.searched_path = QLineEdit()
         layout.addWidget(self.searched_path)
 
