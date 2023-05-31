@@ -9,7 +9,7 @@ import shutil
 import os
 import stat
 
-# SEARCHED_STRINGS = [".always",".catching", ".critical", ".debug", ".error", ".fatal", ".info", ".warn", ".trace", ".log", ".trace"]
+SEARCHED_STRINGS = [".always",".catching", ".critical", ".debug", ".error", ".fatal", ".info", ".warn", ".trace", ".log", ".trace"]
 SEARCHED_FILES = ['.java', '.py']
 INVALID_STRINGS = ["import", "from", "include", "return", "except"]
 
