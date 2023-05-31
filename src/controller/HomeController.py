@@ -3,6 +3,7 @@ from model.HomeModel import HomeModel
 from view.NewRepoView import NewRepoView
 from model.NewRepoModel import NewRepoModel
 from controller.NewRepoController import NewRepoController
+from view.PopupView import PopupManager
 from view.TraceVisualizerView import TraceVisualizerView
 from model.TraceVisualizerModel import TraceVisualizerModel
 from controller.TraceVisualizerController import TraceVisualizerController
@@ -20,8 +21,8 @@ class HomeController:
         # Connect button click events to corresponding functions
         self.view.newRepoButton.clicked.connect(self.new_repo_button_clicked)
         self.view.searchButton.clicked.connect(self.search_button_clicked)
-        self.view.from_calendar.selectionChanged.connect(self.update_from_date)
-        self.view.to_calendar.selectionChanged.connect(self.update_to_date)
+        self.view.from_calendar.selectionChanged.connect(self.validate_date_range)
+        self.view.to_calendar.selectionChanged.connect(self.validate_date_range)
         self.view.deleteRepoButton.clicked.connect(self.delete_repo_button_clicked)
 
     def search_button_clicked(self):
@@ -46,6 +47,17 @@ class HomeController:
         self.traceVisualizerModel = TraceVisualizerModel()
         self.traceVisualizerController = TraceVisualizerController(self.traceVisualizerView, self.traceVisualizerModel, self.view)
 
+    def validate_date_range(self):
+        from_date = self.view.from_calendar.selectedDate()
+        self.update_from_date()
+        to_date = self.view.to_calendar.selectedDate()
+        self.update_to_date()
+
+        if from_date > to_date:
+            PopupManager.show_error_popup("Invalid Date Range", "La date 'FROM' ne peut pas être postérieure à la date 'TO'.")
+        else:
+            print("Valid date range")
+
     def update_from_date(self):
         # Update the "FROM" date label based on the selected date
         from_date = self.view.from_calendar.selectedDate()
@@ -54,7 +66,7 @@ class HomeController:
     def update_to_date(self):
         # Update the "TO" date label based on the selected date
         to_date = self.view.to_calendar.selectedDate()
-        self.view.to_date_label.setText("TO: " + to_date.toString())  
+        self.view.to_date_label.setText("TO: " + to_date.toString()) 
 
     def new_repo_button_clicked(self):
         # Create a new repository view, model, and controller

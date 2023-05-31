@@ -1,4 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QCalendarWidget, QHBoxLayout, QComboBox
+from PyQt6.QtCore import QDate
+from view.PopupView import PopupManager
 
 class HomeView(QWidget):
     def __init__(self):
@@ -39,6 +41,7 @@ class HomeView(QWidget):
 
         # Calendrier pour la date de fin
         self.to_calendar = QCalendarWidget(self)
+        self.to_calendar.setSelectedDate(QDate.currentDate())  # Sélectionne la date actuelle
         layout.addWidget(self.to_calendar)
 
         self.setLayout(layout)
