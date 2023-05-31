@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QCalendarWidget, QHBoxLayout, QComboBox
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QCalendarWidget, QHBoxLayout, QComboBox, QLineEdit
 
 class HomeView(QWidget):
     def __init__(self):
@@ -25,6 +25,18 @@ class HomeView(QWidget):
         layoutForRepoButton.addWidget(self.newRepoButton)
         layoutForRepoButton.addWidget(self.deleteRepoButton)
         layout.addLayout(layoutForRepoButton)
+
+        layout.addWidget(QLabel("Please enter the path in the repository ex: /src/ (leave empty for all)"))
+        self.searched_path = QLineEdit()
+        layout.addWidget(self.searched_path)
+
+        layout.addWidget(QLabel("Please enter the branch in the repository (leave empty for all)"))
+        self.searched_branch = QLineEdit()
+        layout.addWidget(self.searched_branch)
+
+        layout.addWidget(QLabel("Please enter the author of the commits (leave empty for all)"))
+        self.searched_author = QLineEdit()
+        layout.addWidget(self.searched_author)
 
         # Widget pour afficher les dates sélectionnées
         self.from_date_label = QLabel("FROM: ")

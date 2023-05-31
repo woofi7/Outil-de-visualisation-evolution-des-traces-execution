@@ -31,11 +31,15 @@ class HomeController:
         repoName = self.view.repoList.currentText()
         repoPath = REPO_FOLDER + repoName + "/"
 
+        searched_path = self.view.searched_path.text()
+        searched_branch = self.view.searched_branch.text()
+        searched_author = self.view.searched_author.text()
+
         # Perform a Git pull in the repository
         self.model.git_pull(repoPath)
 
         # Retrieve commits based on the selected dates using the model
-        log_instructions = self.model.get_log_instructions(repoPath, from_date, to_date)
+        log_instructions = self.model.get_log_instructions(repoPath, from_date, to_date, searched_path, searched_branch, searched_author)
 
         # Close the current view
         self.view.close()
