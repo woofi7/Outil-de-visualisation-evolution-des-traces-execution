@@ -32,8 +32,14 @@ class HomeController:
         repoPath = REPO_FOLDER + repoName + "/"
 
         searched_path = self.view.searched_path.text()
+        if searched_path is None:
+            searched_path = ""
         searched_branch = self.view.searched_branch.text()
+        if searched_branch is None:
+            searched_branch = ""
         searched_author = self.view.searched_author.text()
+        if searched_author is None:
+            searched_author = ""
 
         # Perform a Git pull in the repository
         self.model.git_pull(repoPath)

@@ -1,11 +1,11 @@
 class Modification:
-    def __init__(self, commit_hash, date, type) :
-        self.commit_hash = commit_hash
+    def __init__(self, commit, date, type) :
+        self.commit = commit
         self.date = date
         self.type = type
     
     def get_commit_hash(self):
-        return self.commit_hash
+        return self.commit
     
     def get_date(self):
         return self.date

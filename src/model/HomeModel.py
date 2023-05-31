@@ -41,7 +41,7 @@ class HomeModel:
 
                     if is_added_code_log_based:
                         # Create a modification object to add to the log instruction
-                        mod_object = Modification(commit.hash, commit.committer_date, "added")
+                        mod_object = Modification(commit, commit.committer_date, "added")
 
                         # Check if the code already exists in the returning list
                         instruction_index = next((i for i, log_instruction in enumerate(added_log_instructions) if log_instruction.instruction.replace("  ", "") in added_code), None)
