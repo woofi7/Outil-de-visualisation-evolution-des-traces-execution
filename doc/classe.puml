@@ -1,0 +1,22 @@
+@startuml class
+package controller {
+    class CommitWindowController
+    class HomeController
+    class TraceVisualizationController
+}
+
+package model {
+    class CommitWindowModel
+    class HomeModel
+    class TraceVisualizationModel
+}
+
+package view {
+    class CommitWindowView
+    class HomeView
+    class TraceVisualizationView
+}
+
+
+
+@enduml
