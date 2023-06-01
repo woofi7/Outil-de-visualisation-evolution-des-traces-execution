@@ -16,6 +16,7 @@ class HomeController:
         self.view = view
         self.model = model
         self.update_repo_list()
+        self.update_branch_list()
 
         # Connect button click events to corresponding functions
         self.view.newRepoButton.clicked.connect(self.new_repo_button_clicked)
@@ -34,9 +35,7 @@ class HomeController:
         searched_path = self.view.searched_path.text()
         if searched_path is None:
             searched_path = ""
-        searched_branch = self.view.searched_branch.text()
-        if searched_branch is None:
-            searched_branch = ""
+        searched_branch = self.view.branches.currentText()
         searched_author = self.view.searched_author.text()
         if searched_author is None:
             searched_author = ""
@@ -45,14 +44,14 @@ class HomeController:
         self.model.git_pull(repoPath)
 
         # Retrieve commits based on the selected dates using the model
-        log_instructions = self.model.get_log_instructions(repoPath, from_date, to_date, searched_path, searched_branch, searched_author)
+        added_log_instructions, deleted_log_instructions = self.model.get_log_instructions(repoPath, from_date, to_date, searched_path, searched_branch, searched_author)
 
         # Close the current view
         self.view.close()
 
         # Create a new TraceVisualizerView and pass the retrieved commits to it
         self.traceVisualizerView = TraceVisualizerView()
-        self.traceVisualizerView.set_log_instruction(log_instructions)
+        self.traceVisualizerView.set_log_instruction(added_log_instructions, deleted_log_instructions)
         self.traceVisualizerModel = TraceVisualizerModel()
         self.traceVisualizerController = TraceVisualizerController(self.traceVisualizerView, self.traceVisualizerModel, self.view)
 
@@ -77,6 +76,11 @@ class HomeController:
         self.create_directory(REPO_FOLDER)
         self.view.repoList.clear()
         self.view.setRepos(self.model.get_repos(REPO_FOLDER))
+
+    def update_branch_list(self):
+        repoName = self.view.repoList.currentText()
+        repoPath = REPO_FOLDER + repoName + "/"
+        self.view.setBranches(self.model.get_branches(repoPath))
 
     def delete_repo_button_clicked(self):
         # Retrieve the selected repository name from the view

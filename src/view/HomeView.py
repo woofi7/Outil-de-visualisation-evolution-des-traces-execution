@@ -31,8 +31,8 @@ class HomeView(QWidget):
         layout.addWidget(self.searched_path)
 
         layout.addWidget(QLabel("Please enter the branch in the repository (leave empty for all)"))
-        self.searched_branch = QLineEdit()
-        layout.addWidget(self.searched_branch)
+        self.branches = QComboBox()
+        layout.addWidget(self.branches)
 
         layout.addWidget(QLabel("Please enter the author of the commits (leave empty for all)"))
         self.searched_author = QLineEdit()
@@ -64,3 +64,7 @@ class HomeView(QWidget):
         self.repos = repos
         for repo in repos:
             self.repoList.addItem(repo)
+
+    def setBranches(self, branches):
+        for branch in branches:
+            self.branches.addItem(branch)

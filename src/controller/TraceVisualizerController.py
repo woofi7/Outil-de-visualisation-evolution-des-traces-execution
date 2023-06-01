@@ -11,7 +11,7 @@ class TraceVisualizerController:
         self.home_view = home_view
 
         # Connect the searchButton's clicked signal to the search_button_clicked slot
-        self.view.commits_list.itemClicked.connect(self.show_commit_changes)
+        # self.view.commits_list.itemClicked.connect(self.show_commit_changes)
 
     def show_commit_changes(self, item):
         # Extract the commit hash from the clicked item
