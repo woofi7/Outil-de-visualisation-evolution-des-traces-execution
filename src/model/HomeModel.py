@@ -112,9 +112,12 @@ class HomeModel:
             print(f"An error occurred while deleting the directory: {str(e)}")
 
     def get_branches(self, repoPath):
+        result = []
         # Get the current branch of the repository
-        repo = Repo(repoPath)
-        return [str(ref) for ref in repo.refs]
+        if os.path.exists(repoPath + ".git"):
+            repo = Repo(repoPath)
+            result = [str(ref) for ref in repo.refs]
+        return result
 
 def on_rm_error(func, path, exc_info):
     # This function is called when an error occurs while removing a file or directory.

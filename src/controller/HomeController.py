@@ -24,6 +24,7 @@ class HomeController:
         self.view.from_calendar.selectionChanged.connect(self.update_from_date)
         self.view.to_calendar.selectionChanged.connect(self.update_to_date)
         self.view.deleteRepoButton.clicked.connect(self.delete_repo_button_clicked)
+        self.view.repoList.currentTextChanged.connect(self.update_branch_list)
 
     def search_button_clicked(self):
         # Retrieve selected dates and repository name from the view
@@ -78,6 +79,7 @@ class HomeController:
         self.view.setRepos(self.model.get_repos(REPO_FOLDER))
 
     def update_branch_list(self):
+        self.view.branches.clear()
         repoName = self.view.repoList.currentText()
         repoPath = REPO_FOLDER + repoName + "/"
         self.view.setBranches(self.model.get_branches(repoPath))

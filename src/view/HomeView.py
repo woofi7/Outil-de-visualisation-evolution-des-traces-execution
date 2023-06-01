@@ -30,7 +30,7 @@ class HomeView(QWidget):
         self.searched_path = QLineEdit()
         layout.addWidget(self.searched_path)
 
-        layout.addWidget(QLabel("Please enter the branch in the repository (leave empty for all)"))
+        layout.addWidget(QLabel("Please enter the branch in the repository"))
         self.branches = QComboBox()
         layout.addWidget(self.branches)
 
