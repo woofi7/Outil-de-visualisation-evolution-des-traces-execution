@@ -24,11 +24,14 @@ class TraceVisualizerView(QWidget):
 
         # Left Layout
         left_frame = QFrame()
-        left_layout = QVBoxLayout(left_frame)
-        label = QLabel("Current log instructions")  # Create a label widget
-        self.commits_list = QListWidget()
-        left_layout.addWidget(label)  # Add the label to the layout
-        left_layout.addWidget(self.commits_list)
+        upper_left_layout = QVBoxLayout(left_frame)
+        self.added_commits_list = QListWidget()
+        upper_left_layout.addWidget(QLabel("Added log instructions"))  # Add the label to the layout
+        upper_left_layout.addWidget(self.added_commits_list)
+
+        self.deleted_commits_list = QListWidget()
+        upper_left_layout.addWidget(QLabel("Deleted log instructions"))  # Add the label to the layout
+        upper_left_layout.addWidget(self.deleted_commits_list)
 
         # Right Layout
         right_frame = QFrame()
@@ -65,12 +68,12 @@ class TraceVisualizerView(QWidget):
         return canvas, axes
         
 
-    def set_log_instruction(self, log_instructions):
-        for log_instruction in log_instructions:
+    def set_log_instruction(self, log_instructions_added, log_instructions_deleted):
+        for log_instruction_add in log_instructions_added:
             # Add each commit information as an item to the QListWidget
-            if(log_instruction.instruction is not None):
-                item = QListWidgetItem(log_instruction.instruction.replace("  ","") + "\tnumber of time modified : " + str(len(log_instruction.modifications)))
-                item.setData(QtCore.Qt.ItemDataRole.UserRole, log_instruction)
-                #data = item.data(QtCore.Qt.ItemDataRole.UserRole)
-                self.commits_list.addItem(item)
-                # self.commits_list.addItem(log_instruction.instruction.replace("  ","") + "\tnumber of time modified : " + str(len(log_instruction.modifications)))
+            if(log_instruction_add.instruction is not None):
+                self.added_commits_list.addItem(log_instruction_add.instruction.replace("  ","") + "\tnumber of time modified : " + str(len(log_instruction_add.modifications)))
+        for log_instruction_delete in log_instructions_deleted:
+            # Add each commit information as an item to the QListWidget
+            if(log_instruction_delete.instruction is not None):
+                self.deleted_commits_list.addItem(log_instruction_delete.instruction.replace("  ","") + "\tnumber of time modified : " + str(len(log_instruction_delete.modifications)))

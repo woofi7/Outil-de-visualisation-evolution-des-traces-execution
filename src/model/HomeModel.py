@@ -28,15 +28,15 @@ class HomeModel:
         dt2 = datetime(to_date_obj.year, to_date_obj.month, to_date_obj.day)
 
         # Iterate through the commits in the repository
-        for commit in Repository(repo_url, since=dt1, to=dt2, only_modifications_with_file_types=SEARCHED_FILES).traverse_commits():
-            if (searched_author == "" or commit.author is searched_author) and (searched_branch == "" or searched_branch in commit.branches) :
+        # for commit in Repository(repo_url, single="9f1bff41fc2ca84e9a2878f03177601d9889f8f9").traverse_commits():
+        for commit in Repository(repo_url,since=dt1, to=dt2, only_modifications_with_file_types=SEARCHED_FILES, only_in_branch=searched_branch).traverse_commits():
+            if (searched_author == "" or commit.author is searched_author) :
                 # Traverse through the modified files in each commit
                 for modification in commit.modified_files:
                     # Check if the file has an allowed extension
                     if any(modification.filename.endswith(ext) for ext in SEARCHED_FILES) and ((modification.old_path is not None and searched_path in modification.old_path) or (modification.new_path is not None and searched_path in modification.new_path)):
                         # Check if added log instructions are present in the modification
                         is_added_code_log_based, added_code = self.__locate_log_instructions(modification.diff_parsed["added"], SEARCHED_STRINGS, INVALID_STRINGS)
-
                         # Check if removed log instructions are present in the modification
                         is_removed_code_log_based, removed_code = self.__locate_log_instructions(modification.diff_parsed["deleted"], SEARCHED_STRINGS, INVALID_STRINGS)
 
@@ -45,7 +45,7 @@ class HomeModel:
                             mod_object = Modification(commit, commit.committer_date, "added")
 
                             # Check if the code already exists in the returning list
-                            instruction_index = next((i for i, log_instruction in enumerate(added_log_instructions) if log_instruction.instruction.replace("  ", "") in added_code), None)
+                            instruction_index = next((i for i, log_instruction in enumerate(added_log_instructions) if log_instruction.instruction.replace("  ", "") == added_code), None)
 
                             if instruction_index is not None:
                                 # Add the modification to the existing log instruction
@@ -53,26 +53,20 @@ class HomeModel:
                             else:
                                 # Create a new log instruction and add it to the list
                                 added_log_instructions.append(LogInstruction(added_code, [mod_object]))
-
-                        elif is_removed_code_log_based:
+                        if is_removed_code_log_based:
                             # Create a modification object for deleted log instruction
                             mod_object = Modification(commit, commit.committer_date, "deleted")
 
                             # Check if the instruction already exists in the deleted log instructions
-                            instruction_index = next((i for i, log_instruction in enumerate(deleted_log_instructions) if log_instruction.instruction.replace("  ", "") in removed_code), None)
-
+                            instruction_index = next((i for i, log_instruction in enumerate(deleted_log_instructions) if log_instruction.instruction.replace("  ", "") == removed_code), None)
                             if instruction_index is not None:
                                 # Add the modification to the existing log instruction
                                 deleted_log_instructions[instruction_index].add_modification(mod_object)
                             else:
                                 # Create a new log instruction and add it to the list
                                 deleted_log_instructions.append(LogInstruction(removed_code, [mod_object]))
-
-        # Merge the added and deleted log instructions into a single list
-        added_log_instructions.extend(deleted_log_instructions)
-
         # Return the list of log instructions that match the criteria
-        return added_log_instructions
+        return added_log_instructions, deleted_log_instructions
 
     def __locate_log_instructions(self, modifications_list, target_strings, invalid_strings):
         my_tuple = None
@@ -84,6 +78,14 @@ class HomeModel:
             return True, my_tuple[1]
         else:
             return False, None
+        
+#next((i for i, log_instruction in enumerate(deleted_log_instructions) if log_instruction.instruction.replace("  ", "") in removed_code), None)
+    def check_element_in_list(self, deleted_log_instructions, removed_code):
+        for i, log_instruction in enumerate(deleted_log_instructions):
+            cleaned_instruction = log_instruction.instruction.replace("  ", "")
+            if cleaned_instruction == removed_code:
+                return i
+        return None
 
     def get_repos(self, repoPath):
         folder_names = []
@@ -106,6 +108,14 @@ class HomeModel:
             print("Directory not found.")
         except OSError as e:
             print(f"An error occurred while deleting the directory: {str(e)}")
+
+    def get_branches(self, repoPath):
+        result = []
+        # Get the current branch of the repository
+        if os.path.exists(repoPath + ".git"):
+            repo = Repo(repoPath)
+            result = [str(ref) for ref in repo.refs]
+        return result
 
 def on_rm_error(func, path, exc_info):
     # This function is called when an error occurs while removing a file or directory.
