@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidget, QHBoxLayout, QGridLayout, QTabWidget, QComboBox, QSplitter, QFrame
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidget, QHBoxLayout, QGridLayout, QTabWidget, QComboBox, QSplitter, QFrame, QListWidgetItem
 from PyQt6 import QtCore,QtWidgets
 import sys
 import matplotlib
@@ -69,4 +69,8 @@ class TraceVisualizerView(QWidget):
         for log_instruction in log_instructions:
             # Add each commit information as an item to the QListWidget
             if(log_instruction.instruction is not None):
-                self.commits_list.addItem(log_instruction.instruction.replace("  ","") + "\tnumber of time modified : " + str(len(log_instruction.modifications)))
+                item = QListWidgetItem(log_instruction.instruction.replace("  ","") + "\tnumber of time modified : " + str(len(log_instruction.modifications)))
+                item.setData(QtCore.Qt.ItemDataRole.UserRole, log_instruction)
+                #data = item.data(QtCore.Qt.ItemDataRole.UserRole)
+                self.commits_list.addItem(item)
+                # self.commits_list.addItem(log_instruction.instruction.replace("  ","") + "\tnumber of time modified : " + str(len(log_instruction.modifications)))

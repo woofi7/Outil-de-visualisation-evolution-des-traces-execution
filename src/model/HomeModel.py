@@ -56,7 +56,7 @@ class HomeModel:
 
                         elif is_removed_code_log_based:
                             # Create a modification object for deleted log instruction
-                            mod_object = Modification(commit.hash, commit.committer_date, "deleted")
+                            mod_object = Modification(commit, commit.committer_date, "deleted")
 
                             # Check if the instruction already exists in the deleted log instructions
                             instruction_index = next((i for i, log_instruction in enumerate(deleted_log_instructions) if log_instruction.instruction.replace("  ", "") in removed_code), None)

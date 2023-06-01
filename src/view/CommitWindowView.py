@@ -4,7 +4,7 @@ from PyQt6.QtGui import QColor, QTextCursor
 class CommitWindowView(QWidget):
     def __init__(self, commit_changes):
         super().__init__()
-        print(commit_changes[0][0])
+        #print(commit_changes[0][0])
         commit_hash = commit_changes[0][0]
         self.setWindowTitle(f"Commit Changes: {commit_hash}")
         self.setGeometry(200, 200, 800, 600)
@@ -21,7 +21,7 @@ class CommitWindowView(QWidget):
         # date_label = QLabel(f"Date: {commit.author_date}", self)
         # layout.addWidget(date_label)
 
-        self.file_buttons = {}  # Dictionnaire pour stocker les boutons de chaque fichier
+        # self.file_buttons = {}  # Dictionnaire pour stocker les boutons de chaque fichier
         self.code_tables = {}  # Dictionnaire pour stocker les tables de chaque fichierw
 
         for commit in commit_changes:
@@ -30,10 +30,10 @@ class CommitWindowView(QWidget):
 
             file_layout = QVBoxLayout()
 
-            # show_hide_button = QPushButton("Show", self)
-            # file_layout.addWidget(show_hide_button)
-            # show_hide_button.setCheckable(True)
-            # show_hide_button.setChecked(False)
+        #     # show_hide_button = QPushButton("Show", self)
+        #     # file_layout.addWidget(show_hide_button)
+        #     # show_hide_button.setCheckable(True)
+        #     # show_hide_button.setChecked(False)
                     
             self.code_table = QTableWidget(self)
             self.code_table.setColumnCount(2)
@@ -60,14 +60,14 @@ class CommitWindowView(QWidget):
             self.code_table.resizeColumnsToContents()
             self.code_table.resizeRowsToContents()
 
-            # self.file_buttons[commit[1]] = show_hide_button
-            self.code_tables[commit[1]] = self.code_table
+        #     # self.file_buttons[commit[1]] = show_hide_button
+        #     self.code_tables[commit[1]] = self.code_table
 
 
             layout.addWidget(self.code_table)
             layout.addLayout(file_layout)
 
-            #show_hide_button.clicked.connect(lambda checked, name=commit_changes[1]: self.toggle_code_table(checked, name))
+        #     #show_hide_button.clicked.connect(lambda checked, name=commit_changes[1]: self.toggle_code_table(checked, name))
 
         # widget = QWidget()
         self.setLayout(layout)
