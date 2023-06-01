@@ -37,8 +37,6 @@ class HomeModel:
                     if any(modification.filename.endswith(ext) for ext in SEARCHED_FILES) and ((modification.old_path is not None and searched_path in modification.old_path) or (modification.new_path is not None and searched_path in modification.new_path)):
                         # Check if added log instructions are present in the modification
                         is_added_code_log_based, added_code = self.__locate_log_instructions(modification.diff_parsed["added"], SEARCHED_STRINGS, INVALID_STRINGS)
-                        print(modification.diff_parsed["added"])
-
                         # Check if removed log instructions are present in the modification
                         is_removed_code_log_based, removed_code = self.__locate_log_instructions(modification.diff_parsed["deleted"], SEARCHED_STRINGS, INVALID_STRINGS)
 
