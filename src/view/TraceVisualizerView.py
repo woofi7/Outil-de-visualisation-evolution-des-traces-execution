@@ -6,12 +6,15 @@ from view.PopupView import PopupManager
 matplotlib.use('QtAgg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from datetime import datetime
 from model.LogInstruction import LogInstruction
 import traceback
 
 class TraceVisualizerView(QWidget):
 
-    def __init__(self):
+    def __init__(self, added_log_instructions, deleted_log_instructions):
         try:
             super().__init__()
             self.setWindowTitle("Trace Visualizer")
@@ -50,12 +53,14 @@ class TraceVisualizerView(QWidget):
             self_layout.addWidget(splitter)
 
             # Plot
-            canvas, axes = self._create_plot(6, 6, 100)
-            axes.plot([0,1,2,3,4], [10,1,20,3,40])
+            fig = Figure(figsize=(6, 6), dpi=100)
+            axes = fig.add_subplot(111)
+            canvas = FigureCanvasQTAgg(fig)
+            self.set_plot(axes, added_log_instructions, deleted_log_instructions)
             toolbar = NavigationToolbar(canvas)
             right_layout.addWidget(toolbar)
             right_layout.addWidget(canvas)
-
+            
             self.show()  # Show the widget
         except Exception as e:
             traceback.print_exc()
@@ -71,6 +76,7 @@ class TraceVisualizerView(QWidget):
             traceback.print_exc()
             PopupManager.show_error_popup("Caught Error", str(e))
         
+    
 
     def set_log_instruction(self, log_instructions_added, log_instructions_deleted):
         try:
@@ -86,6 +92,48 @@ class TraceVisualizerView(QWidget):
                     item = QListWidgetItem(log_instruction_delete.instruction.replace("  ","") + "\tnumber of time modified : " + str(len(log_instruction_delete.modifications)))
                     item.setData(QtCore.Qt.ItemDataRole.UserRole, log_instruction_delete)
                     self.deleted_commits_list.addItem(item)
+        except Exception as e:
+            traceback.print_exc()
+            PopupManager.show_error_popup("Caught Error", str(e))
+        
+
+    def set_plot(self, axes, log_instructions_added, log_instructions_deleted):
+        try:
+            # Créer des listes pour stocker les dates et les nombres de modifications
+            dates_added = []
+            num_modifications_added = []
+
+            for added_log in log_instructions_added:
+                print(added_log.instruction)
+                print(added_log.modifications[0].get_commit_hash())
+                for modif in added_log.modifications:
+                    print(modif.get_date())
+
+            # Parcourir les log_instructions_added
+            for log_instruction in log_instructions_added:
+                for modification in log_instruction.modifications:
+                    # Ajouter la date et le nombre de modifications à leurs listes respectives
+                    dates_added.append(modification.get_date())
+                    num_modifications_added.append(len(log_instruction.modifications))
+
+            # Créer le graphique en utilisant les dates et les nombres de modifications
+            axes.plot(dates_added, num_modifications_added, 'o', markersize=4)
+
+            # Ajouter des traits pour montrer la modification d'une instruction à travers plusieurs commits
+            for log_instruction in log_instructions_added:
+                if len(log_instruction.modifications) > 1:
+                    dates = [modification.get_date() for modification in log_instruction.modifications]
+                    num_modifications = [len(log_instruction.modifications)] * len(dates)
+                    axes.plot(dates, num_modifications, '-', linewidth=0.5, color='gray')
+
+            axes.set_xlabel('Date')
+            axes.set_ylabel('Modified instructions')
+            axes.set_title('Commit History')
+            axes.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+            axes.xaxis.set_major_locator(mdates.DayLocator())
+            
+            axes.set_xticks(dates_added)
+            axes.set_xticklabels([date.strftime('%Y-%m-%d') for date in dates_added], rotation=90, ha='right')
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_error_popup("Caught Error", str(e))

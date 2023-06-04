@@ -8,7 +8,7 @@ import traceback
 REPO_FOLDER = "./repo/"
 
 class TraceVisualizerController:
-    def __init__(self, view, model, home_view):
+    def __init__(self, view, model, home_view, home_model):
         try:
             self.view = view
             self.model = model
