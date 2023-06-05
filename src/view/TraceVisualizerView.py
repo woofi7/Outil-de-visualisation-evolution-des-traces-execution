@@ -110,11 +110,15 @@ class TraceVisualizerView(QWidget):
                     print(modif.get_date())
 
             # Parcourir les log_instructions_added
-            for log_instruction in log_instructions_added:
-                for modification in log_instruction.modifications:
-                    # Ajouter la date et le nombre de modifications à leurs listes respectives
+            for log_added in log_instructions_added:
+                for modification in log_added.modifications:
                     dates_added.append(modification.get_date())
-                    num_modifications_added.append(len(log_instruction.modifications))
+                    num_modifications_added.append(len(log_added.modifications))
+                    
+            # for log_deleted in log_instructions_deleted:
+            #     for modification in log_deleted.modifications:
+            #         dates_added.append(modification.get_date())
+            #         num_modifications_added.append(len(log_deleted.modifications))
 
             # Créer le graphique en utilisant les dates et les nombres de modifications
             axes.plot(dates_added, num_modifications_added, 'o', markersize=4)
