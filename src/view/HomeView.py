@@ -71,3 +71,5 @@ class HomeView(QWidget):
     def setBranches(self, branches):
         for branch in branches:
             self.branches.addItem(branch)
+    def popupError(self,title,  message):
+        PopupManager.show_error_popup(title, message)
