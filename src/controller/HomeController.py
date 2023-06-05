@@ -67,6 +67,7 @@ class HomeController:
             PopupManager.show_error_popup("Caught Error", str(e))
 
     def validate_date_range(self):
+      
         try:
             from_date = self.view.from_calendar.selectedDate()
             self.update_from_date()
@@ -74,7 +75,7 @@ class HomeController:
             self.update_to_date()
 
             if from_date > to_date:
-                PopupManager.show_error_popup("Invalid Date Range", "La date 'FROM' ne peut pas être postérieure à la date 'TO'.")
+                self.view.popupError("Invalid Date Range", "La date 'FROM' ne peut pas être postérieure à la date 'TO'.")
             else:
                 print("Valid date range")
         except Exception as e:
