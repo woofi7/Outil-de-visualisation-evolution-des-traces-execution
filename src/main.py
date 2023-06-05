@@ -8,9 +8,9 @@ def main():
     app = QApplication(sys.argv)  # Create a QApplication instance
 
     # Create instances of the view, model, and controller
-    homePage = HomeView()
+    homeView = HomeView()
     homeModel = HomeModel()
-    homeController = HomeController(homePage, homeModel)
+    homeController = HomeController(homeView, homeModel)
 
     sys.exit(app.exec())  # Start the application event loop
 

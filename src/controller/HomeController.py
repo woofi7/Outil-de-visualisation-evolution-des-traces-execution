@@ -58,10 +58,10 @@ class HomeController:
             self.view.close()
 
             # Create a new TraceVisualizerView and pass the retrieved commits to it
-            self.traceVisualizerView = TraceVisualizerView()
+            self.traceVisualizerView = TraceVisualizerView(added_log_instructions, deleted_log_instructions)
             self.traceVisualizerView.set_log_instruction(added_log_instructions, deleted_log_instructions)
             self.traceVisualizerModel = TraceVisualizerModel()
-            self.traceVisualizerController = TraceVisualizerController(self.traceVisualizerView, self.traceVisualizerModel, self.view)
+            self.traceVisualizerController = TraceVisualizerController(self.traceVisualizerView, self.traceVisualizerModel, self.view, self.model)
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_error_popup("Caught Error", str(e))

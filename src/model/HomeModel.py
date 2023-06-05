@@ -69,6 +69,10 @@ class HomeModel:
                                 else:
                                     # Create a new log instruction and add it to the list
                                     deleted_log_instructions.append(LogInstruction(removed_code, [mod_object]))
+            # Save the lists as properties
+            self.added_log_instructions = added_log_instructions
+            self.deleted_log_instructions = deleted_log_instructions
+            
             # Return the list of log instructions that match the criteria
             return added_log_instructions, deleted_log_instructions
         except Exception as e:
@@ -161,3 +165,10 @@ def on_rm_error(func, path, exc_info):
     except Exception as e:
             traceback.print_exc()
             PopupManager.show_error_popup("Caught Error", str(e))
+
+# Getters
+def get_added_log_instructions(self):
+    return self.added_log_instructions
+
+def get_deleted_log_instructions(self):
+    return self.deleted_log_instructions
