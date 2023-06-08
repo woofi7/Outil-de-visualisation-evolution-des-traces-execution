@@ -22,7 +22,7 @@ class DataModel:
                         if any(modified_file.filename.endswith(ext) for ext in instructions.fileTypes) and any(path in modified_file.old_path for path in instructions.paths) and any(path in modified_file.new_path for path in instructions.paths):
                             # filter logs by framework
                             for strategy in instructions.frameworkStrategies:
-                                self.logs.extend(strategy.getLogs(modified_file))
+                                self.logs.extend(strategy.getLogs(modified_file.source_code_before, modified_file.source_code))
         
         except Exception as e:
             traceback.print_exc()
