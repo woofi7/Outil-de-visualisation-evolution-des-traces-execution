@@ -1,4 +1,6 @@
 import re
+from model.LogInstruction import LogInstruction
+from model.Modification import Modification
 
 class StrategyLog4j():
     instance = None
@@ -10,14 +12,14 @@ class StrategyLog4j():
         return cls.instance
     
     # Function to get the logs specific to this framework
-    def getLogs(self, beforeCode, afterCode):
+    def getLogs(self, beforeCode, afterCode, date, logs):
         hasFramework = False
-        logs = {}
-        deletedLogs = []
-        untouchedLogs = []
-        modifiedLogs = []
-        addedLogs = []
-
+        if logs is None:
+            logs = []
+        if beforeCode is None:
+            beforeCode = ''
+        if afterCode is None:
+            afterCode = ''
         # Check for log4j import in the before and after code
         if "import " in beforeCode + afterCode and "log4j" in beforeCode + afterCode:
             hasFramework = True
@@ -31,7 +33,6 @@ class StrategyLog4j():
             for beforeMatch in beforeMatches[:]:
                 for afterMatch in afterMatches[:]:
                     if beforeMatch[0] == afterMatch[0] and beforeMatch[1] == afterMatch[1]:
-                        untouchedLogs.append(beforeMatch[0] + beforeMatch[1])
                         afterMatches.remove(afterMatch)
                         beforeMatches.remove(beforeMatch)
                         break
@@ -39,23 +40,29 @@ class StrategyLog4j():
             for beforeMatch in beforeMatches[:]:
                 for afterMatch in afterMatches[:]:
                     if (beforeMatch[0] == afterMatch[0] and beforeMatch[1] != afterMatch[1]) or (beforeMatch[0] != afterMatch[0] and beforeMatch[1] == afterMatch[1]):
-                        modifiedLogs.append([beforeMatch[0] + beforeMatch[1], afterMatch[0] + afterMatch[1]])
+                        self.addLogs(logs, beforeMatch[0] + beforeMatch[1],  afterMatch[0] + afterMatch[1], 'modified', date)
                         afterMatches.remove(afterMatch)
                         beforeMatches.remove(beforeMatch)
                         break
 
             for beforeMatch in beforeMatches[:]:
                 if len(beforeMatches) >= len(afterMatches):
-                    deletedLogs.append(beforeMatch[0] + beforeMatch[1])
+                    self.addLogs(logs, beforeMatch[0] + beforeMatch[1], beforeMatch[0] + beforeMatch[1], 'deleted', date)
                     beforeMatches.remove(beforeMatch)
 
             for afterMatch in afterMatches[:]:
-                addedLogs.append(afterMatch[0] + afterMatch[1])
+                modification = Modification(afterMatch[0] + afterMatch[1], date, 'added')
+                logInstruction = LogInstruction(afterMatch[0] + afterMatch[1], [modification], date)
+                logs.append(logInstruction)
                 afterMatches.remove(afterMatch)
-
-            logs["deletedLogs"] = deletedLogs
-            logs["untouchedLogs"] = untouchedLogs
-            logs["modifiedLogs"] = modifiedLogs
-            logs["addedLogs"] = addedLogs
+            
+            
 
             return logs
+        
+    def addLogs(logs, instruction, newInstruction, type, date):
+        for log in logs:
+            if log.instruction == instruction:
+                modification = Modification(newInstruction, date, type)
+                log.modifications.append(modification)
+                log.instruction = newInstruction

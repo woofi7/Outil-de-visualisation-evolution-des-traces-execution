@@ -2,9 +2,10 @@ import traceback
 from view.PopupView import PopupManager
 
 class LogInstruction:
-    def __init__(self, instruction, modifications):
+    def __init__(self, instruction, modifications, date):
         try:
             self.instruction = instruction
+            self.date = date
             if modifications is None:
                 self.modifications = []
             else:

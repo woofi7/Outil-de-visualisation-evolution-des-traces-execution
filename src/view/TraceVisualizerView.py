@@ -83,7 +83,7 @@ class TraceVisualizerView(QWidget):
             for log_instruction_add in log_instructions_added:
                 # Add each commit information as an item to the QListWidget
                 if(log_instruction_add.instruction is not None):
-                    item = QListWidgetItem(log_instruction_add.instruction.replace("  ","") + "\tnumber of time modified : " + str(len(log_instruction_add.modifications)))
+                    item = QListWidgetItem(log_instruction_add.instruction)
                     item.setData(QtCore.Qt.ItemDataRole.UserRole, log_instruction_add)
                     self.added_commits_list.addItem(item)
             for log_instruction_delete in log_instructions_deleted:
@@ -102,12 +102,6 @@ class TraceVisualizerView(QWidget):
             # Créer des listes pour stocker les dates et les nombres de modifications
             dates_added = []
             num_modifications_added = []
-
-            for added_log in log_instructions_added:
-                print(added_log.instruction)
-                print(added_log.modifications[0].get_commit_hash())
-                for modif in added_log.modifications:
-                    print(modif.get_date())
 
             # Parcourir les log_instructions_added
             for log_added in log_instructions_added:

@@ -29,7 +29,7 @@ class TraceVisualizerController:
             commits = []
             modifications = item.data(QtCore.Qt.ItemDataRole.UserRole).modifications
             for modification in modifications:
-                print(modification.commit.hash)
+                print(modification.commit)
                 commits.append(modification.commit)
 
 

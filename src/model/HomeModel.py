@@ -2,6 +2,8 @@ import traceback
 from pydriller import Repository
 from PyQt6.QtCore import QDate, Qt
 from datetime import datetime
+from model.GlobalModel import GlobalModel
+from model.Instructions import Instructions
 from git import Repo
 from model.Modification import Modification
 from model.LogInstruction import LogInstruction
@@ -30,51 +32,26 @@ class HomeModel:
             # Create datetime objects for the start and end dates
             dt1 = datetime(from_date_obj.year, from_date_obj.month, from_date_obj.day)
             dt2 = datetime(to_date_obj.year, to_date_obj.month, to_date_obj.day)
+            instruction = Instructions(searched_path, [dt1, dt2], ['log4j'], ['.java'], [])
+            gm = GlobalModel()
+            gm.addRepoBranch(repo_url, searched_branch, instruction)
+            repoBranch = gm.getRepoBranch(repo_url, searched_branch)
+            for key, value in  repoBranch.logs.items():
+                for log in value:
+                    if(log is not None):
+                        if log.modifications[len(log.modifications) - 1].type == 'deleted':
+                            deleted_log_instructions.append(log)
+                            value.remove(log)
+                        else:
+                            added_log_instructions.append(log)
 
-            # Iterate through the commits in the repository
-            # for commit in Repository(repo_url, single="9f1bff41fc2ca84e9a2878f03177601d9889f8f9").traverse_commits():
-            for commit in Repository(repo_url,since=dt1, to=dt2, only_modifications_with_file_types=SEARCHED_FILES, only_in_branch=searched_branch).traverse_commits():
-                if (searched_author == "" or commit.author is searched_author) :
-                    # Traverse through the modified files in each commit
-                    for modification in commit.modified_files:
-                        # Check if the file has an allowed extension
-                        if any(modification.filename.endswith(ext) for ext in SEARCHED_FILES) and ((modification.old_path is not None and searched_path in modification.old_path) or (modification.new_path is not None and searched_path in modification.new_path)):
-                            # Check if added log instructions are present in the modification
-                            is_added_code_log_based, added_code = self.__locate_log_instructions(modification.diff_parsed["added"], SEARCHED_STRINGS, INVALID_STRINGS)
-                            # Check if removed log instructions are present in the modification
-                            is_removed_code_log_based, removed_code = self.__locate_log_instructions(modification.diff_parsed["deleted"], SEARCHED_STRINGS, INVALID_STRINGS)
-
-                            if is_added_code_log_based:
-                                # Create a modification object to add to the log instruction
-                                mod_object = Modification(commit, commit.committer_date, "added")
-
-                                # Check if the code already exists in the returning list
-                                instruction_index = next((i for i, log_instruction in enumerate(added_log_instructions) if log_instruction.instruction.replace("  ", "") == added_code), None)
-
-                                if instruction_index is not None:
-                                    # Add the modification to the existing log instruction
-                                    added_log_instructions[instruction_index].add_modification(mod_object)
-                                else:
-                                    # Create a new log instruction and add it to the list
-                                    added_log_instructions.append(LogInstruction(added_code, [mod_object]))
-                            if is_removed_code_log_based:
-                                # Create a modification object for deleted log instruction
-                                mod_object = Modification(commit, commit.committer_date, "deleted")
-
-                                # Check if the instruction already exists in the deleted log instructions
-                                instruction_index = next((i for i, log_instruction in enumerate(deleted_log_instructions) if log_instruction.instruction.replace("  ", "") == removed_code), None)
-                                if instruction_index is not None:
-                                    # Add the modification to the existing log instruction
-                                    deleted_log_instructions[instruction_index].add_modification(mod_object)
-                                else:
-                                    # Create a new log instruction and add it to the list
-                                    deleted_log_instructions.append(LogInstruction(removed_code, [mod_object]))
             # Save the lists as properties
             self.added_log_instructions = added_log_instructions
             self.deleted_log_instructions = deleted_log_instructions
+
             
             # Return the list of log instructions that match the criteria
-            return added_log_instructions, deleted_log_instructions
+            return self.added_log_instructions, self.deleted_log_instructions
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_error_popup("Caught Error", str(e))
