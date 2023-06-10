@@ -39,6 +39,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Activate virtual environment
+        run: source venv/bin/activate
+
       - name: Run tests with coverage
         run: pwd;ls;cd src; coverage run -m unittest
 
