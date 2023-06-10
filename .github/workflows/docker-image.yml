@@ -25,7 +25,8 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          pip install pyqt6
+          sudo apt-get update
+          sudo apt-get install libgl1-mesa-glx
           cd src
           coverage run -m unittest
 
