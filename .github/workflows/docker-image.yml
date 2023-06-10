@@ -27,7 +27,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt install python3-pyqt6
-          pip3 install pyqt6
           cd src
           coverage run -m unittest
 
