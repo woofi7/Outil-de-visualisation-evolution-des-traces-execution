@@ -40,7 +40,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Run tests with coverage
-        run: coverage run --source=. -m pytest
+        run: cd src && coverage run --source=. -m unittest
 
   # check-coverage:
   #   runs-on: ubuntu-latest
