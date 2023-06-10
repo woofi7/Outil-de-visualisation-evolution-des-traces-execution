@@ -25,8 +25,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          pwd
-          ls
+          sudo apt-get install libgl1-mesa-glx
           cd src
           coverage run -m unittest
 
