@@ -41,7 +41,8 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          cd src
+          pwd
+          ls
           coverage run --source=. -m unittest
 
   # check-coverage:
