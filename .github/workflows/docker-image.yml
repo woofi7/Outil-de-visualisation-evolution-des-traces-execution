@@ -25,7 +25,6 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          sudo apt-get update
           cd src
           coverage run -m unittest
 
