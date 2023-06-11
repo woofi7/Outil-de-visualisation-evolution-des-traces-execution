@@ -7,7 +7,6 @@ from model.HomeModel import HomeModel
 def main():
     app = QApplication(sys.argv)  # Create a QApplication instance
     print("Starting application")
-    print("modif")
     # Create instances of the view, model, and controller
     homeView = HomeView()
     homeModel = HomeModel()
