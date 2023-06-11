@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . /app
 
 # Install dependencies
-RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y && apt install libgl1-mesa-glx -y
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
