@@ -3,7 +3,7 @@ from PyQt6 import QtCore,QtWidgets
 import sys
 import matplotlib
 from view.PopupView import PopupManager
-matplotlib.use('QtAgg')
+matplotlib.use('Qt5Agg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
