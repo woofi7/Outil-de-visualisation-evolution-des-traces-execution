@@ -16,7 +16,7 @@ RUN yum update -y && yum install -y python3
 RUN yum install -y python3-pip
 
 # Upgrade pip
-RUN pip3 install --upgrade pip
+RUN pip install --upgrade pip
 
 RUN pip cache purge
 RUN yum install -y epel-release
