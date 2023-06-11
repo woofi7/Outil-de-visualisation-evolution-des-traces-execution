@@ -51,7 +51,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install pyinstaller
-        
+
 
     - name: Build Linux executable
       run: pyinstaller --onefile --name myscript_linux src/main.py
@@ -63,8 +63,14 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add artifacts/myscript_linux
-        git commit -a -m "add artifacts"
+        git diff --quiet --exit-code artifacts/myscript_linux
+        if [ $? -eq 0 ]; then
+          echo "No changes in artifacts/myscript_linux. Skipping commit."
+        else
+          git add artifacts/myscript_linux
+          git commit -m "Add artifacts"
+        fi
+
 
     - name: push artifacts
       uses: ad-m/github-push-action@master
