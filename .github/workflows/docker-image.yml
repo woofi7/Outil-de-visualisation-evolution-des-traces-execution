@@ -60,13 +60,8 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        
-        if not git diff --quiet --exit-code dist/myscript_linux; then
-          echo "No changes in dist/myscript_linux. Skipping commit."
-        else
-          git add dist/myscript_linux
-          git commit -m "Add artifacts"
-        fi
+        git add dist/myscript_linux
+        git commit -q -m "Add artifacts"
       
 
 
@@ -75,43 +70,43 @@ jobs:
       with:
         branch: ${{ github.ref }}
 
-  create-executable-windows:
-    needs: create-executable-linux
-    runs-on: windows-latest
+  # create-executable-windows:
+  #   needs: create-executable-linux
+  #   runs-on: windows-latest
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      with:
-        ref: ${{ github.head_ref }}
-        fetch-depth: 0
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v3
+  #     with:
+  #       ref: ${{ github.head_ref }}
+  #       fetch-depth: 0
 
-    - name: git stash/pull/checkout
-      run: |
-        git stash
-        git pull
-        git checkout ${{ github.ref }}
+  #   - name: git stash/pull/checkout
+  #     run: |
+  #       git stash
+  #       git pull
+  #       git checkout ${{ github.ref }}
 
-    - name: Install dependencies
-      run: |
-        pip install pyinstaller
+  #   - name: Install dependencies
+  #     run: |
+  #       pip install pyinstaller
 
-    - name: Build Windows executable
-      run: pyinstaller --onefile --name myscript_windows src/main.py
+  #   - name: Build Windows executable
+  #     run: pyinstaller --onefile --name myscript_windows src/main.py
 
-    - name: Configure Git
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git diff --quiet --exit-code dist\myscript_windows.exe
-        if ($LASTEXITCODE -eq 0) {
-          echo "No changes in dist\myscript_windows.exe. Skipping commit."
-        } else {
-          git add dist\myscript_windows.exe
-          git commit -m "Add artifacts"
-        }
+  #   - name: Configure Git
+  #     run: |
+  #       git config --local user.email "action@github.com"
+  #       git config --local user.name "GitHub Action"
+  #       git diff --quiet --exit-code dist\myscript_windows.exe
+  #       if ($LASTEXITCODE -eq 0) {
+  #         echo "No changes in dist\myscript_windows.exe. Skipping commit."
+  #       } else {
+  #         git add dist\myscript_windows.exe
+  #         git commit -m "Add artifacts"
+  #       }
     
-    - name: push artifacts
-      uses: ad-m/github-push-action@master
-      with:
-        branch: ${{ github.ref }}
+  #   - name: push artifacts
+  #     uses: ad-m/github-push-action@master
+  #     with:
+  #       branch: ${{ github.ref }}
