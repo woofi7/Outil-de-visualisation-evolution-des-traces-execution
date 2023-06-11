@@ -98,7 +98,7 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add dist\myscript_windows
+        git add dist/myscript_windows.exe
         git commit -q -m "Add artifacts" || true
     
     - name: push artifacts
