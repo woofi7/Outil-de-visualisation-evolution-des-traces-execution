@@ -59,12 +59,15 @@ jobs:
     - name: Move Linux executable to artifacts directory
       run: mv dist/myscript_linux artifacts/
 
+    - name: Configure Git
+      run: |
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
+
     - name: Commit and push artifacts
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
         git add artifacts
         git commit -m "Add artifacts"
-        git push https://${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:${{ github.ref }}
+        git push origin HEAD:${{ github.ref }}
