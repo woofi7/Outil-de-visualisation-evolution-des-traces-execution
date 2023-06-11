@@ -71,7 +71,7 @@ jobs:
         branch: ${{ github.ref }}
 
   create-executable-windows:
-    # needs: build-and-test
+    needs: create-executable-linux
     runs-on: windows-latest
 
     steps:
@@ -100,12 +100,12 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git diff --quiet --exit-code artifacts\myscript_linux
-        if %errorlevel% equ 0 (
+        if ($LASTEXITCODE -eq 0) {
           echo "No changes in artifacts/myscript_linux. Skipping commit."
-        ) else (
+        } else {
           git add dist\myscript_windows
           git commit -m "Add artifacts"
-        )
+        }
     
     - name: push artifacts
       uses: ad-m/github-push-action@master
