@@ -2,9 +2,10 @@ name: create executable
 
 on:
   push:
-    branches: [ "pipeline" ]
-  pull_request:
-    branches: [ "pipeline" ]
+    branches: 
+      - pipeline
+      - dev
+      - master
 
 jobs:
   build-and-test:
