@@ -79,8 +79,6 @@ jobs:
         git add dist/myscript_linux
         git commit -m "Add artifacts" || true
       
-
-
     - name: push artifacts
       uses: ad-m/github-push-action@master
       with:
