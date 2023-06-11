@@ -34,7 +34,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.head_ref }}
+        fetch-depth: 0
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -61,13 +64,11 @@ jobs:
 
     - name: Configure Git
       run: |
-        git config --global user.email "action@github.com"
-        git config --global user.name "GitHub Action"
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git commit -a -m "add artifacts"
 
-    - name: Commit and push artifacts
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        git add artifacts
-        git commit -m "Add artifacts"
-        git push origin HEAD:${{ github.ref }}
+    - name: push artifacts
+      uses: ad-m/github-push-action@master
+      with:
+        branch: ${{ github.head_ref }}
