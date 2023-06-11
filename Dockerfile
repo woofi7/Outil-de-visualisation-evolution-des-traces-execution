@@ -1,5 +1,5 @@
-# Use the base image with Ubuntu latest
-FROM ubuntu:22.04
+# Use the base image with CentOS latest
+FROM centos:latest
 
 # Set the working directory
 WORKDIR /app
@@ -8,13 +8,13 @@ WORKDIR /app
 COPY . /app
 
 # Install dependencies
-RUN apt-get update && apt-get upgrade -y && apt-get install -y python3.10 python3-pip libgl1-mesa-glx libxkbcommon-x11-0 libegl1-mesa libglib2.0-0 libdbus-1-3 git qtbase5-private-dev build-essential libgl1-mesa-dev
+RUN yum update -y && yum install -y python3 python3-pip libX11 libXext libXrender mesa-libGL libxcb git qt5-qtbase-devel gcc gcc-c++ mesa-libGL-devel
 
 # Install pip
-RUN apt-get install -y python3-pip
+RUN yum install -y python3-pip
 
 # Upgrade pip
-# RUN pip3 install --upgrade pip
+RUN pip3 install --upgrade pip
 
 # Install requirements
 RUN pip install -r requirements.txt
