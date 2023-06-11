@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . /app
 
 # Install dependencies
-RUN apt-get update && apt-get install -y python3.10 python3-pip libgl1-mesa-glx libxkbcommon-x11-0
+RUN apt-get update && apt-get install -y python3.10 python3-pip libgl1-mesa-glx libxkbcommon-x11-0 libegl1-mesa
 
 # Install pip
 RUN apt-get install -y python3-pip
