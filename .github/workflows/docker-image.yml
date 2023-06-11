@@ -103,11 +103,11 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git diff --quiet --exit-code dist\myscript_windows
+        git diff --quiet --exit-code dist\myscript_windows.exe
         if ($LASTEXITCODE -eq 0) {
-          echo "No changes in dist\myscript_windows. Skipping commit."
+          echo "No changes in dist\myscript_windows.exe. Skipping commit."
         } else {
-          git add dist\myscript_windows
+          git add dist\myscript_windows.exe
           git commit -m "Add artifacts"
         }
     
