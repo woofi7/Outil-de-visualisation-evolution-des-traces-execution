@@ -28,4 +28,4 @@ RUN pip install opencv-python-headless
 WORKDIR /app/src
 
 # Define the default command to run when the container starts
-CMD ["python3", "main.py"]
+# CMD ["python3", "main.py"]
