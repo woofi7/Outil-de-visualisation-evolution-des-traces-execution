@@ -56,9 +56,9 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git diff --quiet --exit-code artifacts/myscript_linux
+        git diff --quiet --exit-code dist/myscript_linux
         if [ $? -eq 0 ]; then
-          echo "No changes in artifacts/myscript_linux. Skipping commit."
+          echo "No changes in dist/myscript_linux. Skipping commit."
         else
           git add dist/myscript_linux
           git commit -m "Add artifacts"
@@ -98,9 +98,9 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git diff --quiet --exit-code artifacts\myscript_linux
+        git diff --quiet --exit-code dist\myscript_windows
         if ($LASTEXITCODE -eq 0) {
-          echo "No changes in artifacts/myscript_linux. Skipping commit."
+          echo "No changes in dist\myscript_windows. Skipping commit."
         } else {
           git add dist\myscript_windows
           git commit -m "Add artifacts"
