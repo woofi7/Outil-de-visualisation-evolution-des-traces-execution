@@ -44,9 +44,6 @@ jobs:
         git stash
         git pull
         git checkout ${{ github.ref }}
-        if [ -f "artifacts/myscript_linux" ]; then
-          rm artifacts/myscript_linux
-        fi
 
     - name: Install dependencies
       run: |
@@ -77,8 +74,8 @@ jobs:
       with:
         branch: ${{ github.ref }}
 
-  create-executable-Windows:
-    needs: create-executable-linux
+  create-executable-windows:
+    # needs: build-and-test
     runs-on: windows-latest
 
     steps:
@@ -88,28 +85,36 @@ jobs:
         ref: ${{ github.head_ref }}
         fetch-depth: 0
 
-    - name: delete old windows executable
+    - name: delete old linux executable
       run: |
-        if [ -f "artifacts/myscript_windows" ]; then
-          rm artifacts/myscript_windows
-        fi
+        git stash
+        git pull
+        git checkout ${{ github.ref }}
 
     - name: Install dependencies
-      run: pip install pyinstaller
+      run: |
+        pip install pyinstaller
+
 
     - name: Build Windows executable
       run: pyinstaller --onefile --name myscript_windows src/main.py
 
-    - name: Move Windows executable to artifacts directory
-      run: mv dist/myscript_linux artifacts/
+    - name: Move Linux executable to artifacts directory
+      run: move /Y dist\myscript_windows artifacts\
+
 
     - name: Configure Git
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add artifacts/myscript_windows
-        git commit -a -m "add artifacts"
-
+        git diff --quiet --exit-code artifacts\myscript_linux
+        if %errorlevel% equ 0 (
+          echo "No changes in artifacts/myscript_linux. Skipping commit."
+        ) else (
+          git add artifacts\myscript_linux
+          git commit -m "Add artifacts"
+        )
+    
     - name: push artifacts
       uses: ad-m/github-push-action@master
       with:
