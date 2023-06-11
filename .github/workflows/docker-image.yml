@@ -39,7 +39,7 @@ jobs:
         ref: ${{ github.head_ref }}
         fetch-depth: 0
 
-    - name: delete old linux executable
+    - name: git stash/pull/checkout
       run: |
         git stash
         git pull
@@ -81,7 +81,7 @@ jobs:
         ref: ${{ github.head_ref }}
         fetch-depth: 0
 
-    - name: delete old linux executable
+    - name: git stash/pull/checkout
       run: |
         git stash
         git pull
@@ -90,7 +90,6 @@ jobs:
     - name: Install dependencies
       run: |
         pip install pyinstaller
-
 
     - name: Build Windows executable
       run: pyinstaller --onefile --name myscript_windows src/main.py
