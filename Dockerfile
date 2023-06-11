@@ -12,7 +12,7 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # Run tests with coverage
-RUN cd src && coverage run -m unittest
+WORKDIR /app/src
 
 # Build the Docker image
 RUN docker build -t tommyti/outil-de-visualisation-evolution-des-traces-execution:latest .
