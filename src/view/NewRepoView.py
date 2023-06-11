@@ -8,6 +8,7 @@ class NewRepoView(QWidget):
             super().__init__()
             self.setWindowTitle("new repository")
             self.setGeometry(100, 100, 280, 80)
+            
 
             # Create a layout for the widget
             layout = QGridLayout(self)
