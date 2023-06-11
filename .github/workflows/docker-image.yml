@@ -39,7 +39,7 @@ jobs:
         uses: docker/login-action@v1
         with:
           username: tommyti
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
       - name: Build Docker image
         run: docker build -t tommyti/outil-de-visualisation-evolution-des-traces-execution:latest .
