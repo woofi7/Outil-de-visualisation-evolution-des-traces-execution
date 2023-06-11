@@ -9,7 +9,7 @@ COPY . /app
 
 # Install dependen cies
 RUN apt-get update && apt-get install -y python3.10 python3-pip libgl1-mesa-glx libxkbcommon-x11-0 libegl1-mesa libglib2.0-0 libdbus-1-3 git python3-pyqt5 qtbase5-private-dev
-
+RUN echo 2
 
 # Install pip
 RUN apt-get install -y python3-pip
