@@ -1,14 +1,14 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidget, QHBoxLayout, QGridLayout, QTabWidget, QComboBox, QSplitter, QFrame, QListWidgetItem
 from PyQt6 import QtCore,QtWidgets
 import sys
-import matplotlib
+# import matplotlib
 from view.PopupView import PopupManager
-matplotlib.use('Qt5Agg')
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
+# matplotlib.use('Qt5Agg')
+# from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+# from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+# from matplotlib.figure import Figure
+# import matplotlib.pyplot as plt
+# import matplotlib.dates as mdates
 from datetime import datetime
 from model.LogInstruction import LogInstruction
 import traceback
@@ -53,14 +53,14 @@ class TraceVisualizerView(QWidget):
 
             self_layout.addWidget(splitter)
 
-            # Plot
-            fig = Figure(figsize=(6, 6), dpi=100)
-            axes = fig.add_subplot(111)
-            canvas = FigureCanvas(fig)
-            self.set_plot(axes, added_log_instructions, deleted_log_instructions)
-            toolbar = NavigationToolbar(canvas)
-            right_layout.addWidget(toolbar)
-            right_layout.addWidget(canvas)
+            # # Plot
+            # fig = Figure(figsize=(6, 6), dpi=100)
+            # axes = fig.add_subplot(111)
+            # canvas = FigureCanvas(fig)
+            # self.set_plot(axes, added_log_instructions, deleted_log_instructions)
+            # toolbar = NavigationToolbar(canvas)
+            # right_layout.addWidget(toolbar)
+            # right_layout.addWidget(canvas)
             
             self.show()  # Show the widget
         except Exception as e:
