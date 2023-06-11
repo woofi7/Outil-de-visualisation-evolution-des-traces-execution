@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . /app
 
 # Install dependencies
-RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y && apt install libgl1-mesa-glx -y
+RUN apt-get update && apt install libgl1-mesa-glx -y && apt-get install -y python3-opencv && pip install opencv-python && pip install opencv-python-headless && pip install opencv-contrib-python && pip install opencv-contrib-python-headless==4.5.3.56
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
