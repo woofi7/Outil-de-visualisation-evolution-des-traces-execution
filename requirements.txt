@@ -3,6 +3,6 @@ matplotlib
 pydriller
 sip
 PyQt-builder
-PyQt6
+pyqt6==6.2.3
 PyQt6_sip
 coverage
