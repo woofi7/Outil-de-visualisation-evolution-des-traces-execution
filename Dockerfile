@@ -13,6 +13,7 @@ RUN apt install python3.10-venv -y
 RUN python3.10 -m venv venv
 RUN . venv/bin/activate
 RUN apt install python3.10 -y
+RUN apt install pip -y
 # RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
