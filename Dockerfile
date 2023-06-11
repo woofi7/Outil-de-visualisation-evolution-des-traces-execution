@@ -14,7 +14,7 @@ RUN yum update -y && yum install -y python3
 
 # Install pip
 RUN yum update -y && \
-    yum install -y python3 python3-pip libX11 libXext libXrender mesa-libGL libxcb git qt5-qtbase-devel gcc gcc-c++ mesa-libGL-devel
+    yum install -y python3 python3-pip libX11 libXext libXrender mesa-libGL libxcb git qt5-qtbase-devel gcc gcc-c++ mesa-libGL-devel python3-pyqt6 PyQt6-WebKit
 
 # Upgrade pip
 RUN pip3 install --upgrade pip
