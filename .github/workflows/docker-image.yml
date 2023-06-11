@@ -41,15 +41,15 @@ jobs:
 
     - name: delete old linux executable
       run: |
+        git stash
+        git pull
+        git checkout ${{ github.ref }}
         if [ -f "artifacts/myscript_linux" ]; then
           rm artifacts/myscript_linux
         fi
 
     - name: Install dependencies
       run: |
-        git stash
-        git pull
-        git checkout ${{ github.ref }}
         pip install pyinstaller
 
     - name: Build Linux executable
