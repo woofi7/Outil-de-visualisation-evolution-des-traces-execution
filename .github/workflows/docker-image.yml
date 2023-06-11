@@ -50,19 +50,24 @@ jobs:
         pip install pyinstaller
 
     - name: Build Linux executable
-      run: pyinstaller --onefile --name myscript_linux src/main.py
+      run: |
+        if [ -f dist/myscript_linux ]; then
+          rm dist/myscript_linux
+        fi
+        pyinstaller --onefile --name myscript_linux src/main.py
 
     - name: Configure Git
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git diff --quiet --exit-code dist/myscript_linux
-        if [ $? -eq 0 ]; then
+        
+        if git diff --quiet --exit-code dist/myscript_linux; then
           echo "No changes in dist/myscript_linux. Skipping commit."
         else
           git add dist/myscript_linux
           git commit -m "Add artifacts"
         fi
+      
 
 
     - name: push artifacts
