@@ -1,4 +1,4 @@
-GitPython==3.1.30
+GitPython>=3.1.0
 matplotlib==3.7.1
 pydriller==2.5
 PyQt6==6.5.1
