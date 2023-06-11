@@ -42,7 +42,6 @@ jobs:
     - name: delete old linux executable
       run: |
         if [ -f "artifacts/myscript_linux" ]; then
-          git rm artifacts/myscript_linux
           rm artifacts/myscript_linux
         fi
 
@@ -53,7 +52,7 @@ jobs:
       run: pyinstaller --onefile --name myscript_linux src/main.py
 
     - name: Move Linux executable to artifacts directory
-      run: mv dist/myscript_linux artifacts/
+      run: mv -f dist/myscript_linux artifacts/
 
     - name: Configure Git
       run: |
