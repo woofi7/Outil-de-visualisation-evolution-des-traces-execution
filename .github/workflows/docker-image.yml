@@ -61,7 +61,7 @@ jobs:
         branch: ${{ github.ref }}
 
   create-executable-Windows:
-    needs: build-and-test
+    needs: create-executable-linux
     runs-on: windows-latest
 
     steps:
