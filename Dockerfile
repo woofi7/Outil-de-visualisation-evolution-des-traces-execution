@@ -22,7 +22,8 @@ RUN yum install -y epel-release
 
 # Install requirements
 RUN pip install -r requirements.txt
-
+RUN pip uninstall opencv-python
+RUN pip install opencv-python-headless
 # Set the working directory for running tests
 WORKDIR /app/src
 
