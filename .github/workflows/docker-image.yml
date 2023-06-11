@@ -100,7 +100,8 @@ jobs:
       run: pyinstaller --onefile --name myscript_windows src/main.py
 
     - name: Move Linux executable to artifacts directory
-      run: move /Y dist\myscript_windows artifacts\
+      run: Move-Item -Path "dist\myscript_windows" -Destination "artifacts\myscript_windows" -Force
+
 
 
     - name: Configure Git
