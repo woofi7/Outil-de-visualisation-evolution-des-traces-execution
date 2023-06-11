@@ -70,7 +70,7 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add .
+        git add dist/myscript_linux
         git commit -m "Add artifacts" || true
       
 
@@ -118,7 +118,7 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add .
+        git add dist/myscript_windows.exe
         git commit -m "Add artifacts" || true
     
     - name: push artifacts
