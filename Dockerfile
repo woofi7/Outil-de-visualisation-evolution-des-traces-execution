@@ -14,6 +14,8 @@ RUN apt-get install -y python3-pip
 # Upgrade pip
 RUN pip3 install --upgrade pip
 
+ENV DISPLAY = host.docker.internal:0.0
+
 # Install requirements
 RUN pip install -r requirements.txt
 
