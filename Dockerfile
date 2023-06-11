@@ -18,6 +18,9 @@ RUN yum install -y python3-pip
 # Upgrade pip
 RUN pip3 install --upgrade pip
 
+RUN pip cache purge
+RUN yum install -y epel-release
+
 # Install requirements
 RUN pip install -r requirements.txt
 
