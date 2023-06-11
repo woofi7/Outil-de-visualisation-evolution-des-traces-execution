@@ -53,6 +53,7 @@ jobs:
     - name: Build Linux executable
       run: pyinstaller --onefile --name myscript_linux src/main.py
 
+      
     - name: Create artifacts directory
       run: mkdir artifacts
 
