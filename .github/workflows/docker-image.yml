@@ -28,7 +28,7 @@ jobs:
   #         cd src
   #         coverage run -m unittest
 
-  create-executable:
+  create-executable-linux:
     # needs: build-and-test
     runs-on: ubuntu-latest
 
@@ -39,26 +39,11 @@ jobs:
         ref: ${{ github.head_ref }}
         fetch-depth: 0
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
-
     - name: Install dependencies
       run: pip install pyinstaller
 
-    - name: Build Windows executable
-      run: pyinstaller --onefile --name myscript_windows.exe src/main.py
-
     - name: Build Linux executable
       run: pyinstaller --onefile --name myscript_linux src/main.py
-
-
-    - name: Create artifacts directory
-      run: mkdir artifacts
-
-    - name: Move Windows executable to artifacts directory
-      run: mv dist/myscript_windows.exe artifacts/
 
     - name: Move Linux executable to artifacts directory
       run: mv dist/myscript_linux artifacts/
@@ -67,10 +52,50 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add artifacts
+        git add artifacts/myscript_linux
         git commit -a -m "add artifacts"
 
     - name: push artifacts
       uses: ad-m/github-push-action@master
       with:
         branch: ${{ github.ref }}
+
+  # create-executable-Windows:
+  #   # needs: build-and-test
+  #   runs-on: windows-latest
+
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v3
+  #     with:
+  #       ref: ${{ github.head_ref }}
+  #       fetch-depth: 0
+
+  #   - name: Set up Python
+  #     uses: actions/setup-python@v2
+  #     with:
+  #       python-version: 3.8
+
+  #   - name: Install dependencies
+  #     run: pip install pyinstaller
+
+  #   - name: Build Windows executable
+  #     run: pyinstaller --onefile --name myscript_windows.exe src/main.py
+
+  #   - name: Create artifacts directory
+  #     run: mkdir artifacts
+
+  #   - name: Move Windows executable to artifacts directory
+  #     run: mv dist/myscript_windows.exe artifacts/
+
+  #   - name: Configure Git
+  #     run: |
+  #       git config --local user.email "action@github.com"
+  #       git config --local user.name "GitHub Action"
+  #       git add artifacts
+  #       git commit -a -m "add artifacts"
+
+  #   - name: push artifacts
+  #     uses: ad-m/github-push-action@master
+  #     with:
+  #       branch: ${{ github.ref }}
