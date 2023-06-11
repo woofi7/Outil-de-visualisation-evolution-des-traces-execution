@@ -51,6 +51,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install pyinstaller
+        
 
     - name: Build Linux executable
       run: pyinstaller --onefile --name myscript_linux src/main.py
