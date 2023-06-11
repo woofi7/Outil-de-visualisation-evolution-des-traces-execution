@@ -42,6 +42,7 @@ jobs:
     - name: delete old linux executable
       run: |
         if [ -f "artifacts/myscript_linux" ]; then
+          git rm artifacts/myscript_linux
           rm artifacts/myscript_linux
         fi
 
