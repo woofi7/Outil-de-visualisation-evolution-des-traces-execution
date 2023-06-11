@@ -1,27 +1,23 @@
-# Use the base image with CentOS latest
-FROM centos:latest
+# Use the base image with Ubuntu latest
+FROM ubuntu:latest
 
 # Set the working directory
 WORKDIR /app
-
-# Copy the code into the container
 COPY . /app
-RUN cd /etc/yum.repos.d/
-RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
-RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
+# Install dependencies
+RUN apt-get update && apt-get upgrade -y && apt-get install -y python3.10 python3-pip libgl1-mesa-glx libxkbcommon-x11-0 libegl1-mesa libglib2.0-0 libdbus-1-3 git qtbase5-private-dev build-essential libgl1-mesa-dev
 
 # Install pip
-RUN yum update -y && \
-    yum install -y epel-release python38 python3-pip libX11 libXext libXrender mesa-libGL libxcb git qt5-qtbase-devel gcc gcc-c++ mesa-libGL-devel python3-qt5 libxkbcommon-x11
+RUN apt-get install -y python3-pip
+RUN yum install -y python3-pip
 
 # Upgrade pip
 RUN pip3 install --upgrade pip
 
-RUN pip cache purge
-RUN yum install -y epel-release
-
 # Install requirements
 RUN pip install -r requirements.txt
+
 # Set the working directory for running tests
 WORKDIR /app/src
 
