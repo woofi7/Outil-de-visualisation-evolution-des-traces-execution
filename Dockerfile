@@ -11,11 +11,10 @@ COPY . /app
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Run tests with coverage
+# Set the working directory for running tests
 WORKDIR /app/src
 
-# Build the Docker image
-RUN docker build -t tommyti/outil-de-visualisation-evolution-des-traces-execution:latest .
+# Update the WORKDIR directive above if necessary
 
-# Push the Docker image to a registry
-RUN docker push tommyti/outil-de-visualisation-evolution-des-traces-execution:latest
+# Define the default command to run when the container starts
+CMD ["python", "main.py"]
