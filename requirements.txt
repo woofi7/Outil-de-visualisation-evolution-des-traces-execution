@@ -1,8 +1,8 @@
-GitPython>=3.1.0
-matplotlib>=3.3.4
-pydriller>=2.5
-sip >=6.5, <7
-PyQt-builder >=1.15, <2
-PyQt6>=6.5.1
-PyQt6_sip>=13.5.1
-coverage>=7.2.7
+GitPython==latest
+matplotlib==latest
+pydriller==latest
+sip==latest
+PyQt-builder==latest
+PyQt6==latest
+PyQt6_sip==latest
+coverage==latest
