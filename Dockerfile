@@ -10,7 +10,6 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y python3.10 python
 
 # Install pip
 RUN apt-get install -y python3-pip
-RUN yum install -y python3-pip
 
 # Upgrade pip
 RUN pip3 install --upgrade pip
