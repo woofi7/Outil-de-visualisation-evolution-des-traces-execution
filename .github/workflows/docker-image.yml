@@ -53,8 +53,8 @@ jobs:
     - name: Create artifacts directory
       run: mkdir artifacts
 
-    - name: Move Windows executable to artifacts directory
-      run: mv dist/myscript_windows.exe artifacts/
+    # - name: Move Windows executable to artifacts directory
+    #   run: mv dist/myscript_windows.exe artifacts/
 
     - name: Move Linux executable to artifacts directory
       run: mv dist/myscript_linux artifacts/
