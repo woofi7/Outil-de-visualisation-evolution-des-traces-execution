@@ -1,5 +1,5 @@
 # Use the base image with Python 3.9
-FROM python:3.9-windowsservercore
+FROM python:3.7
 
 # Set the working directory
 WORKDIR /app
