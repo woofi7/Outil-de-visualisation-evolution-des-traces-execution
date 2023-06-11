@@ -61,7 +61,7 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         
-        if git diff --quiet --exit-code dist/myscript_linux; then
+        if not git diff --quiet --exit-code dist/myscript_linux; then
           echo "No changes in dist/myscript_linux. Skipping commit."
         else
           git add dist/myscript_linux
