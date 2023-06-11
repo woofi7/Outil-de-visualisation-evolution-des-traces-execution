@@ -4,7 +4,8 @@ import sys
 import matplotlib
 from view.PopupView import PopupManager
 matplotlib.use('Qt5Agg')
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
@@ -55,7 +56,7 @@ class TraceVisualizerView(QWidget):
             # Plot
             fig = Figure(figsize=(6, 6), dpi=100)
             axes = fig.add_subplot(111)
-            canvas = FigureCanvasQTAgg(fig)
+            canvas = FigureCanvas(fig)
             self.set_plot(axes, added_log_instructions, deleted_log_instructions)
             toolbar = NavigationToolbar(canvas)
             right_layout.addWidget(toolbar)
@@ -70,7 +71,7 @@ class TraceVisualizerView(QWidget):
         try:
             fig = Figure(figsize=(width, height), dpi=dpi)
             axes = fig.add_subplot(111)
-            canvas = FigureCanvasQTAgg(fig)
+            canvas = FigureCanvas(fig)
             return canvas, axes
         except Exception as e:
             traceback.print_exc()
