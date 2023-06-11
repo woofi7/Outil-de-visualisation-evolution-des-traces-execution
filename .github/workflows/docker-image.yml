@@ -39,6 +39,16 @@ jobs:
         ref: ${{ github.head_ref }}
         fetch-depth: 0
 
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
     - name: git stash/pull/checkout
       run: |
         git stash
@@ -80,6 +90,16 @@ jobs:
       with:
         ref: ${{ github.head_ref }}
         fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
     - name: git stash/pull/checkout
       run: |
