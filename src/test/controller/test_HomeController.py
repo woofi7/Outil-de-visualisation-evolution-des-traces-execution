@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 from PyQt6.QtCore import QDate
 from PyQt6.QtWidgets import QApplication
 from io import StringIO
+from unittest.mock import patch
 import sys
 
 
@@ -71,27 +72,30 @@ class test_HomeController(unittest.TestCase):
     #     printed_output = captured_output.getvalue().strip()
     #     self.assertIn("An error occurred while creating the directory: ", printed_output)
 
-    def test_create_directory_OsError(self):
-        homePage = Mock()
-        homeModel = Mock()
-        homePage.repoList.currentText = MagicMock(return_value='path')
-        homeController = HomeController(homePage, homeModel)
 
-        # Capture the output
-        captured_output = StringIO()
-        sys.stdout = captured_output
+@patch('test.controller.test_HomeController.MagicMock')
+def test_create_directory_OsError(self, mock_magicmock):
+    homePage = Mock()
+    homeModel = Mock()
+    mock_magicmock.return_value = 'path'
+    homeController = HomeController(homePage, homeModel)
 
-        # Call the method under test
-        homeController.create_directory('./<user>/controller/test_HomeController.py')
+    # Capture the output
+    captured_output = StringIO()
+    sys.stdout = captured_output
 
-        # Reset sys.stdout to its original value
-        sys.stdout = sys.__stdout__
+    # Call the method under test
+    homeController.create_directory('./<user>/controller/test_HomeController.py')
 
-        # Get the printed output
-        printed_output = captured_output.getvalue().strip()
+    # Reset sys.stdout to its original value
+    sys.stdout = sys.__stdout__
 
-        # Assert the error message is present
-        self.assertIn("An error occurred while creating the directory: ", printed_output)
+    # Get the printed output
+    printed_output = captured_output.getvalue().strip()
+
+    # Assert the error message is present
+    self.assertIn("An error occurred while creating the directory: ", printed_output)
+
 
 
         
