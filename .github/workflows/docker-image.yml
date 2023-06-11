@@ -30,7 +30,8 @@ jobs:
 
       - name: Check coverage percentage
         run: |
-          coverage report --fail-under=80
+          cd src
+          coverage report --rcfile=.coveragerc --fail-under=80
 
   create-executable-linux:
     needs: build-and-test
