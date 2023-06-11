@@ -1,5 +1,5 @@
 # Use the base image with Python 3.9
-FROM Ubuntu:latest
+FROM ubuntu:latest
 
 # Set the working directory
 WORKDIR /app
