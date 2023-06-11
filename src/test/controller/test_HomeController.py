@@ -79,20 +79,15 @@ def test_create_directory_OsError(self, mock_magicmock):
     homeModel = Mock()
     mock_magicmock.return_value = 'path'
     homeController = HomeController(homePage, homeModel)
-
     # Capture the output
     captured_output = StringIO()
     sys.stdout = captured_output
-
     # Call the method under test
     homeController.create_directory('./<user>/controller/test_HomeController.py')
-
     # Reset sys.stdout to its original value
     sys.stdout = sys.__stdout__
-
     # Get the printed output
     printed_output = captured_output.getvalue().strip()
-
     # Assert the error message is present
     self.assertIn("An error occurred while creating the directory: ", printed_output)
 
