@@ -1,8 +1,8 @@
-GitPython==latest
-matplotlib==latest
-pydriller==latest
-sip==latest
-PyQt-builder==latest
-PyQt6==latest
-PyQt6_sip==latest
-coverage==latest
+GitPython
+matplotlib
+pydriller
+sip
+PyQt-builder
+PyQt6
+PyQt6_sip
+coverage
