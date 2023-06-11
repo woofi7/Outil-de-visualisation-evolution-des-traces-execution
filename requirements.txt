@@ -3,3 +3,4 @@ matplotlib==3.7.1
 pydriller==2.5
 PyQt6==6.5.1
 PyQt6_sip==13.5.1
+coverage==7.2.7
