@@ -25,4 +25,4 @@ WORKDIR /app/src
 # Update the WORKDIR directive above if necessary
 
 # Define the default command to run when the container starts
-CMD ["python", "main.py"]
+CMD ["python3", "main.py"]
