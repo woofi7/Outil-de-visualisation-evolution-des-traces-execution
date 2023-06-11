@@ -12,7 +12,7 @@ RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|
 
 # Install pip
 RUN yum update -y && \
-    yum install -y epel-release python3 python3-pip libX11 libXext libXrender mesa-libGL libxcb git qt5-qtbase-devel gcc gcc-c++ mesa-libGL-devel python3-qt5 python3-pyqt6 PyQt6-WebKit
+    yum install -y epel-release python3 python3-pip libX11 libXext libXrender mesa-libGL libxcb git qt5-qtbase-devel gcc gcc-c++ mesa-libGL-devel python3-qt5
 
 # Upgrade pip
 RUN pip3 install --upgrade pip
