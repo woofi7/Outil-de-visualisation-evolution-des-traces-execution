@@ -1,4 +1,4 @@
-# Use the base image with Python 3.9
+# Use the base image with Ubuntu latest
 FROM ubuntu:latest
 
 # Set the working directory
@@ -7,14 +7,20 @@ WORKDIR /app
 # Copy the code into the container
 COPY . /app
 
-# Install dependencie
-RUN apt update
-RUN apt install python3.10-venv -y
+# Install dependencies
+RUN apt-get update && apt-get install -y python3.10 python3.10-venv
+
+# Create and activate virtual environment
 RUN python3.10 -m venv venv
-RUN . venv/bin/activate
-RUN apt install python3.10 -y
-RUN apt install pip -y
-# RUN pip install --upgrade pip
+RUN /bin/bash -c "source venv/bin/activate"
+
+# Install pip
+RUN apt-get install -y python3-pip
+
+# Upgrade pip
+RUN pip3 install --upgrade pip
+
+# Install requirements
 RUN pip install -r requirements.txt
 
 # Set the working directory for running tests
