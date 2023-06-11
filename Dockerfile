@@ -8,6 +8,7 @@ WORKDIR /app
 COPY . /app
 
 # Install dependencie
+RUN apt update
 RUN apt install python3.10-venv -y
 RUN python3.10 -m venv venv
 RUN . venv/bin/activate
