@@ -12,6 +12,12 @@ RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|
 # Install dependencies
 RUN yum update -y && yum install -y python3
 
+# Install pip
+RUN yum install -y python3-pip
+
+# Upgrade pip
+RUN pip3 install --upgrade pip
+
 # Install requirements
 RUN pip install -r requirements.txt
 
