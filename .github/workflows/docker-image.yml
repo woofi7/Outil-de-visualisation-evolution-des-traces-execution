@@ -48,7 +48,7 @@ jobs:
       run: pyinstaller --onefile src/main.py
 
     - name: Build Linux executable
-      run: pyinstaller --onefile --add-data 'path_to_icon_file:.' src/main.py
+      run: pyinstaller --onefile src/main.py
 
     - name: Create artifacts directory
       run: mkdir artifacts
@@ -65,4 +65,4 @@ jobs:
         git config --local user.name "GitHub Action"
         git add artifacts
         git commit -m "Add artifacts"
-        git push origin main
+        git push origin pipeline
