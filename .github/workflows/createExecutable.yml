@@ -3,7 +3,6 @@ name: create executable
 on:
   push:
     branches: 
-      - pipeline
       - dev
       - master
 

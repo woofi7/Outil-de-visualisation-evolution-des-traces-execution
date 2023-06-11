@@ -2,7 +2,6 @@ name : execute tests and check coverage
 on:
     pull_request:
       branches:
-        - pipeline
         - dev
         - master
 
