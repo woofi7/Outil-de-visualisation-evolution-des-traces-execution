@@ -12,7 +12,9 @@ class StrategyLog4j():
         return cls.instance
     
     # Function to get the logs specific to this framework
-    def getLogs(self, beforeCode, afterCode, date, logs):
+    def getLogs(self, hash, filename, beforeCode, afterCode, date, logs):
+        print(f"HASH : {hash}")
+        print(f"FILENAME : {filename}")
         hasFramework = False
         if logs is None:
             logs = []
@@ -40,18 +42,18 @@ class StrategyLog4j():
             for beforeMatch in beforeMatches[:]:
                 for afterMatch in afterMatches[:]:
                     if (beforeMatch[0] == afterMatch[0] and beforeMatch[1] != afterMatch[1]) or (beforeMatch[0] != afterMatch[0] and beforeMatch[1] == afterMatch[1]):
-                        self.addLogs(logs, beforeMatch[0] + beforeMatch[1],  afterMatch[0] + afterMatch[1], 'modified', date)
+                        self.addLogs(logs, beforeMatch[0] + beforeMatch[1],  afterMatch[0] + afterMatch[1], 'modified', date, beforeCode, afterCode, hash, filename)
                         afterMatches.remove(afterMatch)
                         beforeMatches.remove(beforeMatch)
                         break
 
             for beforeMatch in beforeMatches[:]:
                 if len(beforeMatches) >= len(afterMatches):
-                    self.addLogs(logs, beforeMatch[0] + beforeMatch[1], beforeMatch[0] + beforeMatch[1], 'deleted', date)
+                    self.addLogs(logs, beforeMatch[0] + beforeMatch[1], beforeMatch[0] + beforeMatch[1], 'deleted', date, beforeCode, afterCode, hash, filename)
                     beforeMatches.remove(beforeMatch)
 
             for afterMatch in afterMatches[:]:
-                modification = Modification(afterMatch[0] + afterMatch[1], date, 'added')
+                modification = Modification(afterMatch[0] + afterMatch[1], date, 'added', beforeCode, afterCode, hash, filename)
                 logInstruction = LogInstruction(afterMatch[0] + afterMatch[1], [modification], date)
                 logs.append(logInstruction)
                 afterMatches.remove(afterMatch)
@@ -60,9 +62,15 @@ class StrategyLog4j():
 
             return logs
         
-    def addLogs(logs, instruction, newInstruction, type, date):
+    # def addLogs(logs, instruction, newInstruction, type, date):
+    #     for log in logs:
+    #         if log.instruction == instruction:
+    #             modification = Modification(newInstruction, date, type)
+    #             log.modifications.append(modification)
+    #             log.instruction = newInstruction
+    def addLogs(logs, instruction, newInstruction, type, date, source_code_before, source_code, hash, filename):
         for log in logs:
             if log.instruction == instruction:
-                modification = Modification(newInstruction, date, type)
+                modification = Modification(newInstruction, date, type, source_code_before, source_code, hash, filename)
                 log.modifications.append(modification)
                 log.instruction = newInstruction

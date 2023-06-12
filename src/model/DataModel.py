@@ -23,7 +23,7 @@ class DataModel:
                         if any(modified_file.filename.endswith(ext) for ext in instructions.fileTypes) and ((modified_file.old_path is not None and instructions.paths in modified_file.old_path) or (modified_file.new_path is not None and instructions.paths in modified_file.new_path)):
                             # filter logs by framework
                             for strategy in instructions.frameworkStrategies:
-                                self.logs[modified_file.filename] = strategy.getLogs(modified_file.source_code_before, modified_file.source_code, commit.committer_date, self.logs[modified_file.filename])
+                                self.logs[modified_file.filename] = strategy.getLogs(commit.hash, modified_file.filename, modified_file.source_code_before, modified_file.source_code, commit.committer_date, self.logs[modified_file.filename])
         
         except Exception as e:
             traceback.print_exc()
