@@ -42,6 +42,12 @@ class HomeView(QWidget):
             self.searched_author = QLineEdit()
             layout.addWidget(self.searched_author)
 
+            layout.addWidget(QLabel("Please enter the logging framework you want to analyse"))
+            self.slected_framework = QComboBox()
+            self.slected_framework.addItem('log4j')
+            self.slected_framework.addItem('log4p')
+            layout.addWidget(self.slected_framework)
+
             # Widget pour afficher les dates sélectionnées
             self.from_date_label = QLabel("FROM: ")
             layout.addWidget(self.from_date_label)
@@ -85,5 +91,6 @@ class HomeView(QWidget):
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_error_popup("Caught Error", str(e))
+    
     def popupError(self,title,  message):
        PopupManager.show_error_popup(title, message)

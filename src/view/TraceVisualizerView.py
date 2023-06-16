@@ -66,20 +66,21 @@ class TraceVisualizerView(QWidget):
             traceback.print_exc()
             PopupManager.show_error_popup("Caught Error", str(e))
 
-    def _create_plot(self,width, height, dpi):
-        try:
-            fig = Figure(figsize=(width, height), dpi=dpi)
-            axes = fig.add_subplot(111)
-            canvas = FigureCanvasQTAgg(fig)
-            return canvas, axes
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
+    #def _create_plot(self,width, height, dpi):
+     #   try:
+     #       fig = Figure(figsize=(width, height), dpi=dpi)
+     #       axes = fig.add_subplot(111)
+     #       canvas = FigureCanvasQTAgg(fig)
+     #       return canvas, axes
+     #   except Exception as e:
+     #       traceback.print_exc()
+     #       PopupManager.show_error_popup("Caught Error", str(e))
         
     
 
     def set_log_instruction(self, log_instructions_added, log_instructions_deleted):
         try:
+            
             for log_instruction_add in log_instructions_added:
                 # Add each commit information as an item to the QListWidget
                 if(log_instruction_add.instruction is not None):

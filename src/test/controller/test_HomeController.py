@@ -1,11 +1,12 @@
 import unittest
 from controller.HomeController import HomeController
-from unittest.mock import Mock, patch
-from unittest.mock import MagicMock
+from unittest.mock import Mock, patch, MagicMock
 from PyQt6.QtCore import QDate
 from PyQt6.QtWidgets import QApplication
 from io import StringIO
 import sys
+from view.PopupView import PopupManager
+import traceback
 
 
 
@@ -70,6 +71,8 @@ class test_HomeController(unittest.TestCase):
         homeController.create_directory('./<user>/controller/test_HomeController.py')
         printed_output = captured_output.getvalue().strip()
         self.assertIn("An error occurred while creating the directory: ", printed_output)
+
+    
 
         
    

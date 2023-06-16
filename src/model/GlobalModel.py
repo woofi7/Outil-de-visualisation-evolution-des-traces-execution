@@ -3,6 +3,7 @@ from model.DataModel import DataModel
 class GlobalModel:
     def __init__(self):
         self.repos = dict(dict())
+
     
     # Get the dictionnary of branches and dataModels from a repo
     def getRepo(self, repo):

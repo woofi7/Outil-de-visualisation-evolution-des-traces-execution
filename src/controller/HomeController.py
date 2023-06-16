@@ -47,12 +47,14 @@ class HomeController:
             searched_author = self.view.searched_author.text()
             if searched_author is None:
                 searched_author = ""
+            framework = self.view.slected_framework.currentText()
+
 
             # Perform a Git pull in the repository
             self.model.git_pull(repoPath)
 
             # Retrieve commits based on the selected dates using the model
-            added_log_instructions, deleted_log_instructions = self.model.get_log_instructions(repoPath, from_date, to_date, searched_path, searched_branch, searched_author)
+            added_log_instructions, deleted_log_instructions = self.model.get_log_instructions(repoPath, from_date, to_date, searched_path, searched_branch, searched_author, framework)
 
             # Close the current view
             self.view.close()

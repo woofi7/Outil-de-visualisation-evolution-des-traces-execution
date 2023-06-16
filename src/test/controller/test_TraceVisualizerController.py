@@ -3,13 +3,15 @@ from unittest.mock import Mock
 from controller.TraceVisualizerController import TraceVisualizerController
 from unittest.mock import MagicMock
 from PyQt6.QtWidgets import QLineEdit, QApplication
+from view.PopupView import PopupManager
+import traceback
 
 
 
 class test_TraceVisualizerController(unittest.TestCase):
         
     
-    def ok_button_clicked(self):
+    def TraceVisualizerController_init(self):
         app = QApplication([])
         view = Mock()
         model = Mock()

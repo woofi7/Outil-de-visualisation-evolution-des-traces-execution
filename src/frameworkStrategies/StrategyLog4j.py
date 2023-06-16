@@ -68,7 +68,7 @@ class StrategyLog4j():
     #             modification = Modification(newInstruction, date, type)
     #             log.modifications.append(modification)
     #             log.instruction = newInstruction
-    def addLogs(logs, instruction, newInstruction, type, date, source_code_before, source_code, hash, filename):
+    def addLogs(self, logs, instruction, newInstruction, type, date, source_code_before, source_code, hash, filename):
         for log in logs:
             if log.instruction == instruction:
                 modification = Modification(newInstruction, date, type, source_code_before, source_code, hash, filename)
