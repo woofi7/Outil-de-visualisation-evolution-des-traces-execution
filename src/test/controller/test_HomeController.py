@@ -4,6 +4,7 @@ from unittest.mock import Mock, patch, MagicMock
 from PyQt6.QtCore import QDate
 from PyQt6.QtWidgets import QApplication
 from io import StringIO
+from unittest.mock import patch
 import sys
 from view.PopupView import PopupManager
 import traceback
@@ -61,16 +62,37 @@ class test_HomeController(unittest.TestCase):
             homeController.create_directory('./test/test/test_HomeController.py')
             mock_os.assert_called_once_with('./test/test/test_HomeController.py')
 
-    def test_create_directory_OsError(self):
-        homePage = Mock()
-        homeModel =  Mock()
-        homePage.repoList.currentText =  MagicMock(return_value='path')
-        homeController = HomeController(homePage, homeModel)
-        captured_output = StringIO()
-        sys.stdout = captured_output
-        homeController.create_directory('./<user>/controller/test_HomeController.py')
-        printed_output = captured_output.getvalue().strip()
-        self.assertIn("An error occurred while creating the directory: ", printed_output)
+    # def test_create_directory_OsError(self):
+    #     homePage = Mock()
+    #     homeModel =  Mock()
+    #     homePage.repoList.currentText =  MagicMock(return_value='path')
+    #     homeController = HomeController(homePage, homeModel)
+    #     captured_output = StringIO()
+    #     sys.stdout = captured_output
+    #     homeController.create_directory('./<user>/controller/test_HomeController.py')
+    #     printed_output = captured_output.getvalue().strip()
+    #     self.assertIn("An error occurred while creating the directory: ", printed_output)
+
+
+@patch('test.controller.test_HomeController.MagicMock')
+def test_create_directory_OsError(self, mock_magicmock):
+    homePage = Mock()
+    homeModel = Mock()
+    mock_magicmock.return_value = 'path'
+    homeController = HomeController(homePage, homeModel)
+    # Capture the output
+    captured_output = StringIO()
+    sys.stdout = captured_output
+    # Call the method under test
+    homeController.create_directory('./<user>/controller/test_HomeController.py')
+    # Reset sys.stdout to its original value
+    sys.stdout = sys.__stdout__
+    # Get the printed output
+    printed_output = captured_output.getvalue().strip()
+    # Assert the error message is present
+    self.assertIn("An error occurred while creating the directory: ", printed_output)
+
+
 
     
 

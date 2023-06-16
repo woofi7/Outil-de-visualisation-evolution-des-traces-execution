@@ -9,7 +9,6 @@ class HomeView(QWidget):
             super().__init__()
             self.setWindowTitle("Home")
             self.setGeometry(100, 100, 280, 80)
-            self.setMaximumSize(280, 80)
 
             # Create a layout for the widget
             layout = QVBoxLayout(self)

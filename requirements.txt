@@ -1,0 +1,8 @@
+GitPython
+matplotlib
+pydriller
+sip
+PyQt-builder
+pyqt6
+PyQt6_sip
+coverage

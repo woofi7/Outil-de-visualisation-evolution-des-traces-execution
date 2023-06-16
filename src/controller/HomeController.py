@@ -1,5 +1,3 @@
-from view.HomeView import HomeView
-from model.HomeModel import HomeModel
 from view.NewRepoView import NewRepoView
 from model.NewRepoModel import NewRepoModel
 from controller.NewRepoController import NewRepoController
