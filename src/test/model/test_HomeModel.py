@@ -39,7 +39,7 @@ class test_HomeModel(unittest.TestCase):
   def test_getRepos(self):
      model = HomeModel()
      folder_name= model.get_repos('./test')
-     self.assertEqual(len(folder_name),4)
+     self.assertEqual(len(folder_name),5)
 
   @patch('view.PopupView.PopupManager.show_error_popup')
   @patch('traceback.print_exc')   
