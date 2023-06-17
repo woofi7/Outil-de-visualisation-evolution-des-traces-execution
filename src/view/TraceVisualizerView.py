@@ -1,13 +1,12 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidget, QHBoxLayout, QGridLayout, QTabWidget, QComboBox, QSplitter, QFrame, QListWidgetItem
 from PyQt6 import QtCore,QtWidgets
 import sys
+from model.Modification import Modification
 # import matplotlib
 from view.PopupView import PopupManager
-# matplotlib.use('Qt5Agg')
-# from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-# from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-# from matplotlib.figure import Figure
-# import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib.pyplot as plt
+
 import matplotlib.dates as mdates
 from datetime import datetime
 from model.LogInstruction import LogInstruction
@@ -41,8 +40,19 @@ class TraceVisualizerView(QWidget):
             filters_label.setSizePolicy(QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Fixed)
             filters = QComboBox()
             filters.addItems(["All", "Added", "Deleted", "Modified"])
+            
+            # plot
+            sns.set(style="whitegrid")
+            plt.figure(figsize=(10, 6))
+            sns.set_theme()
+            date_list = [log.date for log in added_log_instructions]
+            modif_list = [len(log.modifications) for log in added_log_instructions]
+
+            sns.scatterplot(x=date_list, y=modif_list)
+            
             right_layout.addWidget(filters_label)
             right_layout.addWidget(filters)
+            right_layout.addWidget(plt.gcf().canvas)
 
             splitter_vertical = QSplitter(QtCore.Qt.Orientation.Vertical)
             splitter_vertical.addWidget(right_frame)
@@ -53,29 +63,11 @@ class TraceVisualizerView(QWidget):
 
             self_layout.addWidget(splitter)
 
-            # # Plot
-            # fig = Figure(figsize=(6, 6), dpi=100)
-            # axes = fig.add_subplot(111)
-            # canvas = FigureCanvas(fig)
-            # self.set_plot(axes, added_log_instructions, deleted_log_instructions)
-            # toolbar = NavigationToolbar(canvas)
-            # right_layout.addWidget(toolbar)
-            # right_layout.addWidget(canvas)
             
             self.show()  # Show the widget
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_error_popup("Caught Error", str(e))
-
-    #def _create_plot(self,width, height, dpi):
-     #   try:
-     #       fig = Figure(figsize=(width, height), dpi=dpi)
-     #       axes = fig.add_subplot(111)
-     #       canvas = FigureCanvasQTAgg(fig)
-     #       return canvas, axes
-     #   except Exception as e:
-     #       traceback.print_exc()
-     #       PopupManager.show_error_popup("Caught Error", str(e))
         
     
 
