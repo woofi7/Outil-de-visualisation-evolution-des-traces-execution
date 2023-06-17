@@ -88,7 +88,7 @@ class HomeView(QWidget):
             for branch in branches:
                 self.branches.addItem(branch)
         except Exception as e:
-            traceback.print_exc()
+            #traceback.print_exc()
             PopupManager.show_error_popup("Caught Error", str(e))
     
     def popupError(self,title,  message):

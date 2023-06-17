@@ -1,6 +1,6 @@
 import unittest
 from model.NewRepoModel import NewRepoModel
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock, MagicMock, patch
 from view.HomeView import HomeView
 from PyQt6.QtWidgets import QApplication
 from view.PopupView import PopupManager
@@ -50,14 +50,16 @@ class test_HomeView(unittest.TestCase):
      view.setBranches(['branche1', 'branche'] )
      self.assertEqual(len(view.branches), 2) 
 
-  def HomeView_setBranch_Exception(self):
+  @patch('view.PopupView.PopupManager.show_error_popup')
+  @patch('traceback.print_exc')
+  def HomeView_setBranch_Exception(self, mock_popup, mock_traceback):
      app = QApplication([])
-     PopupManager.show_error_popup = Mock()
-     #traceback.print_exc = Mock()
+     mock_popup = Mock()
+     mock_traceback = Mock()
      view = HomeView()
      view.branches.addItem = Mock(side_effect = Exception("Mocked exception"))
      view.setBranches(['branche1', 'branche'] )
-     PopupManager.show_error_popup.assert_called_once()
+     mock_popup.assert_called_once()
      #traceback.print_exc.assert_called_once()
 
 

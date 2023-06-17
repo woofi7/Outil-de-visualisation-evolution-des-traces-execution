@@ -1,13 +1,14 @@
 import unittest
 from controller.HomeController import HomeController
 from unittest.mock import Mock, patch, MagicMock
+from model.LogInstruction import LogInstruction
+from model.Modification import Modification
 from PyQt6.QtCore import QDate
 from PyQt6.QtWidgets import QApplication
 from io import StringIO
 from unittest.mock import patch
+import os
 import sys
-from view.PopupView import PopupManager
-import traceback
 
 
 
@@ -52,6 +53,7 @@ class test_HomeController(unittest.TestCase):
         self.assertIsNotNone(homeController.NewRepoModel)
         self.assertIsNotNone(homeController.NewRepoController)
 
+
     def test_create_directory_existing_path(self):
         homePage = Mock()
         homeModel =  Mock()
@@ -62,35 +64,47 @@ class test_HomeController(unittest.TestCase):
             homeController.create_directory('./test/test/test_HomeController.py')
             mock_os.assert_called_once_with('./test/test/test_HomeController.py')
 
-    # def test_create_directory_OsError(self):
-    #     homePage = Mock()
-    #     homeModel =  Mock()
-    #     homePage.repoList.currentText =  MagicMock(return_value='path')
-    #     homeController = HomeController(homePage, homeModel)
-    #     captured_output = StringIO()
-    #     sys.stdout = captured_output
-    #     homeController.create_directory('./<user>/controller/test_HomeController.py')
-    #     printed_output = captured_output.getvalue().strip()
-    #     self.assertIn("An error occurred while creating the directory: ", printed_output)
+    def test_create_directory_OsError(self):
+         homePage = Mock()
+         homeModel =  Mock()
+         homePage.repoList.currentText =  MagicMock(return_value='path')
+         homeController = HomeController(homePage, homeModel)
+         captured_output = StringIO()
+         sys.stdout = captured_output
+         homeController.create_directory('./<user>/controller/test_HomeController.py')
+         printed_output = captured_output.getvalue().strip()
+         self.assertIn("An error occurred while creating the directory: ", printed_output)
 
+    def test_search_button_clicked(self):
+        app = QApplication([])
+        homePage = Mock()
+        homeModel =  Mock()
+        modification = Modification('commit', 'date', 'type', 'beforeCode', 'aftercode', 'hash', 'filename')
+        modification2 = Modification('commit', 'date', 'deleted', 'beforeCode', 'aftercode', 'hash', 'filename')
+        logInstruction = LogInstruction('log.info("info")', [modification], '2023-01-01')
+        logInstruction2 = LogInstruction('log.info("info")', [modification2], '2023-01-01')
+        homeModel.get_log_instructions = MagicMock(return_value= ([logInstruction], [logInstruction2]))
+        homePage.repoList.currentText =  MagicMock(return_value='path')
+        homeController = HomeController(homePage, homeModel)
+        homePage.from_calendar.selectedDate = MagicMock(return_value=QDate(2023, 1, 1))
+        homePage.to_calendar.selectedDate = MagicMock(return_value=QDate(2023, 1, 2))
+        captured_output = StringIO()
+        sys.stdout = captured_output
+        homeController.search_button_clicked()
+        self.assertIsNotNone(homeController.traceVisualizerView)
+        self.assertIsNotNone(homeController.traceVisualizerModel)
+        self.assertIsNotNone(homeController.traceVisualizerController)
 
-@patch('test.controller.test_HomeController.MagicMock')
-def test_create_directory_OsError(self, mock_magicmock):
-    homePage = Mock()
-    homeModel = Mock()
-    mock_magicmock.return_value = 'path'
-    homeController = HomeController(homePage, homeModel)
-    # Capture the output
-    captured_output = StringIO()
-    sys.stdout = captured_output
-    # Call the method under test
-    homeController.create_directory('./<user>/controller/test_HomeController.py')
-    # Reset sys.stdout to its original value
-    sys.stdout = sys.__stdout__
-    # Get the printed output
-    printed_output = captured_output.getvalue().strip()
-    # Assert the error message is present
-    self.assertIn("An error occurred while creating the directory: ", printed_output)
+    def test_delete_repo_button_clicked(self):
+        app = QApplication([])
+        homePage = Mock()
+        homeModel =  Mock()
+        homePage.repoList.currentText =  MagicMock(return_value='path')
+        homeController = HomeController(homePage, homeModel)
+        homePage.from_calendar.selectedDate = MagicMock(return_value=QDate(2023, 1, 1))
+        homePage.to_calendar.selectedDate = MagicMock(return_value=QDate(2023, 1, 2))
+        homeController.delete_repo_button_clicked()
+        homeModel.deleteRepo.assert_called_once()
 
 
 

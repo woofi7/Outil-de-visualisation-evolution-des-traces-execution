@@ -8,7 +8,7 @@ from view.PopupView import PopupManager
 # from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 # from matplotlib.figure import Figure
 # import matplotlib.pyplot as plt
-# import matplotlib.dates as mdates
+import matplotlib.dates as mdates
 from datetime import datetime
 from model.LogInstruction import LogInstruction
 import traceback
@@ -133,7 +133,7 @@ class TraceVisualizerView(QWidget):
             axes.xaxis.set_major_locator(mdates.DayLocator())
             
             axes.set_xticks(dates_added)
-            axes.set_xticklabels([date.strftime('%Y-%m-%d') for date in dates_added], rotation=90, ha='right')
+           # axes.set_xticklabels([date.strftime('%Y-%m-%d') for date in dates_added], rotation=90, ha='right')
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_error_popup("Caught Error", str(e))

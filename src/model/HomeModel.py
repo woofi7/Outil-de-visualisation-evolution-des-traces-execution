@@ -101,7 +101,7 @@ class HomeModel:
     def deleteRepo(self, path):
         try:
             # Delete the repository directory
-            shutil.rmtree(path, onerror=on_rm_error)
+            shutil.rmtree(path, onerror=self.on_rm_error)
             print("Directory deleted successfully.")
             PopupManager.show_error_popup("Alert", "Directory deleted successfully.")
         except FileNotFoundError:
@@ -125,23 +125,23 @@ class HomeModel:
             traceback.print_exc()
             PopupManager.show_error_popup("Caught Error", str(e))
 
-def on_rm_error(func, path, exc_info):
-    try:
+    def on_rm_error(self, func, path, exc_info):
+        try:
         # This function is called when an error occurs while removing a file or directory.
         # It is used to handle read-only files by changing their permissions before unlinking them.
         # The path parameter contains the path of the file or directory that couldn't be removed.
         
         # Change the file or directory permissions to allow write access
-        os.chmod(path, stat.S_IWRITE)
+            os.chmod(path, stat.S_IWRITE)
         # Unlink (remove) the file or directory
-        os.unlink(path)
-    except Exception as e:
+            os.unlink(path)
+        except Exception as e:
             traceback.print_exc()
             PopupManager.show_error_popup("Caught Error", str(e))
 
 # Getters
-def get_added_log_instructions(self):
-    return self.added_log_instructions
+    def get_added_log_instructions(self):
+        return self.added_log_instructions
 
-def get_deleted_log_instructions(self):
-    return self.deleted_log_instructions
+    def get_deleted_log_instructions(self):
+        return self.deleted_log_instructions
