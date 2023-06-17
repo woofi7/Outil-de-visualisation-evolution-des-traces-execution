@@ -9,12 +9,12 @@ class CommitWindowView(QWidget):
             super().__init__()
             #print(commit_changes[0][0])
             commit_hash = commit_changes[0][0]
-            self.setWindowTitle(f"Commit Changes: {commit_hash}")
+            self.setWindowTitle(f"Commit Changes: {commit_hash[:7]}")
             self.setGeometry(200, 200, 800, 600)
             
             layout = QVBoxLayout()
 
-            label = QLabel(f"Commit: {commit_hash}", self)
+            label = QLabel(f"Commit: {commit_hash[:7]}", self)
             layout.addWidget(label)
 
             # AUTEUR ET DATE WIP
@@ -71,7 +71,14 @@ class CommitWindowView(QWidget):
                 layout.addLayout(file_layout)
 
             #     #show_hide_button.clicked.connect(lambda checked, name=commit_changes[1]: self.toggle_code_table(checked, name))
-
+            # code_display = QTextEdit(self)
+            # layout.addWidget(code_display)
+            # for commit in commit_changes:
+            #     code_display.append(f"File: {commit[1]}\n")
+            #     code_display.append("Before:\n")
+            #     code_display.append(commit[2])
+            #     code_display.append("\nAfter:\n")
+            #     code_display.append(commit[3])
             # widget = QWidget()
             self.setLayout(layout)
             # self.setCentralWidget(self)

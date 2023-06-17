@@ -2,25 +2,17 @@ import traceback
 from view.PopupView import PopupManager
 
 class Modification:
-    def __init__(self, commit, date, type) :
-        try:
-            self.commit = commit
-            self.date = date
-            self.type = type
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
+    def __init__(self, commit, date, type, beforeCode, afterCode, hash, filename) :
+        self.commit = commit
+        self.date = date
+        self.type = type
+        self.beforeCode = beforeCode
+        self.afterCode = afterCode
+        self.hash = hash
+        self.filename = filename
     
     def get_commit_hash(self):
-        try:
-            return self.commit
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
+        return self.commit
     
     def get_date(self):
-        try:
-            return self.date
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
+        return self.date

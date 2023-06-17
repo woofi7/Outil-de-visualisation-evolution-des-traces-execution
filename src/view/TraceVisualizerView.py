@@ -8,7 +8,7 @@ from view.PopupView import PopupManager
 # from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 # from matplotlib.figure import Figure
 # import matplotlib.pyplot as plt
-# import matplotlib.dates as mdates
+import matplotlib.dates as mdates
 from datetime import datetime
 from model.LogInstruction import LogInstruction
 import traceback
@@ -67,24 +67,25 @@ class TraceVisualizerView(QWidget):
             traceback.print_exc()
             PopupManager.show_error_popup("Caught Error", str(e))
 
-    def _create_plot(self,width, height, dpi):
-        try:
-            fig = Figure(figsize=(width, height), dpi=dpi)
-            axes = fig.add_subplot(111)
-            canvas = FigureCanvas(fig)
-            return canvas, axes
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
+    #def _create_plot(self,width, height, dpi):
+     #   try:
+     #       fig = Figure(figsize=(width, height), dpi=dpi)
+     #       axes = fig.add_subplot(111)
+     #       canvas = FigureCanvasQTAgg(fig)
+     #       return canvas, axes
+     #   except Exception as e:
+     #       traceback.print_exc()
+     #       PopupManager.show_error_popup("Caught Error", str(e))
         
     
 
     def set_log_instruction(self, log_instructions_added, log_instructions_deleted):
         try:
+            
             for log_instruction_add in log_instructions_added:
                 # Add each commit information as an item to the QListWidget
                 if(log_instruction_add.instruction is not None):
-                    item = QListWidgetItem(log_instruction_add.instruction.replace("  ","") + "\tnumber of time modified : " + str(len(log_instruction_add.modifications)))
+                    item = QListWidgetItem(log_instruction_add.instruction)
                     item.setData(QtCore.Qt.ItemDataRole.UserRole, log_instruction_add)
                     self.added_commits_list.addItem(item)
             for log_instruction_delete in log_instructions_deleted:
@@ -103,12 +104,6 @@ class TraceVisualizerView(QWidget):
             # Créer des listes pour stocker les dates et les nombres de modifications
             dates_added = []
             num_modifications_added = []
-
-            for added_log in log_instructions_added:
-                print(added_log.instruction)
-                print(added_log.modifications[0].get_commit_hash())
-                for modif in added_log.modifications:
-                    print(modif.get_date())
 
             # Parcourir les log_instructions_added
             for log_added in log_instructions_added:
@@ -138,7 +133,7 @@ class TraceVisualizerView(QWidget):
             axes.xaxis.set_major_locator(mdates.DayLocator())
             
             axes.set_xticks(dates_added)
-            axes.set_xticklabels([date.strftime('%Y-%m-%d') for date in dates_added], rotation=90, ha='right')
+           # axes.set_xticklabels([date.strftime('%Y-%m-%d') for date in dates_added], rotation=90, ha='right')
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_error_popup("Caught Error", str(e))
