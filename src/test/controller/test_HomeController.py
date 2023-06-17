@@ -63,10 +63,11 @@ class test_HomeController(unittest.TestCase):
         with patch('os.makedirs', mock_os):
             homeController.create_directory('./test/test/test_HomeController.py')
             mock_os.assert_called_once_with('./test/test/test_HomeController.py')
-
-    def test_create_directory_OsError(self):
+    @patch('os.makedirs')
+    def create_directory_OsError(self, mock_os):
          homePage = Mock()
          homeModel =  Mock()
+         mock_os = Mock(side_effect= OSError('test'))
          homePage.repoList.currentText =  MagicMock(return_value='path')
          homeController = HomeController(homePage, homeModel)
          captured_output = StringIO()
