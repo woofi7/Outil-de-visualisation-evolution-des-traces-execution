@@ -10,8 +10,13 @@ on:
 jobs:
   create-executable-linux:
     runs-on: ubuntu-latest
-
     steps:
+    - name: Check if workflow should be skipped for Bot
+      run: |
+        if [[ "${{ github.actor }}" == "bot-actions-user" ]]; then
+          echo "Skipping workflow execution for BOT."
+          exit 78
+        fi
     - name: Checkout code
       uses: actions/checkout@v3
       with:
@@ -63,6 +68,12 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    - name: Check if workflow should be skipped for Bot
+      run: |
+        if [[ "${{ github.actor }}" == "bot-actions-user" ]]; then
+          echo "Skipping workflow execution for BOT."
+          exit 78
+        fi
     - name: Checkout code
       uses: actions/checkout@v3
       with:
