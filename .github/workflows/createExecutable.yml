@@ -34,12 +34,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: git stash/pull/checkout
-      run: |
-        git stash
-        git pull
-        git checkout ${{ github.ref }}
-
     - name: Install dependencies
       run: |
         pip install pyinstaller
@@ -50,6 +44,12 @@ jobs:
           rm dist/myscript_linux
         fi
         pyinstaller --onefile --name myscript_linux src/main.py
+    
+    - name: git stash/pull/checkout
+      run: |
+        git stash
+        git checkout ${{ github.ref }}
+        git pull
 
     - name: Configure Git
       run: |
