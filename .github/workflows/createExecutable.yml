@@ -82,7 +82,6 @@ jobs:
     - name: git stash/pull/checkout
       run: |
         git stash
-        git pull
         git checkout ${{ github.ref }}
 
     - name: Install dependencies
@@ -94,6 +93,7 @@ jobs:
 
     - name: Configure Git
       run: |
+        git pull
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add dist/myscript_windows.exe
