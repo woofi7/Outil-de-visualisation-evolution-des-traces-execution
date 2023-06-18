@@ -44,12 +44,6 @@ jobs:
           rm dist/myscript_linux
         fi
         pyinstaller --onefile --name myscript_linux src/main.py
-    
-    - name: git stash/pull/checkout
-      run: |
-        git stash
-        git checkout ${{ github.ref }}
-        git pull
 
     - name: Configure Git
       run: |
@@ -80,6 +74,7 @@ jobs:
       with:
         ref: ${{ github.head_ref }}
         fetch-depth: 0
+        token: ${{ secrets.BOT_PAT_TOKEN }}
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -91,11 +86,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: git stash/pull/checkout
-      run: |
-        git stash
-        git checkout ${{ github.ref }}
-
     - name: Install dependencies
       run: |
         pip install pyinstaller
@@ -105,7 +95,6 @@ jobs:
 
     - name: Configure Git
       run: |
-        git pull
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add dist/myscript_windows.exe
