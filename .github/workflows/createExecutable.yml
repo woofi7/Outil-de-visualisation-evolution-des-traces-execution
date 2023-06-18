@@ -70,10 +70,10 @@ jobs:
     steps:
     - name: Check if workflow should be skipped for Bot
       run: |
-        if [[ "${{ github.actor }}" == "bot-actions-user" ]]; then
-          echo "Skipping workflow execution for BOT."
-          exit 78
-        fi
+        if "%GITHUB_ACTOR%"=="bot-actions-user" (
+          echo Skipping workflow execution for BOT.
+          exit /b 78
+        )      
     - name: Checkout code
       uses: actions/checkout@v3
       with:
