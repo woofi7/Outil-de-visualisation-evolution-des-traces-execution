@@ -46,7 +46,7 @@ class TestStrategyLog4p(unittest.TestCase):
                         logger.info("test1");
                         logger.info("test2");'''
         afterCode = '''import log4p;
-                       logger.info("test1");'''
+                       logger.info("test51");'''
         logs = self.strat.getLogs(hash='test', filename='testFile',beforeCode=beforeCode, afterCode=afterCode, date='2023-01-01',logs=logs)
         self.assertEqual(len(logs), 2)
         

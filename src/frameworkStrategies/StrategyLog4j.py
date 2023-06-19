@@ -13,8 +13,8 @@ class StrategyLog4j():
     
     # Function to get the logs specific to this framework
     def getLogs(self, hash, filename, beforeCode, afterCode, date, logs):
-        print(f"HASH : {hash}")
-        print(f"FILENAME : {filename}")
+        # print(f"HASH : {hash}")
+        # print(f"FILENAME : {filename}")
         hasFramework = False
         if logs is None:
             logs = []
