@@ -1,21 +1,99 @@
 @startuml class
 package controller {
-    class CommitWindowController
     class HomeController
-    class TraceVisualizationController
 }
 
 package model {
-    class CommitWindowModel
-    class HomeModel
-    class TraceVisualizationModel
+    class CommitDiffGenerator{
+        + getCommitDiff()
+    }
+
+    package LogInstructionFileGenerators{
+        interface LogInstructionFileGenerator{
+            + createFile(logInstructions : List<LogInstruction>)
+        }
+
+        class CsvFileGenerator implements LogInstructionFileGenerator{
+            + createFile(logInstructions : List<LogInstruction>)
+        }
+    }
+
+    package GraphBuilders{
+        class Director {
+            - builder  : GraphBuilder
+            + Director(builder : GraphBuilder)
+            + changeBuilder(builder : GraphBuilder)
+            + make(type : String)
+        }
+        interface GraphBuilder{
+            + reset()
+            + buildStepA()
+            + buildStepB()
+        }
+        class LinearGraphBuilder{
+            + reset()
+            + buildStepA()
+            + buildStepB()
+            + getResult() : LinearGraph
+        }
+        class LinearGraph
+    }
+
+    package LogInstructionCollectors{
+        interface LogInstructionCollector{
+            + getLogInstruction()
+        }
+
+        class Log4JCollector implements LogInstructionCollector{
+            + getLogInstruction()
+        }
+
+        class Log4PCollector implements LogInstructionCollector{
+            + getLogInstruction()
+        }
+        class LogInstruction
+        class Modification {
+            - type : String
+            - commit : Commit
+        }
+    }
 }
+
+HomeController --> LogInstructionCollector
+HomeController --> LogInstructionFileGenerator 
+controller --> CommitDiffGenerator
 
 package view {
     class CommitWindowView
-    class HomeView
-    class TraceVisualizationView
+    class HomeView {
+        setRepos(repos : List<Repo>)
+        setBranches(branches : List<Branch>)
+    }
+    class NewRepoView
+    class PopupView
+    class TraceVisualizationView {
+        setLogInstructions(logInstructions : List<LogInstruction>)
+        set_plot(graph : LinearGraph)
+    }
+
 }
+
+controller --> view
+
+
+
+LogInstruction "1" o-- "*"Modification
+Log4JCollector --> LogInstruction
+Log4PCollector --> LogInstruction
+
+
+HomeController --> Director
+Director --> GraphBuilder
+LinearGraphBuilder ..|> GraphBuilder
+LinearGraphBuilder --> LinearGraph
+
+
+
 
 
 
