@@ -36,12 +36,12 @@ class test_HomeView(unittest.TestCase):
 
   def HomeView_setRepos_Exception(self):
      app = QApplication([])
-     PopupManager.show_error_popup = Mock()
+     PopupManager.show_info_popup = Mock()
      traceback.print_exc = Mock()
      view = HomeView()
      view.repoList.addItem = Mock(side_effect = Exception("Mocked exception"))
      view.setRepos(['repo1', 'repo2'] )
-     PopupManager.show_error_popup.assert_called_once()
+     PopupManager.show_info_popup.assert_called_once()
      traceback.print_exc.assert_called_once()
 
   def test_HomeView_setBranche(self):

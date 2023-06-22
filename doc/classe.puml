@@ -1,6 +1,7 @@
 @startuml class
 package controller {
     class HomeController
+    class TraceVisualizerController
 }
 
 package model {
@@ -61,7 +62,7 @@ package model {
 
 HomeController --> LogInstructionCollector
 HomeController --> LogInstructionFileGenerator 
-controller --> CommitDiffGenerator
+TraceVisualizerController --> CommitDiffGenerator
 
 package view {
     class CommitWindowView
