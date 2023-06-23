@@ -1,14 +1,139 @@
-@startuml class
+@startuml packageView
+
+skinparam defaultfontname Verdana
+skinparam RoundCorner 20
+skinparam linetype ortho
+
 package controller {
     class HomeController
     class TraceVisualizerController
+    class NewRepoController
 }
 
 package model {
-    class CommitDiffGenerator{
-        + getCommitDiff()
+
+    class LogInstructionDiffGenerator
+    class ReposManager
+    package GraphBuilders{
+        class Director
+        interface GraphBuilder
+        class LinearGraphBuilder
+        class LinearGraph
+    }
+    package LogInstructionCollectors{
+        interface LogInstructionCollector
+        class Log4JCollector
+        class Log4PCollector
+        class LogInstruction
+        class Modification
     }
 
+    package LogInstructionFileGenerators{
+        interface LogInstructionFileGenerator
+        class CsvFileGenerator
+    }
+}
+
+package view {
+    class CommitWindowView
+    class HomeView
+    class NewRepoView
+    class TraceVisualizationView
+}
+@enduml
+
+@startuml HomeController
+    class HomeController
+
+    class HomeView {
+        setRepos(repos : List<Repo>)
+        setBranches(branches : List<Branch>)
+    }
+
+    class ReposManager{
+        + get_repos(main_repo_path : String)
+        + git_pull(repo_path:String)
+        + delete_repo(repo_path:String)
+        + getBranches(repo_path : String)
+        + clone_repo(repo_url:String, repo_path:String)
+    }
+
+    HomeController "1" o-- "1" HomeView
+    HomeController ..> TraceVisualizerController
+    HomeController ..> ReposManager
+    HomeController ..> NewRepoController
+
+@enduml
+
+@startuml TraceVisualizerController
+    class TraceVisualizerController{
+        - set_strategy_collector(strategy : String) : LogInstructionCollectorsStrategy
+        - set_strategy_generator_file(strategy : String) : LogInstructionFileGeneratorsStrategy
+    }
+
+    class TraceVisualizerView{
+        + setLogInstructions(logInstructions : List<LogInstruction>)
+        + set_graphic(graphic : LinearGraph)
+    }
+
+    class LogInstructionDiffGenerator{
+        + getCommitChanges(commits : List<Commit>) : List<Modification>
+    }
+
+    TraceVisualizerController "1" o-- "1" TraceVisualizerView
+    TraceVisualizerController ..> LogInstructionDiffGenerator
+    TraceVisualizerController ..> LogInstructionCollectorsStrategy
+    TraceVisualizerController ..> LogInstructionFileGeneratorsStrategy
+
+
+@enduml
+
+@startuml NewRepoController 
+    class NewRepoController{
+        - home_view : HomeView
+
+    }
+        class ReposManager{
+        + get_repos(main_repo_path : String)
+        + git_pull(repo_path:String)
+        + delete_repo(repo_path:String)
+        + getBranches(repo_path : String)
+        + clone_repo(repo_url:String, repo_path:String)
+    }
+    NewRepoController "1" ..> "1" ReposManager
+    NewRepoController "1" o-- "1" NewRepoView
+
+@enduml
+
+
+@startuml LogInstructionCollectorsStrategy
+    package LogInstructionCollectors{
+        interface LogInstructionCollector{
+            + getLogInstruction()
+        }
+
+        class Log4JCollector implements LogInstructionCollector{
+            + getLogInstruction()
+        }
+
+        class Log4PCollector implements LogInstructionCollector{
+            + getLogInstruction()
+        }
+        class LogInstruction{
+            - instruction : String
+        }
+        class Modification {
+            - type : String
+            - commit : Commit
+        }
+    }
+
+    Log4JCollector ..> LogInstruction
+    Log4PCollector ..> LogInstruction
+    LogInstruction "1" o-- "*"Modification
+@enduml
+
+@startuml LogInstructionFileGeneratorsStrategy
     package LogInstructionFileGenerators{
         interface LogInstructionFileGenerator{
             + createFile(logInstructions : List<LogInstruction>)
@@ -18,6 +143,9 @@ package model {
             + createFile(logInstructions : List<LogInstruction>)
         }
     }
+@enduml
+
+@startuml GraphBuilders
 
     package GraphBuilders{
         class Director {
@@ -40,62 +168,7 @@ package model {
         class LinearGraph
     }
 
-    package LogInstructionCollectors{
-        interface LogInstructionCollector{
-            + getLogInstruction()
-        }
-
-        class Log4JCollector implements LogInstructionCollector{
-            + getLogInstruction()
-        }
-
-        class Log4PCollector implements LogInstructionCollector{
-            + getLogInstruction()
-        }
-        class LogInstruction
-        class Modification {
-            - type : String
-            - commit : Commit
-        }
-    }
-}
-
-HomeController --> LogInstructionCollector
-HomeController --> LogInstructionFileGenerator 
-TraceVisualizerController --> CommitDiffGenerator
-
-package view {
-    class CommitWindowView
-    class HomeView {
-        setRepos(repos : List<Repo>)
-        setBranches(branches : List<Branch>)
-    }
-    class NewRepoView
-    class PopupView
-    class TraceVisualizationView {
-        setLogInstructions(logInstructions : List<LogInstruction>)
-        set_plot(graph : LinearGraph)
-    }
-
-}
-
-controller --> view
-
-
-
-LogInstruction "1" o-- "*"Modification
-Log4JCollector --> LogInstruction
-Log4PCollector --> LogInstruction
-
-
-HomeController --> Director
 Director --> GraphBuilder
 LinearGraphBuilder ..|> GraphBuilder
 LinearGraphBuilder --> LinearGraph
-
-
-
-
-
-
 @enduml

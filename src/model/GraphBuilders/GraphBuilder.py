@@ -1,5 +1,5 @@
 class GraphBuilder:
 
-    # à implémenter la méthode que je vais appeler va être celle-ci
-    def make_graph(self):
-        return None
+    # TODO
+    def build_graph(self, path_to_file_csv):
+        return None #the qgraphic object ready to be added to the QLayout

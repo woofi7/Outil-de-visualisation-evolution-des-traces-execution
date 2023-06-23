@@ -15,8 +15,9 @@ class Log4pCollector(LogInstructionCollector):
             if from_date != datetime.strptime(str(from_date), '%Y-%m-%d %H:%M:%S') or to_date != datetime.strptime(str(to_date), '%Y-%m-%d %H:%M:%S'):
                 raise ValueError("Incorrect data format, should be YYYY-MM-DD")
             self.logs = {}
+
             # filter commits by repo, dates, file types and branch
-            for commit in Repository('https://github.com/Projet-de-fin-etudes/Outil-de-visualisation-evolution-des-traces-execution', since=from_date, to=to_date, only_modifications_with_file_types=FILE_TYPES, only_in_branch='origin/dev').traverse_commits():
+            for commit in Repository(repo, since=from_date, to=to_date, only_modifications_with_file_types=FILE_TYPES, only_in_branch=branch).traverse_commits():
                 # filter commits by authors
                 if(commit.author is author or author is None):
                     self.commits.append(commit)

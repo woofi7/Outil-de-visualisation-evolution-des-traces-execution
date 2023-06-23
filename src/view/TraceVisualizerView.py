@@ -59,6 +59,17 @@ class TraceVisualizerView(QWidget):
             traceback.print_exc()
             PopupManager.show_info_popup("Caught Error", str(e))
 
-    
-    def set_graphique(self, graphique):
-        
+    def set_graphic(self, graphic):
+        if graphic is None:
+            raise ValueError("graphic cannot be None")
+        # Remove existing graphic from right_layout if it's not None
+        if self.graphic is not None:
+            self.right_layout.removeWidget(self.graphic)
+
+        # Set the new graphic
+        self.graphic = graphic
+
+        # Add the new graphic to right_layout
+        self.right_layout.addWidget(self.graphic)
+
+

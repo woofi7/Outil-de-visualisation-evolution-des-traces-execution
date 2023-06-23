@@ -1,20 +1,21 @@
 import traceback
 from view.PopupView import PopupManager
 from model.ReposManager import ReposManager
+from view.NewRepoView import NewRepoView
 
 class NewRepoController:
-    def __init__(self, new_repo_view, home_view):
+    def __init__(self, home_view):
         try:
-            self.new_repo_view = new_repo_view
+            self.new_repo_view = NewRepoView()
             self.home_view = home_view
             self.repo_manager = ReposManager()
-            self.new_repo_view.okButton.clicked.connect(self.ok_button_clicked)
-            self.new_repo_view.cancelButton.clicked.connect(self.cancel_button_clicked)
+            self.new_repo_view.okButton.clicked.connect(self._ok_button_clicked)
+            self.new_repo_view.cancelButton.clicked.connect(self._cancel_button_clicked)
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_info_popup("Caught Error", str(e))    
 
-    def ok_button_clicked(self):
+    def _ok_button_clicked(self):
         try:
             # Get the repository name and convert it to path
             repo_name = self.new_repo_view.newRepo.text().split("/")[-1].split(".")[0]
@@ -32,6 +33,6 @@ class NewRepoController:
             traceback.print_exc()
             PopupManager.show_info_popup("Caught Error", str(e))
 
-    def cancel_button_clicked(self):
+    def _cancel_button_clicked(self):
         #Close the current view
         self.new_repo_view.close()

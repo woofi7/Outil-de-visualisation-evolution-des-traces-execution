@@ -10,8 +10,7 @@ def main():
     app = QApplication(sys.argv)  # Create a QApplication instance
     print("Starting application")
     # Create instances of the view, model, and controller
-    home_view = HomeView()
-    HomeController(home_view)
+    HomeController()
     sys.exit(app.exec())  # Start the application event loop
 
 def _create_directory(directory_path):
