@@ -67,6 +67,8 @@ package view {
 
 @startuml TraceVisualizerController
     class TraceVisualizerController{
+        - strategy_collector : LogInstructionCollectorsStrategy
+        - strategy_generator_file : LogInstructionFileGeneratorsStrategy
         - set_strategy_collector(strategy : String) : LogInstructionCollectorsStrategy
         - set_strategy_generator_file(strategy : String) : LogInstructionFileGeneratorsStrategy
     }
@@ -82,8 +84,8 @@ package view {
 
     TraceVisualizerController "1" o-- "1" TraceVisualizerView
     TraceVisualizerController ..> LogInstructionDiffGenerator
-    TraceVisualizerController ..> LogInstructionCollectorsStrategy
-    TraceVisualizerController ..> LogInstructionFileGeneratorsStrategy
+    TraceVisualizerController "1" o-- "1" LogInstructionCollectorsStrategy
+    TraceVisualizerController "1" o-- "1" LogInstructionFileGeneratorsStrategy
 
 
 @enduml

@@ -20,12 +20,13 @@ class TraceVisualizerController:
             self.trace_visualizer_view.log_instructions_list.itemClicked.connect(self._show_commit_changes)
 
             # Retrieve commits based on the selected dates using the model
-            self.log_instruction_collector = self._set_strategy(framework)
+            self.log_instruction_collector = self._set_strategy_collector(framework)
             log_instructions = self.log_instruction_collector.get_log_instructions(repo_path, from_date, to_date, searched_path, searched_branch, searched_author)
 
             # Create a new TraceVisualizerView and pass the retrieved commits to it
             self.trace_visualizer_view.set_log_instructions(log_instructions)
-            self.trace_visualizer_view.set_graphic(GraphBuilder().build_graph(CsvFileGenerator().createFile(log_instructions)))
+            self.strategy_generator_file = self._set_strategy_generator_file("csv")
+            self.trace_visualizer_view.set_graphic(GraphBuilder().build_graph(self.strategy_generator_file.createFile(log_instructions)))
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_info_popup("Caught Error", str(e))
@@ -46,10 +47,16 @@ class TraceVisualizerController:
             traceback.print_exc()
             PopupManager.show_info_popup("Caught Error", str(e))
 
-    def _set_strategy(self, strategy):
+    def _set_strategy_collector(self, strategy):
         if strategy == "log4p":
             return Log4pCollector()
         elif strategy == "log4j":
             return Log4jCollector()
+        else:
+            raise ValueError("Invalid strategy name")
+        
+    def _set_strategy_generator_file(self, strategy):
+        if strategy == "csv":
+            return CsvFileGenerator()
         else:
             raise ValueError("Invalid strategy name")
