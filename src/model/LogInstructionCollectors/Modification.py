@@ -2,8 +2,9 @@ import traceback
 from view.PopupView import PopupManager
 
 class Modification:
-    def __init__(self, commit, date, type, beforeCode, afterCode, hash, filename) :
-        self.commit = commit
+    def __init__(self, level, instruction, date, type, beforeCode, afterCode, hash, filename) :
+        self.level = level
+        self.instruction = instruction
         self.date = date
         self.type = type
         self.beforeCode = beforeCode

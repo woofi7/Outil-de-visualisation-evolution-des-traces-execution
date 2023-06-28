@@ -22,7 +22,6 @@ class TraceVisualizerController:
             # Retrieve commits based on the selected dates using the model
             self.log_instruction_collector = self._set_strategy_collector(framework)
             log_instructions = self.log_instruction_collector.get_log_instructions(repo_path, from_date, to_date, searched_path, searched_branch, searched_author)
-
             # Create a new TraceVisualizerView and pass the retrieved commits to it
             self.trace_visualizer_view.set_log_instructions(log_instructions)
             self.strategy_generator_file = self._set_strategy_generator_file("csv")

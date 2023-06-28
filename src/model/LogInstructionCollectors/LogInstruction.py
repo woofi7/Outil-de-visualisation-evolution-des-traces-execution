@@ -2,7 +2,8 @@ import traceback
 from view.PopupView import PopupManager
 
 class LogInstruction:
-    def __init__(self, instruction, modifications, date):
+    def __init__(self,level ,instruction, modifications, date):
+        self.level = level
         self.instruction = instruction
         self.date = date
         if modifications is None:
