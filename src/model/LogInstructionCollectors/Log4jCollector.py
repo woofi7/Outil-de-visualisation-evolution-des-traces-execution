@@ -49,7 +49,6 @@ class Log4jCollector(LogInstructionCollector):
             try:
                 beforeParse = self.parse_java_code(before_code)
                 afterParse = self.parse_java_code(after_code)
-             
                 for _, node in beforeParse:
                     if isinstance(node, MethodInvocation) and node.member in logPattern:
                         beforeMatches.append(self.get_Log_Instruction(node, date, before_code, after_code, hash, filename, type))
@@ -76,8 +75,10 @@ class Log4jCollector(LogInstructionCollector):
                             break
                 
                 return afterMatches
-            except Exception as e:
-                traceback.print_exc()
+            except javalang.parser.JavaSyntaxError as e:
+                print(f"Error parsing file {filename} : {e}")
+            except javalang.tokenizer.LexerError as e:
+                print(f"Error parsing file {filename} : {e}")
         return logs
 
     def parse_java_code(self, code):
@@ -90,31 +91,24 @@ class Log4jCollector(LogInstructionCollector):
 
     def get_instruction(self, arguments):
         final_argument = ''
-        for argument in arguments:
+        for index, argument in enumerate(arguments):
+          if index > 0:
+              final_argument = final_argument + ', '
           final_argument = final_argument + self.get_node_arguments(argument, '')
         return final_argument
     
     def get_node_arguments(self, node, final_argument):
+
         if isinstance(node, BinaryOperation):
             final_argument = final_argument + self.get_node_arguments(node.operandl, '') + node.operator + self.get_node_arguments(node.operandr, '')
         elif isinstance(node, MethodInvocation):
-            final_argument = final_argument+ node.member + "(" + self.get_arguments(node.arguments) + ")"   
+            final_argument = final_argument+ node.member + "(" + self.get_instruction(node.arguments) + ")"   
         elif isinstance(node, MemberReference):
-            final_argument = final_argument + ", "+ node.member
+            final_argument = final_argument + node.member
         elif isinstance(node, Literal):
             final_argument = final_argument + node.value
-        return final_argument
-
-    def get_arguments(self, arguments):
-        final_argument = ''
-        for argument in arguments:
-            if isinstance(argument, ClassCreator):
-                for arg in argument.arguments:
-                    final_argument = final_argument + self.get_node_arguments(arg, '')
-            elif isinstance(argument, MemberReference):
-                    final_argument = final_argument + self.get_node_arguments(argument, '')
-            elif isinstance(argument, Cast):
-                    final_argument = final_argument + self.get_arguments(argument.expression)
-            else:
-                final_argument = final_argument + " "+argument.value
+        elif isinstance(node, ClassCreator):
+                final_argument = final_argument + 'new ' + node.type.name+'(' + self.get_instruction(node.arguments)+')'
+        elif isinstance(node, Cast):
+                final_argument = final_argument + self.get_instruction(node.expression)
         return final_argument
