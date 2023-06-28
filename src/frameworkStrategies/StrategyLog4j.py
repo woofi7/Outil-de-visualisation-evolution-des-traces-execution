@@ -58,16 +58,8 @@ class StrategyLog4j():
                 logs.append(logInstruction)
                 afterMatches.remove(afterMatch)
             
-            
-
             return logs
         
-    # def addLogs(logs, instruction, newInstruction, type, date):
-    #     for log in logs:
-    #         if log.instruction == instruction:
-    #             modification = Modification(newInstruction, date, type)
-    #             log.modifications.append(modification)
-    #             log.instruction = newInstruction
     def addLogs(self, logs, instruction, newInstruction, type, date, source_code_before, source_code, hash, filename):
         for log in logs:
             if log.instruction == instruction:

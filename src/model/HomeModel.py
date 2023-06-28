@@ -5,16 +5,13 @@ from model.Instructions import Instructions
 from git import Repo
 from model.Modification import Modification
 from model.LogInstruction import LogInstruction
+from urllib.parse import urlparse
 
 import shutil
 import os
 import stat
 
 from view.PopupView import PopupManager
-
-SEARCHED_STRINGS = [".always",".catching", ".critical", ".debug", ".error", ".fatal", ".info", ".warn", ".trace", ".log", ".trace"]
-SEARCHED_FILES = ['.java', '.py']
-INVALID_STRINGS = ["import", "from", "include", "return", "except"]
 
 class HomeModel:
 
@@ -31,6 +28,7 @@ class HomeModel:
             dt2 = datetime(to_date_obj.year, to_date_obj.month, to_date_obj.day)
             instruction = Instructions(searched_path, [dt1, dt2], [framework], [])
             gm = GlobalModel()
+            
             gm.addRepoBranch(repo_url, searched_branch, instruction)
             repoBranch = gm.getRepoBranch(repo_url, searched_branch)
             for key, value in  repoBranch.logs.items():
@@ -49,34 +47,7 @@ class HomeModel:
 
             
             # Return the list of log instructions that match the criteria
-            return self.added_log_instructions, self.deleted_log_instructions
-        
-
-    #def __locate_log_instructions(self, modifications_list, target_strings, invalid_strings):
-    #    try:
-    #        my_tuple = None
-    #        for t in modifications_list:
-    #            if isinstance(t, tuple) and any(element in t[1] for element in target_strings) and all(element not in t[1] for element in invalid_strings):
-    #                my_tuple = t
-    #                break
-    #        if my_tuple:
-    #           return True, my_tuple[1]
-    #        else:
-    #            return False, None
-    #    except Exception as e:
-    #        traceback.print_exc()
-    #        PopupManager.show_error_popup("Caught Error", str(e))
-        
-    #def check_element_in_list(self, deleted_log_instructions, removed_code):
-    #    try:
-    #        for i, log_instruction in enumerate(deleted_log_instructions):
-    #            cleaned_instruction = log_instruction.instruction.replace("  ", "")
-    #            if cleaned_instruction == removed_code:
-    #                return i
-    #        return None
-    #    except Exception as e:
-    #        traceback.print_exc()
-    #        PopupManager.show_error_popup("Caught Error", str(e))
+            return self.added_log_instructions, self.deleted_log_instructions, repoBranch.commits, repoBranch.logs
 
     def get_repos(self, repoPath):
         try:

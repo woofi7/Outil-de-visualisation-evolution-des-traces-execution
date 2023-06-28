@@ -14,7 +14,7 @@ import traceback
 
 class TraceVisualizerView(QWidget):
 
-    def __init__(self, added_log_instructions, deleted_log_instructions):
+    def __init__(self, added_log_instructions, deleted_log_instructions, commits, logs):
         try:
             super().__init__()
             self.setWindowTitle("Trace Visualizer")
@@ -45,10 +45,14 @@ class TraceVisualizerView(QWidget):
             sns.set(style="whitegrid")
             plt.figure(figsize=(10, 6))
             sns.set_theme()
-            date_list = [log.date for log in added_log_instructions]
-            modif_list = [len(log.modifications) for log in added_log_instructions]
-
-            sns.scatterplot(x=date_list, y=modif_list)
+            commitsInfo = self.extractCommitsInfo(added_log_instructions)
+            dates = [commit["date"] for commit in commitsInfo]
+            index = self.enumerate(dates)
+            # logsCount = [commit["logsCount"] for commit in commitsInfo]
+            sns.scatterplot(x=dates, y=index)
+            plt.legend(["Commit"])
+            plt.xlabel("Commit's date")
+            plt.ylabel("Logs Count")
             
             right_layout.addWidget(filters_label)
             right_layout.addWidget(filters)
@@ -89,43 +93,29 @@ class TraceVisualizerView(QWidget):
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_error_popup("Caught Error", str(e))
+
+
+    def extractCommitsInfo(self, added_log_instructions):
+        commitsInfo = []
         
+        
+        for log in added_log_instructions:
+            for modification in log.modifications:
+                if not any(commit["hash"] == modification.hash for commit in commitsInfo):
+                    commitsInfo.append({
+                        "hash": modification.hash,
+                        "date": modification.date,
+                        "logsCount": 0
+                    })
+                else:
+                    for commit in commitsInfo:
+                        if commit["hash"] == modification.hash:
+                            commit["logsCount"] += 1
+                            
+        return commitsInfo
 
-    def set_plot(self, axes, log_instructions_added, log_instructions_deleted):
-        try:
-            # Créer des listes pour stocker les dates et les nombres de modifications
-            dates_added = []
-            num_modifications_added = []
-
-            # Parcourir les log_instructions_added
-            for log_added in log_instructions_added:
-                for modification in log_added.modifications:
-                    dates_added.append(modification.get_date())
-                    num_modifications_added.append(len(log_added.modifications))
-                    
-            # for log_deleted in log_instructions_deleted:
-            #     for modification in log_deleted.modifications:
-            #         dates_added.append(modification.get_date())
-            #         num_modifications_added.append(len(log_deleted.modifications))
-
-            # Créer le graphique en utilisant les dates et les nombres de modifications
-            axes.plot(dates_added, num_modifications_added, 'o', markersize=4)
-
-            # Ajouter des traits pour montrer la modification d'une instruction à travers plusieurs commits
-            for log_instruction in log_instructions_added:
-                if len(log_instruction.modifications) > 1:
-                    dates = [modification.get_date() for modification in log_instruction.modifications]
-                    num_modifications = [len(log_instruction.modifications)] * len(dates)
-                    axes.plot(dates, num_modifications, '-', linewidth=0.5, color='gray')
-
-            axes.set_xlabel('Date')
-            axes.set_ylabel('Modified instructions')
-            axes.set_title('Commit History')
-            axes.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-            axes.xaxis.set_major_locator(mdates.DayLocator())
-            
-            axes.set_xticks(dates_added)
-           # axes.set_xticklabels([date.strftime('%Y-%m-%d') for date in dates_added], rotation=90, ha='right')
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
+    def enumerate(self, dates):
+        index = []
+        for i, _ in enumerate(dates, start=1):
+            index.append(i)
+        return index

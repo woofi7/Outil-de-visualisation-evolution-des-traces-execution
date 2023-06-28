@@ -104,7 +104,7 @@ class TestStrategyLog4p(unittest.TestCase):
                        logger.info("Starting processing");
                        logger.debug("Configuration loaded successfully");
                        for file in files:
-                           logger.info("Processing file: %s", file);
+                           logger.info("Processing allo file: %s", file);
                            try:
                                process_file(file);
                                logger.info("File %s processed successfully", file);

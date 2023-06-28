@@ -52,13 +52,13 @@ class HomeController:
             self.model.git_pull(repoPath)
 
             # Retrieve commits based on the selected dates using the model
-            added_log_instructions, deleted_log_instructions = self.model.get_log_instructions(repoPath, from_date, to_date, searched_path, searched_branch, searched_author, framework)
+            added_log_instructions, deleted_log_instructions, commits, logs = self.model.get_log_instructions(repoPath, from_date, to_date, searched_path, searched_branch, searched_author, framework)
 
             # Close the current view
             self.view.close()
 
             # Create a new TraceVisualizerView and pass the retrieved commits to it
-            self.traceVisualizerView = TraceVisualizerView(added_log_instructions, deleted_log_instructions)
+            self.traceVisualizerView = TraceVisualizerView(added_log_instructions, deleted_log_instructions, commits, logs)
             self.traceVisualizerView.set_log_instruction(added_log_instructions, deleted_log_instructions)
             self.traceVisualizerModel = TraceVisualizerModel()
             self.traceVisualizerController = TraceVisualizerController(self.traceVisualizerView, self.traceVisualizerModel, self.view, self.model)
