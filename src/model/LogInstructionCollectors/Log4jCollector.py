@@ -1,7 +1,7 @@
 from model.LogInstructionCollectors.LogInstructionCollector import LogInstructionCollector
 import javalang
 from javalang.tree import MethodInvocation, BinaryOperation, Literal, MemberReference, ClassCreator, Cast
-from pydriller import Repository
+from pydriller import Repository, ModificationType
 import traceback
 from view.PopupView import PopupManager
 from model.LogInstructionCollectors.LogInstruction import LogInstruction
@@ -22,11 +22,18 @@ class Log4jCollector(LogInstructionCollector):
                         # filter files by file types and paths
                         if modified_file.filename.endswith(tuple(FILE_TYPES)) and ((modified_file.old_path is not None and path_in_directory in modified_file.old_path) or (modified_file.new_path is not None and path_in_directory in modified_file.new_path)):
                             # filter logs by framework
-                            if modified_file.filename not in self.logs:
-                                self.logs[modified_file.filename] = []
-                            modification = self.getLogs(commit.hash, modified_file.filename, modified_file.source_code_before, modified_file.source_code, commit.committer_date, self.logs[modified_file.filename], modified_file.change_type)
-                            if len(modification) > 0:
-                                self.logs[modified_file.filename] = modification
+                            if modified_file.change_type == ModificationType.RENAME:
+                                tmp = self.logs[modified_file.old_path]
+                                self.logs[modified_file.new_path] = tmp
+                                self.logs[modified_file.old_path] =[]
+                            elif modified_file.change_type == ModificationType.DELETE:
+                                self.logs[modified_file.old_path] = []
+                            else:
+                                if modified_file.new_path not in self.logs:
+                                    self.logs[modified_file.new_path] = []
+                                self.logs[modified_file.new_path] = self.getLogs(commit.hash, modified_file.filename, modified_file.source_code_before, modified_file.source_code, commit.committer_date, self.logs[modified_file.new_path], modified_file.change_type)
+                                
+                            
             return self.logs
         except Exception as e:
             traceback.print_exc()
@@ -42,7 +49,6 @@ class Log4jCollector(LogInstructionCollector):
         # Check for log4j import in the before and after code
         
         if ("import " in before_code or after_code) and "log4j" in (before_code + after_code):
-         
             logPattern = {'debug','info','warn','error','fatal'}
             beforeMatches = []
             afterMatches = []
@@ -56,7 +62,10 @@ class Log4jCollector(LogInstructionCollector):
                 for _, node in afterParse:
                     if isinstance(node, MethodInvocation) and node.member in logPattern:
                         afterMatches.append(self.get_Log_Instruction(node, date, before_code, after_code, hash, filename, type))
-                    
+
+                if(len(beforeMatches) != len(logs)):
+                    return afterMatches
+                
                 for afterMatch in afterMatches:
                     for index, beforMatch in enumerate (beforeMatches):
                         if (afterMatch.level == beforMatch.level and afterMatch.instruction == beforMatch.instruction) and len(logs) > 0:
@@ -64,6 +73,7 @@ class Log4jCollector(LogInstructionCollector):
                             logs.remove(logs[index])
                             beforeMatches.remove(beforeMatches[index])
                             break
+
                 for afterMatch in afterMatches:
                     for index, beforMatch in enumerate (beforeMatches):
                         if ((afterMatch.level != beforMatch.level and afterMatch.instruction == beforMatch.instruction) or (afterMatch.level == beforMatch.level and afterMatch.instruction != beforMatch.instruction)) and len(logs) > 0:
@@ -73,13 +83,16 @@ class Log4jCollector(LogInstructionCollector):
                             logs.remove(logs[index])
                             beforeMatches.remove(beforeMatches[index])
                             break
-                
+
+
                 return afterMatches
-            except javalang.parser.JavaSyntaxError as e:
+            except Exception as e:
                 print(f"Error parsing file {filename} : {e}")
             except javalang.tokenizer.LexerError as e:
                 print(f"Error parsing file {filename} : {e}")
-        return logs
+        else:
+
+            return []        
 
     def parse_java_code(self, code):
         return javalang.parse.parse(code)
