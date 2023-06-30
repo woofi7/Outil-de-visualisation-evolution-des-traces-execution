@@ -24,7 +24,7 @@ class test_HomeController(unittest.TestCase):
         homePage.to_calendar.selectedDate = MagicMock(return_value=QDate(2023, 1, 2))
         captured_output = StringIO()
         sys.stdout = captured_output
-        homeController.validate_date_range()
+        homeController._validate_date_range()
         printed_output = captured_output.getvalue().strip()
         homePage.from_date_label.setText.assert_called_once_with("FROM: Sun Jan 1 2023")
         homePage.to_date_label.setText.assert_called_once_with("TO: Mon Jan 2 2023")
@@ -37,7 +37,7 @@ class test_HomeController(unittest.TestCase):
         homeController = HomeController(homePage, homeModel)
         homePage.from_calendar.selectedDate = MagicMock(return_value=QDate(2023, 1, 2))
         homePage.to_calendar.selectedDate = MagicMock(return_value=QDate(2023, 1, 1))
-        homeController.validate_date_range()
+        homeController._validate_date_range()
         homePage.from_date_label.setText.assert_called_once_with("FROM: Mon Jan 2 2023")
         homePage.to_date_label.setText.assert_called_once_with("TO: Sun Jan 1 2023")
         homePage.popupError.assert_called_once_with("Invalid Date Range", "La date 'FROM' ne peut pas être postérieure à la date 'TO'.")
@@ -48,7 +48,7 @@ class test_HomeController(unittest.TestCase):
         homeModel =  Mock()
         homePage.repoList.currentText =  MagicMock(return_value='path')
         homeController = HomeController(homePage, homeModel)
-        homeController.new_repo_button_clicked()
+        homeController._new_repo_button_clicked()
         self.assertIsNotNone(homeController.NewRepoView)
         self.assertIsNotNone(homeController.NewRepoModel)
         self.assertIsNotNone(homeController.NewRepoController)
@@ -91,10 +91,10 @@ class test_HomeController(unittest.TestCase):
         homePage.to_calendar.selectedDate = MagicMock(return_value=QDate(2023, 1, 2))
         captured_output = StringIO()
         sys.stdout = captured_output
-        homeController.search_button_clicked()
+        homeController._search_button_clicked()
         self.assertIsNotNone(homeController.traceVisualizerView)
         self.assertIsNotNone(homeController.traceVisualizerModel)
-        self.assertIsNotNone(homeController.traceVisualizerController)
+        self.assertIsNotNone(homeController.trace_visualizer_controller)
 
     def test_delete_repo_button_clicked(self):
         app = QApplication([])
@@ -104,7 +104,7 @@ class test_HomeController(unittest.TestCase):
         homeController = HomeController(homePage, homeModel)
         homePage.from_calendar.selectedDate = MagicMock(return_value=QDate(2023, 1, 1))
         homePage.to_calendar.selectedDate = MagicMock(return_value=QDate(2023, 1, 2))
-        homeController.delete_repo_button_clicked()
+        homeController._delete_repo_button_clicked()
         homeModel.deleteRepo.assert_called_once()
 
 

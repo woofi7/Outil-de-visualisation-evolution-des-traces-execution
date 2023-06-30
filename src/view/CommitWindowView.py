@@ -85,7 +85,7 @@ class CommitWindowView(QWidget):
             self.show()  # Show the widget
         except Exception as e:
             traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
+            PopupManager.show_info_popup("Caught Error", str(e))
 
     # def toggle_code_table(self, checked, filename):
     #     table = self.code_tables.get(filename)

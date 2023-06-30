@@ -1,20 +1,12 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidget, QHBoxLayout, QGridLayout, QTabWidget, QComboBox, QSplitter, QFrame, QListWidgetItem
 from PyQt6 import QtCore,QtWidgets
-import sys
-from model.Modification import Modification
-# import matplotlib
 from view.PopupView import PopupManager
-import seaborn as sns
-import matplotlib.pyplot as plt
-
 import matplotlib.dates as mdates
-from datetime import datetime
-from model.LogInstruction import LogInstruction
 import traceback
 
 class TraceVisualizerView(QWidget):
 
-    def __init__(self, added_log_instructions, deleted_log_instructions, commits, logs):
+    def __init__(self):
         try:
             super().__init__()
             self.setWindowTitle("Trace Visualizer")
@@ -25,13 +17,9 @@ class TraceVisualizerView(QWidget):
             # Left Layout
             left_frame = QFrame()
             upper_left_layout = QVBoxLayout(left_frame)
-            self.added_commits_list = QListWidget()
-            upper_left_layout.addWidget(QLabel("Added log instructions"))  # Add the label to the layout
-            upper_left_layout.addWidget(self.added_commits_list)
-
-            self.deleted_commits_list = QListWidget()
-            upper_left_layout.addWidget(QLabel("Deleted log instructions"))  # Add the label to the layout
-            upper_left_layout.addWidget(self.deleted_commits_list)
+            self.log_instructions_list = QListWidget()
+            upper_left_layout.addWidget(QLabel("log instructions"))  # Add the label to the layout
+            upper_left_layout.addWidget(self.log_instructions_list)
 
             # Right Layout
             right_frame = QFrame()
@@ -66,56 +54,37 @@ class TraceVisualizerView(QWidget):
             splitter.addWidget(right_frame)
 
             self_layout.addWidget(splitter)
-
             
             self.show()  # Show the widget
         except Exception as e:
             traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
-        
-    
+            PopupManager.show_info_popup("Caught Error", str(e))    
 
-    def set_log_instruction(self, log_instructions_added, log_instructions_deleted):
+    def set_log_instructions(self, log_instructions):
         try:
-            
-            for log_instruction_add in log_instructions_added:
+            if log_instructions is None:
+                raise ValueError("log_instructions cannot be None")
+            for log_instruction in log_instructions:
                 # Add each commit information as an item to the QListWidget
-                if(log_instruction_add.instruction is not None):
-                    item = QListWidgetItem(log_instruction_add.instruction)
-                    item.setData(QtCore.Qt.ItemDataRole.UserRole, log_instruction_add)
-                    self.added_commits_list.addItem(item)
-            for log_instruction_delete in log_instructions_deleted:
-                # Add each commit information as an item to the QListWidget
-                if(log_instruction_delete.instruction is not None):
-                    item = QListWidgetItem(log_instruction_delete.instruction.replace("  ","") + "\tnumber of time modified : " + str(len(log_instruction_delete.modifications)))
-                    item.setData(QtCore.Qt.ItemDataRole.UserRole, log_instruction_delete)
-                    self.deleted_commits_list.addItem(item)
+                if(log_instruction.instruction is not None):
+                    item = QListWidgetItem(log_instruction.instruction)
+                    item.setData(QtCore.Qt.ItemDataRole.UserRole, log_instruction)
+                    self.log_instructions_list.addItem(item)
         except Exception as e:
             traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
+            PopupManager.show_info_popup("Caught Error", str(e))
+
+    def set_graphic(self, graphic):
+        if graphic is None:
+            raise ValueError("graphic cannot be None")
+        # Remove existing graphic from right_layout if it's not None
+        if self.graphic is not None:
+            self.right_layout.removeWidget(self.graphic)
+
+        # Set the new graphic
+        self.graphic = graphic
+
+        # Add the new graphic to right_layout
+        self.right_layout.addWidget(self.graphic)
 
 
-    def extractCommitsInfo(self, added_log_instructions):
-        commitsInfo = []
-        
-        
-        for log in added_log_instructions:
-            for modification in log.modifications:
-                if not any(commit["hash"] == modification.hash for commit in commitsInfo):
-                    commitsInfo.append({
-                        "hash": modification.hash,
-                        "date": modification.date,
-                        "logsCount": 0
-                    })
-                else:
-                    for commit in commitsInfo:
-                        if commit["hash"] == modification.hash:
-                            commit["logsCount"] += 1
-                            
-        return commitsInfo
-
-    def enumerate(self, dates):
-        index = []
-        for i, _ in enumerate(dates, start=1):
-            index.append(i)
-        return index

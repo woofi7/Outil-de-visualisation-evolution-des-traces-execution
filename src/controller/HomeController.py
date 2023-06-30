@@ -1,158 +1,86 @@
 from view.NewRepoView import NewRepoView
-from model.NewRepoModel import NewRepoModel
 from controller.NewRepoController import NewRepoController
 from view.PopupView import PopupManager
 from view.TraceVisualizerView import TraceVisualizerView
-from model.TraceVisualizerModel import TraceVisualizerModel
 from controller.TraceVisualizerController import TraceVisualizerController
-from PyQt6.QtCore import QDate, Qt
-import os
+from model.ReposManager import ReposManager
+from datetime import datetime
+from PyQt6.QtCore import Qt
+from functools import partial
+from view.HomeView import HomeView
 import traceback
 
 REPO_FOLDER = "./repo/"
 
 class HomeController:
-    def __init__(self, view, model):
-        try:
-            self.view = view
-            self.model = model
-            self.update_repo_list()
-            self.update_branch_list()
+    def __init__(self):
+        self.home_view = HomeView()
+        self.repos_manager = ReposManager()
+        self.home_view.setRepos(self.repos_manager.get_repos(REPO_FOLDER))
+        self._update_branch_list(self.home_view.repoList.currentText())
 
-            # Connect button click events to corresponding functions
-            self.view.newRepoButton.clicked.connect(self.new_repo_button_clicked)
-            self.view.searchButton.clicked.connect(self.search_button_clicked)
-            self.view.from_calendar.selectionChanged.connect(self.validate_date_range)
-            self.view.to_calendar.selectionChanged.connect(self.validate_date_range)
-            self.view.deleteRepoButton.clicked.connect(self.delete_repo_button_clicked)
-            self.view.repoList.currentTextChanged.connect(self.update_branch_list)
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
+        # Connect button click events to corresponding functions
+        self.home_view.newRepoButton.clicked.connect(partial(self._new_repo_button_clicked))
+        self.home_view.searchButton.clicked.connect(self._search_button_clicked)
+        self.home_view.from_calendar.selectionChanged.connect(self._validate_date_range)
+        self.home_view.to_calendar.selectionChanged.connect(self._validate_date_range)
+        self.home_view.deleteRepoButton.clicked.connect(self._delete_repo_button_clicked)
+        self.home_view.repoList.currentTextChanged.connect(self._update_branch_list)
 
-    def search_button_clicked(self):
+    def _search_button_clicked(self):
         try:
             # Retrieve selected dates and repository name from the view
-            from_date = self.view.from_calendar.selectedDate().toString(Qt.DateFormat.ISODate)
-            to_date = self.view.to_calendar.selectedDate().toString(Qt.DateFormat.ISODate)
-            repoName = self.view.repoList.currentText()
-            repoPath = REPO_FOLDER + repoName + "/"
+            from_date = datetime.strptime(self.home_view.from_calendar.selectedDate().toString(Qt.DateFormat.ISODate), '%Y-%m-%d')
+            to_date = datetime.strptime(self.home_view.to_calendar.selectedDate().toString(Qt.DateFormat.ISODate), '%Y-%m-%d')
+            repo_path = REPO_FOLDER + self.home_view.repoList.currentText() + "/"
 
-            searched_path = self.view.searched_path.text()
-            if searched_path is None:
-                searched_path = ""
-            searched_branch = self.view.branches.currentText()
-            searched_author = self.view.searched_author.text()
-            if searched_author is None:
-                searched_author = ""
-            framework = self.view.slected_framework.currentText()
-
+            searched_path = self.home_view.searched_path.text()
+            searched_branch = self.home_view.branches.currentText()
+            searched_author = self.home_view.searched_author.text()
+            framework = self.home_view.slected_framework.currentText()
 
             # Perform a Git pull in the repository
-            self.model.git_pull(repoPath)
-
-            # Retrieve commits based on the selected dates using the model
-            added_log_instructions, deleted_log_instructions, commits, logs = self.model.get_log_instructions(repoPath, from_date, to_date, searched_path, searched_branch, searched_author, framework)
-
-            # Close the current view
-            self.view.close()
+            self.repos_manager.git_pull(repo_path)
 
             # Create a new TraceVisualizerView and pass the retrieved commits to it
-            self.traceVisualizerView = TraceVisualizerView(added_log_instructions, deleted_log_instructions, commits, logs)
-            self.traceVisualizerView.set_log_instruction(added_log_instructions, deleted_log_instructions)
-            self.traceVisualizerModel = TraceVisualizerModel()
-            self.traceVisualizerController = TraceVisualizerController(self.traceVisualizerView, self.traceVisualizerModel, self.view, self.model)
+            self.trace_visualizer_controller = TraceVisualizerController(framework, from_date, to_date, repo_path, searched_path, searched_branch, searched_author)
+            # Close the current view
+            self.home_view.close()
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_error_popup("Caught Error", str(e))
 
-    def validate_date_range(self):
-      
+    def _validate_date_range(self):
         try:
-            from_date = self.view.from_calendar.selectedDate()
-            self.update_from_date()
-            to_date = self.view.to_calendar.selectedDate()
-            self.update_to_date()
+            from_date = self.home_view.from_calendar.selectedDate()
+            self.home_view.from_date_label.setText("FROM: " + from_date.toString())
+            to_date = self.home_view.to_calendar.selectedDate()
+            self.home_view.to_date_label.setText("TO: " + to_date.toString()) 
 
             if from_date > to_date:
-                self.view.popupError("Invalid Date Range", "La date 'FROM' ne peut pas être postérieure à la date 'TO'.")
+                self.home_view.popupError("Invalid Date Range", "La date 'FROM' ne peut pas être postérieure à la date 'TO'.")
             else:
                 print("Valid date range")
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_error_popup("Caught Error", str(e))
 
-    def update_from_date(self):
-        try:
-            # Update the "FROM" date label based on the selected date
-            from_date = self.view.from_calendar.selectedDate()
-            self.view.from_date_label.setText("FROM: " + from_date.toString())
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
+    def _update_branch_list(self, repo_name):
+        if repo_name.strip():
+                repo_path = REPO_FOLDER + self.home_view.repoList.currentText() + "/"
+                self.home_view.setBranches(self.repos_manager.get_branches(repo_path))
 
-    def update_to_date(self):
-        try:
-            # Update the "TO" date label based on the selected date
-            to_date = self.view.to_calendar.selectedDate()
-            self.view.to_date_label.setText("TO: " + to_date.toString()) 
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
+    def _new_repo_button_clicked(self):
+            self.new_repo_controller = NewRepoController(self.home_view)
 
-    def new_repo_button_clicked(self):
+    def _delete_repo_button_clicked(self):
         try:
-            # Create a new repository view, model, and controller
-            self.NewRepoView = NewRepoView()
-            self.NewRepoModel = NewRepoModel()
-            self.NewRepoController = NewRepoController(self.NewRepoView, self.NewRepoModel, self)
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
-
-    def update_repo_list(self):
-        try:
-            # Clear the repository list and set the repositories in the view
-            self.create_directory(REPO_FOLDER)
-            self.view.repoList.clear()
-            self.view.setRepos(self.model.get_repos(REPO_FOLDER))
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
-
-    def update_branch_list(self):
-        try:
-            self.view.branches.clear()
-            repoName = self.view.repoList.currentText()
-            repoPath = REPO_FOLDER + repoName + "/"
-            self.view.setBranches(self.model.get_branches(repoPath))
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
-
-    def delete_repo_button_clicked(self):
-        try:
-            # Retrieve the selected repository name from the view
-            repoName = self.view.repoList.currentText()
-            repoPath = REPO_FOLDER + repoName + "/"
-
+            repo_name = self.home_view.repoList.currentText()
+            repo_path = REPO_FOLDER + repo_name + "/"
             # Delete the repository using the model
-            self.model.deleteRepo(repoPath)
-
+            self.repos_manager.deleteRepo(repo_path)
             # Update the repository list in the view
-            self.update_repo_list()
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
-    
-    def create_directory(self, directory_path):
-        try:
-            # Create a directory if it doesn't exist
-            if not os.path.exists(directory_path):
-                try:
-                    os.makedirs(directory_path)
-                except OSError as e:
-                    print(f"An error occurred while creating the directory: {str(e)}")
+            self.home_view.setRepos(self.repos_manager.get_repos(REPO_FOLDER))
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_error_popup("Caught Error", str(e))
