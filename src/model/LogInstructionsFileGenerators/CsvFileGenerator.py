@@ -15,11 +15,13 @@ class CsvFileGenerator(LogInstructionsFileGenerator):
         datesByIndex = {}
         i = 0
         
-        for instruction in log_instructions:
-            i += 1
-            datesByIndex[i] = []
-            for modification in instruction.modifications:
-                datesByIndex[i].append(modification.date)
+        for filePath in log_instructions:
+            fileLogs = log_instructions[filePath]
+            for log in fileLogs:
+                i += 1
+                datesByIndex[i] = []
+                for modifiction in log.modifications:
+                    datesByIndex[i].append(modifiction.date)
         
         # datesByIndex = {1: ["2021-01-01", "2022-03-16", "2022-05-29", "2022-06-26"], 
         #          2: ["2021-02-01", "2022-07-27", "2022-05-29"],

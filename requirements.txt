@@ -8,3 +8,5 @@ pyqt6
 PyQt6_sip
 coverage
 seaborn
+javalang
+astor
