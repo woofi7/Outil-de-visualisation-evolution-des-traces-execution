@@ -10,7 +10,7 @@ class TraceVisualizerView(QWidget):
         try:
             super().__init__()
             self.setWindowTitle("Trace Visualizer")
-            self.setGeometry(100, 100, 800, 600)
+            self.setGeometry(100, 100, 1000, 800)
 
             self_layout = QHBoxLayout(self)
 
@@ -22,43 +22,29 @@ class TraceVisualizerView(QWidget):
             upper_left_layout.addWidget(self.log_instructions_list)
 
             # Right Layout
+            self.graphic = None
             right_frame = QFrame()
-            right_layout = QVBoxLayout(right_frame)
+            self.right_layout = QVBoxLayout(right_frame)
             filters_label = QLabel("Filters")
             filters_label.setSizePolicy(QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Fixed)
             filters = QComboBox()
             filters.addItems(["All", "Added", "Deleted", "Modified"])
             
-            # plot
-            sns.set(style="whitegrid")
-            plt.figure(figsize=(10, 6))
-            sns.set_theme()
-            commitsInfo = self.extractCommitsInfo(added_log_instructions)
-            dates = [commit["date"] for commit in commitsInfo]
-            index = self.enumerate(dates)
-            # logsCount = [commit["logsCount"] for commit in commitsInfo]
-            sns.scatterplot(x=dates, y=index)
-            plt.legend(["Commit"])
-            plt.xlabel("Commit's date")
-            plt.ylabel("Logs Count")
-            
-            right_layout.addWidget(filters_label)
-            right_layout.addWidget(filters)
-            right_layout.addWidget(plt.gcf().canvas)
+            self.right_layout.addWidget(filters_label)
+            self.right_layout.addWidget(filters)
 
             splitter_vertical = QSplitter(QtCore.Qt.Orientation.Vertical)
             splitter_vertical.addWidget(right_frame)
-
             splitter = QSplitter(QtCore.Qt.Orientation.Horizontal)
             splitter.addWidget(left_frame)
             splitter.addWidget(right_frame)
-
+            splitter.setStretchFactor(1, 1)
             self_layout.addWidget(splitter)
             
             self.show()  # Show the widget
         except Exception as e:
             traceback.print_exc()
-            PopupManager.show_info_popup("Caught Error", str(e))    
+            PopupManager.show_info_popup("Caught Error", str(e))
 
     def set_log_instructions(self, log_instructions):
         try:
@@ -82,6 +68,7 @@ class TraceVisualizerView(QWidget):
             self.right_layout.removeWidget(self.graphic)
 
         # Set the new graphic
+        graphic.setGeometry(0, 0, self.right_layout.sizeHint().width(), self.right_layout.sizeHint().height())
         self.graphic = graphic
 
         # Add the new graphic to right_layout

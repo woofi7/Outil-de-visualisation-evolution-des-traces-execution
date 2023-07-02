@@ -1,3 +1,5 @@
+import csv
+
 from model.LogInstructionsFileGenerators.LogInstructionsFileGenerator import LogInstructionsFileGenerator
 
 class CsvFileGenerator(LogInstructionsFileGenerator):
@@ -8,4 +10,27 @@ class CsvFileGenerator(LogInstructionsFileGenerator):
     
     # TODO
     def createFile(self, log_instructions):
-        return None #the Path to the file
+        path = 'csv/data.csv'
+        
+        datesByIndex = {}
+        i = 0
+        
+        for instruction in log_instructions:
+            i += 1
+            datesByIndex[i] = []
+            for modification in instruction.modifications:
+                datesByIndex[i].append(modification.date)
+        
+        # datesByIndex = {1: ["2021-01-01", "2022-03-16", "2022-05-29", "2022-06-26"], 
+        #          2: ["2021-02-01", "2022-07-27", "2022-05-29"],
+        #          3: ["2021-03-01", "2022-07-01", "2022-07-22", "2022-08-09"], 
+        #          4: ["2022-09-15"]}
+
+        with open(path, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(['Index', 'Date'])
+            for index, date_list in datesByIndex.items():
+                for date in date_list:
+                    writer.writerow([index, date])
+                    
+        return path

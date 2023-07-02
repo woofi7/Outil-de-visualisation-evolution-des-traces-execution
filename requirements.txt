@@ -2,6 +2,7 @@ GitPython
 matplotlib
 pydriller
 sip
+pandas
 PyQt-builder
 pyqt6
 PyQt6_sip
