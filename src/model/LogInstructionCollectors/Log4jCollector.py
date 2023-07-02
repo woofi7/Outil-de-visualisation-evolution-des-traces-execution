@@ -12,8 +12,8 @@ FILE_TYPES = {".java"}
 class Log4jCollector(LogInstructionCollector):
 
     def get_log_instructions(self, repo, from_date, to_date, path_in_directory, branch, author):
-        try:
             self.logs = {}
+            self.deletedlogs = []
             # filter commits by repo, dates, file types and branch
             for commit in Repository(repo, since=from_date, to=to_date, only_modifications_with_file_types=FILE_TYPES, only_in_branch=branch).traverse_commits():
                 # filter commits by authors
@@ -31,13 +31,13 @@ class Log4jCollector(LogInstructionCollector):
                             else:
                                 if modified_file.new_path not in self.logs:
                                     self.logs[modified_file.new_path] = []
-                                self.logs[modified_file.new_path] = self.getLogs(commit.hash, modified_file.filename, modified_file.source_code_before, modified_file.source_code, commit.committer_date, self.logs[modified_file.new_path], modified_file.change_type)
+                                logs, deletedlogs = self.getLogs(commit.hash, modified_file.filename, modified_file.source_code_before, modified_file.source_code, commit.committer_date, self.logs[modified_file.new_path], modified_file.change_type)
+                                if deletedlogs is not None:
+                                    self.deletedlogs.append(deletedlogs)
+                                self.logs[modified_file.new_path] = logs
                                 
                             
-            return self.logs
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_info_popup("Caught Error", str(e))
+            return self.logs, self.deletedlogs
     
     def getLogs(self, hash, filename, before_code, after_code, date, logs, type):
         # print(f"HASH : {hash}")
@@ -48,51 +48,48 @@ class Log4jCollector(LogInstructionCollector):
             after_code = ''
         # Check for log4j import in the before and after code
         
-        if ("import " in before_code or after_code) and "log4j" in (before_code + after_code):
+        if ("import " in after_code) and "log4j" in  after_code:
             logPattern = {'debug','info','warn','error','fatal'}
             beforeMatches = []
             afterMatches = []
-            try:
-                beforeParse = self.parse_java_code(before_code)
-                afterParse = self.parse_java_code(after_code)
-                for _, node in beforeParse:
-                    if isinstance(node, MethodInvocation) and node.member in logPattern:
-                        beforeMatches.append(self.get_Log_Instruction(node, date, before_code, after_code, hash, filename, type))
+            #beforeParse = self.parse_java_code(before_code)
+            afterParse = self.parse_java_code(after_code)
+            #for _, node in beforeParse:
+            #    if isinstance(node, MethodInvocation) and node.member in logPattern:
+            #        beforeMatches.append(self.get_Log_Instruction(node, date, before_code, after_code, hash, filename, type))
                     
-                for _, node in afterParse:
-                    if isinstance(node, MethodInvocation) and node.member in logPattern:
-                        afterMatches.append(self.get_Log_Instruction(node, date, before_code, after_code, hash, filename, type))
-
-                if(len(beforeMatches) != len(logs)):
-                    return afterMatches
+            for _, node in afterParse:
+                if isinstance(node, MethodInvocation) and node.member in logPattern:
+                    afterMatches.append(self.get_Log_Instruction(node, date, before_code, after_code, hash, filename, type))
                 
-                for afterMatch in afterMatches:
-                    for index, beforMatch in enumerate (beforeMatches):
-                        if (afterMatch.level == beforMatch.level and afterMatch.instruction == beforMatch.instruction) and len(logs) > 0:
-                            afterMatch.modifications = logs[index].modifications
-                            logs.remove(logs[index])
-                            beforeMatches.remove(beforeMatches[index])
-                            break
+            #if(len(beforeMatches) != len(logs)):
+            #    return afterMatches, logs
+                
+            for afterMatch in afterMatches:
+                for index, log in enumerate (logs):
+                    if (afterMatch.level == log.level and afterMatch.instruction == log.instruction) and len(logs) > 0:
+                        afterMatch.modifications = logs[index].modifications
+                        logs.remove(logs[index])
+                        break
+            for afterMatch in afterMatches:
+                for index, log in enumerate (logs):
+                    if ((afterMatch.level != log.level and afterMatch.instruction == log.instruction) or (afterMatch.level == log.level and afterMatch.instruction != log.instruction)) and len(logs) > 0:
+                        modification = Modification(afterMatch.level, afterMatch.instruction, date, type, before_code, after_code, hash, filename)
+                        afterMatch.modifications = logs[index].modifications
+                        afterMatch.modifications.append(modification)
+                        logs.remove(logs[index])
+                        break
 
-                for afterMatch in afterMatches:
-                    for index, beforMatch in enumerate (beforeMatches):
-                        if ((afterMatch.level != beforMatch.level and afterMatch.instruction == beforMatch.instruction) or (afterMatch.level == beforMatch.level and afterMatch.instruction != beforMatch.instruction)) and len(logs) > 0:
-                            modification = Modification(afterMatch.level, afterMatch.instruction, date, type, before_code, after_code, hash, filename)
-                            afterMatch.modifications = logs[index].modifications
-                            afterMatch.modifications.append(modification)
-                            logs.remove(logs[index])
-                            beforeMatches.remove(beforeMatches[index])
-                            break
+            for log in logs:
+                modification = Modification(log.level, log.instruction, date, 'deleted', before_code, after_code, hash, filename)
+                log.modifications.append(modification)
 
-
-                return afterMatches
-            except Exception as e:
-                print(f"Error parsing file {filename} : {e}")
-            except javalang.tokenizer.LexerError as e:
-                print(f"Error parsing file {filename} : {e}")
+            return afterMatches, logs
         else:
-
-            return []        
+            for log in logs:
+                    modification = Modification(log.level, log.instruction, date, 'deleted', before_code, after_code, hash, filename)
+                    log.modifications.append(modification)
+            return [], logs        
 
     def parse_java_code(self, code):
         return javalang.parse.parse(code)

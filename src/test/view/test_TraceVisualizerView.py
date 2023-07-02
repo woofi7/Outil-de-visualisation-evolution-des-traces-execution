@@ -1,5 +1,4 @@
 import unittest
-from model.NewRepoModel import NewRepoModel
 from model.LogInstructionCollectors.LogInstruction import LogInstruction
 from model.LogInstructionCollectors.Modification import Modification
 from unittest.mock import Mock
@@ -13,8 +12,8 @@ class test_TraceVisualizerView(unittest.TestCase):
     
   def test_TraceVisualizerView_init(self):
      app = QApplication([])
-     log_instruction = LogInstruction('test', [], '2023-01-01')
-     tvv = TraceVisualizerView([],[])
+     log_instruction = LogInstruction('test','test', [], '2023-01-01')
+     tvv = TraceVisualizerView()
      tvv.log_instructions_list.addItem = Mock()
      tvv.deleted_commits_list.addItem = Mock()
      tvv.set_log_instructions([log_instruction, log_instruction], [log_instruction, log_instruction])
@@ -24,8 +23,8 @@ class test_TraceVisualizerView(unittest.TestCase):
 
   def test_TraceVisualizerView_Plot(self):
      app = QApplication([])
-     log_instruction = LogInstruction('test', [], '2023-01-01')
-     tvv = TraceVisualizerView([],[])
+     log_instruction = LogInstruction('test','test', [], '2023-01-01')
+     tvv = TraceVisualizerView()
      axes = Mock()
      modification = Modification('commit', 'date', 'type', 'beforeCode', 'aftercode', 'hash', 'filename')
      modification2 = Modification('commit', 'date', 'deleted', 'beforeCode', 'aftercode', 'hash', 'filename')

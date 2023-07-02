@@ -45,11 +45,20 @@ class TraceVisualizerView(QWidget):
             traceback.print_exc()
             PopupManager.show_info_popup("Caught Error", str(e))    
 
-    def set_log_instructions(self, log_instructions):
+    def set_log_instructions(self, log_instructions, deleted_instruction):
         try:
             if log_instructions is None:
                 raise ValueError("log_instructions cannot be None")
             for log_instruction, value in log_instructions.items():
+                if value is not None:
+                    for log in value:
+                    # Add each commit information as an item to the QListWidget
+                        if(log.instruction is not None):
+                            item = QListWidgetItem(f"{log.level}, {log.instruction}")
+                            item.setData(QtCore.Qt.ItemDataRole.UserRole, log)
+                            self.log_instructions_list.addItem(item)
+
+            for value in deleted_instruction:
                 if value is not None:
                     for log in value:
                     # Add each commit information as an item to the QListWidget
