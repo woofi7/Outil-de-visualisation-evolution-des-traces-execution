@@ -12,16 +12,23 @@ import traceback
 REPO_FOLDER = "./repo/"
 
 class TraceVisualizerController:
-    def __init__(self, framework, from_date, to_date, repo_path, searched_path, searched_branch, searched_author):
+    def __init__(self, frameworks, from_date, to_date, repo_path, searched_path, searched_branch, searched_author):
         try:
+            log_instructions = {}
+            deleted_instruction = []
             self.trace_visualizer_view = TraceVisualizerView()
             self.log_instruction_diff_generator = LogInstructionDiffGenerator()
             # Connect the searchButton's clicked signal to the search_button_clicked slot
             self.trace_visualizer_view.log_instructions_list.itemClicked.connect(self._show_commit_changes)
 
             # Retrieve commits based on the selected dates using the model
-            self.log_instruction_collector = self._set_strategy_collector(framework)
-            log_instructions, deleted_instruction = self.log_instruction_collector.get_log_instructions(repo_path, from_date, to_date, searched_path, searched_branch, searched_author)
+            for framework in frameworks:
+                self.log_instruction_collector = self._set_strategy_collector(framework.text())
+                framework_log_instructions, framework_deleted_instruction = self.log_instruction_collector.get_log_instructions(repo_path, from_date, to_date, searched_path, searched_branch, searched_author)
+                if(framework_log_instructions and len(framework_log_instructions)):
+                    log_instructions.update(framework_log_instructions)
+                if(framework_deleted_instruction and len(framework_deleted_instruction)):
+                    deleted_instruction.extend(framework_deleted_instruction)
             # Create a new TraceVisualizerView and pass the retrieved commits to it
             self.trace_visualizer_view.set_log_instructions(log_instructions, deleted_instruction)
             self.strategy_generator_file = self._set_strategy_generator_file("csv")

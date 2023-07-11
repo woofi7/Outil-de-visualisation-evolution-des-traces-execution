@@ -1,5 +1,5 @@
 from view.PopupView import PopupManager
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QCalendarWidget, QHBoxLayout, QComboBox, QLineEdit
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QCalendarWidget, QHBoxLayout, QComboBox, QLineEdit, QListWidget
 from PyQt6.QtCore import QDate
 import traceback
 
@@ -42,7 +42,8 @@ class HomeView(QWidget):
             layout.addWidget(self.searched_author)
 
             layout.addWidget(QLabel("Please enter the logging framework you want to analyse"))
-            self.slected_framework = QComboBox()
+            self.slected_framework = QListWidget()
+            self.slected_framework.setSelectionMode(QListWidget.SelectionMode.MultiSelection)
             self.slected_framework.addItem('log4j')
             self.slected_framework.addItem('log4p')
             layout.addWidget(self.slected_framework)

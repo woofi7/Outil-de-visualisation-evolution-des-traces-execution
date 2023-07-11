@@ -37,13 +37,13 @@ class HomeController:
             searched_path = self.home_view.searched_path.text()
             searched_branch = self.home_view.branches.currentText()
             searched_author = self.home_view.searched_author.text()
-            framework = self.home_view.slected_framework.currentText()
+            frameworks = self.home_view.slected_framework.selectedItems()
 
             # Perform a Git pull in the repository
             self.repos_manager.git_pull(repo_path)
 
             # Create a new TraceVisualizerView and pass the retrieved commits to it
-            self.trace_visualizer_controller = TraceVisualizerController(framework, from_date, to_date, repo_path, searched_path, searched_branch, searched_author)
+            self.trace_visualizer_controller = TraceVisualizerController(frameworks, from_date, to_date, repo_path, searched_path, searched_branch, searched_author)
             # Close the current view
             self.home_view.close()
         except Exception as e:
