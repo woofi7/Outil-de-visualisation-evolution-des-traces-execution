@@ -4,17 +4,19 @@ from view.PopupView import PopupManager
 import traceback
 
 class CommitWindowView(QWidget):
-    def __init__(self, commit_changes):
+    def __init__(self, commit):
         try:
             super().__init__()
-            #print(commit_changes[0][0])
-            commit_hash = commit_changes[0][0]
-            self.setWindowTitle(f"Commit Changes: {commit_hash[:7]}")
+            print(commit)
+            print(f"commit length : {len(commit[0][:7])}")
+            #commit_hash = commit[0]
+            self.setWindowTitle(f"Commit Changes: {commit[0][:7]}")
+            print(f"COMMIT HASH : {commit[0][:7]}")
             self.setGeometry(200, 200, 800, 600)
             
             layout = QVBoxLayout()
 
-            label = QLabel(f"Commit: {commit_hash[:7]}", self)
+            label = QLabel(f"Commit: {commit[0][:7]}", self)
             layout.addWidget(label)
 
             # AUTEUR ET DATE WIP
@@ -27,61 +29,40 @@ class CommitWindowView(QWidget):
             # self.file_buttons = {}  # Dictionnaire pour stocker les boutons de chaque fichier
             self.code_tables = {}  # Dictionnaire pour stocker les tables de chaque fichierw
 
-            for commit in commit_changes:
-                label1 = QLabel(f"File: {commit[1]}\n", self)
-                layout.addWidget(label1)
+            print(f"File: {commit[1]}\n")
+            label1 = QLabel(f"File: {commit[1]}\n", self)
+            layout.addWidget(label1)
 
-                file_layout = QVBoxLayout()
+            file_layout = QVBoxLayout()
 
-            #     # show_hide_button = QPushButton("Show", self)
-            #     # file_layout.addWidget(show_hide_button)
-            #     # show_hide_button.setCheckable(True)
-            #     # show_hide_button.setChecked(False)
-                        
-                self.code_table = QTableWidget(self)
-                self.code_table.setColumnCount(2)
-                self.code_table.setHorizontalHeaderLabels(["Avant", "Après"])
-                self.code_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
-                        
+            self.code_table = QTableWidget(self)
+            self.code_table.setColumnCount(2)
+            self.code_table.setHorizontalHeaderLabels(["Avant", "Après"])
+            self.code_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+                    
+            before_lines = commit[2].splitlines() if commit[2] else []
+            after_lines = commit[3].splitlines() if commit[3] else []
+            max_lines = max(len(before_lines), len(after_lines))
 
-                before_lines = commit[2].splitlines() if commit[2] else []
-                after_lines = commit[3].splitlines() if commit[3] else []
-                max_lines = max(len(before_lines), len(after_lines))
+            self.code_table.setRowCount(max_lines)
 
-                self.code_table.setRowCount(max_lines)
+            for i in range(max_lines):
+                before_item = QTableWidgetItem(before_lines[i] if i < len(before_lines) else "")
+                after_item = QTableWidgetItem(after_lines[i] if i < len(after_lines) else "")
 
-                for i in range(max_lines):
-                    before_item = QTableWidgetItem(before_lines[i] if i < len(before_lines) else "")
-                    after_item = QTableWidgetItem(after_lines[i] if i < len(after_lines) else "")
+                self.code_table.setItem(i, 0, before_item)
+                self.code_table.setItem(i, 1, after_item)
 
-                    self.code_table.setItem(i, 0, before_item)
-                    self.code_table.setItem(i, 1, after_item)
+                self.highlight_code(before_item, QColor(255, 255, 0))  # Couleur jaune pour le code avant
+                self.highlight_code(after_item, QColor(0, 255, 0))  # Couleur verte pour le code après
 
-                    self.highlight_code(before_item, QColor(255, 255, 0))  # Couleur jaune pour le code avant
-                    self.highlight_code(after_item, QColor(0, 255, 0))  # Couleur verte pour le code après
+            self.code_table.resizeColumnsToContents()
+            self.code_table.resizeRowsToContents()
 
-                self.code_table.resizeColumnsToContents()
-                self.code_table.resizeRowsToContents()
+            layout.addWidget(self.code_table)
+            layout.addLayout(file_layout)
 
-            #     # self.file_buttons[commit[1]] = show_hide_button
-            #     self.code_tables[commit[1]] = self.code_table
-
-
-                layout.addWidget(self.code_table)
-                layout.addLayout(file_layout)
-
-            #     #show_hide_button.clicked.connect(lambda checked, name=commit_changes[1]: self.toggle_code_table(checked, name))
-            # code_display = QTextEdit(self)
-            # layout.addWidget(code_display)
-            # for commit in commit_changes:
-            #     code_display.append(f"File: {commit[1]}\n")
-            #     code_display.append("Before:\n")
-            #     code_display.append(commit[2])
-            #     code_display.append("\nAfter:\n")
-            #     code_display.append(commit[3])
-            # widget = QWidget()
             self.setLayout(layout)
-            # self.setCentralWidget(self)
             self.show()  # Show the widget
         except Exception as e:
             traceback.print_exc()
