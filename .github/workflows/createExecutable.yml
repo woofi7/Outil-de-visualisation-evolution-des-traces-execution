@@ -51,6 +51,7 @@ jobs:
     - name: Track large files with Git LFS
       run: git lfs track "dist/myscript_linux"
 
+
     - name: Configure Git
       run: |
         git config --local user.email "action@github.com"
