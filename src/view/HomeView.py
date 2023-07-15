@@ -1,5 +1,5 @@
 from view.PopupView import PopupManager
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QCalendarWidget, QHBoxLayout, QComboBox, QLineEdit
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QCalendarWidget, QHBoxLayout, QComboBox, QLineEdit, QListWidget
 from PyQt6.QtCore import QDate
 import traceback
 
@@ -42,7 +42,8 @@ class HomeView(QWidget):
             layout.addWidget(self.searched_author)
 
             layout.addWidget(QLabel("Please enter the logging framework you want to analyse"))
-            self.slected_framework = QComboBox()
+            self.slected_framework = QListWidget()
+            self.slected_framework.setSelectionMode(QListWidget.SelectionMode.MultiSelection)
             self.slected_framework.addItem('log4j')
             self.slected_framework.addItem('log4p')
             layout.addWidget(self.slected_framework)
@@ -71,25 +72,25 @@ class HomeView(QWidget):
             self.show()
         except Exception as e:
             traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
+            PopupManager.show_info_popup("Caught Error", str(e))
 
     def setRepos(self, repos):
         try: 
-            self.repos = repos
+            self.repoList.clear()
             for repo in repos:
                 self.repoList.addItem(repo)
         except Exception as e:
             traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
+            PopupManager.show_info_popup("Caught Error", str(e))
 
     def setBranches(self, branches):
-
         try:
+            self.branches.clear()
             for branch in branches:
                 self.branches.addItem(branch)
         except Exception as e:
             #traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
+            PopupManager.show_info_popup("Caught Error", str(e))
     
     def popupError(self,title,  message):
-       PopupManager.show_error_popup(title, message)
+       PopupManager.show_info_popup(title, message)

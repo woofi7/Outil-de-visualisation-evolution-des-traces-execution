@@ -16,7 +16,7 @@ class test_NewRepoController(unittest.TestCase):
         homeController = Mock()
         view.newRepo = MagicMock(return_values = QLineEdit('test/test/test.py'))
         newRepoController = NewRepoController(view, model, homeController)
-        newRepoController.ok_button_clicked()
+        newRepoController._ok_button_clicked()
         model.cloneRepo.assert_called_once()
         view.close.assert_called_once()
         homeController.update_repo_list.assert_called_once()
@@ -28,7 +28,7 @@ class test_NewRepoController(unittest.TestCase):
         homeController = Mock()
         view.newRepo = MagicMock(return_values = QLineEdit('test/test/test.py'))
         newRepoController = NewRepoController(view, model, homeController)
-        newRepoController.cancel_button_clicked()
+        newRepoController._cancel_button_clicked()
         view.close.assert_called_once()
 
         

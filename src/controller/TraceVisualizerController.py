@@ -1,58 +1,68 @@
-from view.HomeView import HomeView
 from view.PopupView import PopupManager
 from view.TraceVisualizerView import TraceVisualizerView
 from view.CommitWindowView import CommitWindowView
+from model.LogInstructionDiffGenerator import LogInstructionDiffGenerator
+from model.GraphBuilders.GraphBuilder import GraphBuilder
+from model.LogInstructionCollectors.Log4pCollector import Log4pCollector
+from model.LogInstructionCollectors.Log4jCollector import Log4jCollector
+from model.LogInstructionsFileGenerators.CsvFileGenerator import CsvFileGenerator
 from PyQt6 import QtCore
 import traceback
 
 REPO_FOLDER = "./repo/"
 
 class TraceVisualizerController:
-    def __init__(self, view, model, home_view, home_model):
+    def __init__(self, frameworks, from_date, to_date, repo_path, searched_path, searched_branch, searched_author):
         try:
-            self.view = view
-            self.model = model
-            self.home_view = home_view
-
+            log_instructions = {}
+            deleted_instruction = []
+            self.trace_visualizer_view = TraceVisualizerView()
+            self.log_instruction_diff_generator = LogInstructionDiffGenerator()
             # Connect the searchButton's clicked signal to the search_button_clicked slot
-            #self.view.commits_list.itemClicked.connect(self.show_commit_changes)
-            self.view.added_commits_list.itemClicked.connect(self.show_commit_changes)
-            self.view.deleted_commits_list.itemClicked.connect(self.show_commit_changes)
+            self.trace_visualizer_view.log_instructions_list.itemClicked.connect(self._show_commit_changes)
+
+            # Retrieve commits based on the selected dates using the model
+            for framework in frameworks:
+                self.log_instruction_collector = self._set_strategy_collector(framework.text())
+                framework_log_instructions, framework_deleted_instruction = self.log_instruction_collector.get_log_instructions(repo_path, from_date, to_date, searched_path, searched_branch, searched_author)
+                if(framework_log_instructions and len(framework_log_instructions)):
+                    log_instructions.update(framework_log_instructions)
+                if(framework_deleted_instruction and len(framework_deleted_instruction)):
+                    deleted_instruction.extend(framework_deleted_instruction)
+            # Create a new TraceVisualizerView and pass the retrieved commits to it
+            self.trace_visualizer_view.set_log_instructions(log_instructions, deleted_instruction)
+            self.strategy_generator_file = self._set_strategy_generator_file("csv")
+            self.trace_visualizer_view.set_graphic(GraphBuilder().build_graph(self.strategy_generator_file.createFile(log_instructions)))
         except Exception as e:
             traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
+            PopupManager.show_info_popup("Caught Error", str(e))
 
-    def show_commit_changes(self, item):
+    def _show_commit_changes(self, item):
         try:
             print('ITEM : ')
             print(item.data(QtCore.Qt.ItemDataRole.UserRole).modifications)
             commits = []
             modifications = item.data(QtCore.Qt.ItemDataRole.UserRole).modifications
             for modification in modifications:
-                print(modification.commit)
                 commits.append(modification)
-
-
-            # Extract the commit hash from the clicked item
-            # commit_hash = item.text().split(", File: ")[0].split(": ")[1]
-
-            # # Get the current selected repository name from the home view
-            # repo_name = self.home_view.repoList.currentText()
-
-            # # Construct the repository path
-            # repo_path = REPO_FOLDER + repo_name + "/"
-
-            # Retrieve the commit changes using the model
-            # commitChanges = self.model.getCommitChanges(commit_hash, repo_path)
-            commitChanges = self.model.getCommitChanges(commits)
-
-            #print(commitChanges)
+            commitChanges = self.log_instruction_diff_generator.getCommitChanges(commits)
 
             # Create a new CommitWindowView and pass the retrieved commit changes to it
             self.CommitWindowView = CommitWindowView(commitChanges)
-
-            # Append the CommitWindowView to the view's commit_windows list
-            #self.view.commit_windows.append(self.CommitWindowView)
         except Exception as e:
             traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
+            PopupManager.show_info_popup("Caught Error", str(e))
+
+    def _set_strategy_collector(self, strategy):
+        if strategy == "log4p":
+            return Log4pCollector()
+        elif strategy == "log4j":
+            return Log4jCollector()
+        else:
+            raise ValueError("Invalid strategy name")
+        
+    def _set_strategy_generator_file(self, strategy):
+        if strategy == "csv":
+            return CsvFileGenerator()
+        else:
+            raise ValueError("Invalid strategy name")
