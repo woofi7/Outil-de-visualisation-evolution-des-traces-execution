@@ -51,19 +51,15 @@ class HomeController:
             PopupManager.show_error_popup("Caught Error", str(e))
 
     def _validate_date_range(self):
-        try:
-            from_date = self.home_view.from_calendar.selectedDate()
-            self.home_view.from_date_label.setText("FROM: " + from_date.toString())
-            to_date = self.home_view.to_calendar.selectedDate()
-            self.home_view.to_date_label.setText("TO: " + to_date.toString()) 
+        from_date = self.home_view.from_calendar.selectedDate()
+        self.home_view.from_date_label.setText("FROM: " + from_date.toString())
+        to_date = self.home_view.to_calendar.selectedDate()
+        self.home_view.to_date_label.setText("TO: " + to_date.toString()) 
 
-            if from_date > to_date:
-                self.home_view.popupError("Invalid Date Range", "La date 'FROM' ne peut pas être postérieure à la date 'TO'.")
-            else:
-                print("Valid date range")
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
+        if from_date > to_date:
+            self.home_view.popupError("Invalid Date Range", "La date 'FROM' ne peut pas être postérieure à la date 'TO'.")
+        else:
+            print("Valid date range")
 
     def _update_branch_list(self, repo_name):
         if repo_name.strip():
