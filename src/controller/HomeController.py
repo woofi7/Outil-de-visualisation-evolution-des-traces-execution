@@ -28,7 +28,6 @@ class HomeController:
         self.home_view.repoList.currentTextChanged.connect(self._update_branch_list)
 
     def _search_button_clicked(self):
-        try:
             # Retrieve selected dates and repository name from the view
             from_date = datetime.strptime(self.home_view.from_calendar.selectedDate().toString(Qt.DateFormat.ISODate), '%Y-%m-%d')
             to_date = datetime.strptime(self.home_view.to_calendar.selectedDate().toString(Qt.DateFormat.ISODate), '%Y-%m-%d')
@@ -46,9 +45,6 @@ class HomeController:
             self.trace_visualizer_controller = TraceVisualizerController(frameworks, from_date, to_date, repo_path, searched_path, searched_branch, searched_author)
             # Close the current view
             self.home_view.close()
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
 
     def _validate_date_range(self):
         from_date = self.home_view.from_calendar.selectedDate()
