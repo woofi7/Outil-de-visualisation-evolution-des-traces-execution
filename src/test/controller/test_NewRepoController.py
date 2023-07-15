@@ -14,6 +14,7 @@ class test_NewRepoController(unittest.TestCase):
         view = Mock()
         view.newRepo = MagicMock(return_values = QLineEdit('test/test/test.py'))
         newRepoController = NewRepoController(view)
+        newRepoController.repo_manager.get_repos = Mock()
         newRepoController.repo_manager.clone_repo = Mock()
         newRepoController._ok_button_clicked()
         newRepoController.repo_manager.clone_repo.assert_called_once()
