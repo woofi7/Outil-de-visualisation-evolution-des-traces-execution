@@ -14,7 +14,7 @@ class Modification:
         self.author = author
     
     def get_commit_hash(self):
-        return self.commit
+        return self.hash
     
     def get_date(self):
         return self.date

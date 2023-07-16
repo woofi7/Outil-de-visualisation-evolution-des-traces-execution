@@ -1,15 +1,20 @@
 @startuml completeClassDiagram
 package controller {
-    class HomeController
+    class HomeController{
+        - search_button_clicked()
+        - validate_date_range()
+        - update_branch_list(repo_name : String)
+        - new_repo_button_clicked()
+        - delete_repo_button_clicked()
+    }
     class TraceVisualizerController{
-        - strategy_collector : LogInstructionCollectorsStrategy
-        - strategy_generator_file : LogInstructionFileGeneratorsStrategy
         - set_strategy_collector(strategy : String) : LogInstructionCollectorsStrategy
         - set_strategy_generator_file(strategy : String) : LogInstructionFileGeneratorsStrategy
     }
 
     class NewRepoController{
-        - home_view : HomeView
+        - ok_button_clicked()
+        - cancel_button_clicked()
     }
 }
 
@@ -26,24 +31,10 @@ package model {
         + clone_repo(repo_url:String, repo_path:String)
     }
     package GraphBuilders{
-        class Director {
-            - builder  : GraphBuilder
-            + Director(builder : GraphBuilder)
-            + changeBuilder(builder : GraphBuilder)
-            + make(type : String)
+        
+        class GraphBuilder{
+            + build_graph(path_to_file : String) : QGraphicsView
         }
-        interface GraphBuilder{
-            + reset()
-            + buildStepA()
-            + buildStepB()
-        }
-        class LinearGraphBuilder{
-            + reset()
-            + buildStepA()
-            + buildStepB()
-            + getResult() : LinearGraph
-        }
-        class LinearGraph
     }
     package LogInstructionCollectors{
         interface LogInstructionCollector{
@@ -67,25 +58,46 @@ package model {
 
     package LogInstructionFileGenerators{
         interface LogInstructionFileGenerator{
-            + createFile(logInstructions : List<LogInstruction>)
+            + createFile(logInstructions : List<LogInstruction>) : String
         }
 
         class CsvFileGenerator implements LogInstructionFileGenerator{
-            + createFile(logInstructions : List<LogInstruction>)
+            + createFile(logInstructions : List<LogInstruction>) : String
         }
     }
 }
 
 package view {
-    class CommitWindowView
-    class HomeView {
-        setRepos(repos : List<Repo>)
-        setBranches(branches : List<Branch>)
+    class CommitWindowView{
+        - code_table : QTableWidget
     }
-    class NewRepoView
+
+    class HomeView {
+        - branches : QComboBox
+        - repo_list : QComboBox
+        - new_repo_button : QPushButton
+        - delete_repo_button : QPushButton
+        - searched_path : QLineEdit
+        - searched_author : QLineEdit
+        - slected_framework : QListWidget
+        - from_date_label : QLabel
+        - from_calendar : QCalendarWidget
+        - to_date_label : QLabel
+        - to_calendat : QCalendarWidget
+        - search_button : QPushButton
+        + setRepos(repos : List<String>)
+        + setBranches(branches : List<String>)
+    }
+    class NewRepoView{
+        - new_repo : QLineEdit
+        - ok_button : QPushButton
+        - delete_button : QPushButton
+    }
     class TraceVisualizerView{
-        + setLogInstructions(logInstructions : List<LogInstruction>)
-        + set_graphic(graphic : LinearGraph)
+        - log_instructions_list : QListWidget
+        - graphic : QGraphicsView
+        + set_log_instructions(logInstructions : List<LogInstruction>)
+        + set_graphic(graphic : QGraphicsView)
     }
 }
 
@@ -98,8 +110,8 @@ TraceVisualizerController "1" o-- "1" TraceVisualizerView
 TraceVisualizerController ..> LogInstructionDiffGenerator
 TraceVisualizerController "1" o-- "1" LogInstructionCollector
 TraceVisualizerController "1" o-- "1" LogInstructionFileGenerator
-TraceVisualizerController ..> Director
 TraceVisualizerController "1" o-- "1" CommitWindowView
+TraceVisualizerController ..> GraphBuilder
 
 NewRepoController ..> ReposManager
 NewRepoController "1" o-- "1" NewRepoView
@@ -109,10 +121,6 @@ Log4PCollector .up.|> LogInstructionCollector
 Log4JCollector ..> LogInstruction
 Log4PCollector ..> LogInstruction
 LogInstruction "1" o-- "*"Modification
-
-Director "1" o-- "1" GraphBuilder
-LinearGraphBuilder ..|> GraphBuilder
-LinearGraphBuilder ..> LinearGraph
 
 @enduml
 

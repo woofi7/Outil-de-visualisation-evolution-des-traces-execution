@@ -1,5 +1,4 @@
 import unittest
-from model.NewRepoModel import NewRepoModel
 from unittest.mock import Mock, MagicMock, patch
 from view.HomeView import HomeView
 from PyQt6.QtWidgets import QApplication
@@ -32,7 +31,7 @@ class test_HomeView(unittest.TestCase):
      app = QApplication([])
      view = HomeView()
      view.setRepos(['repo1', 'repo2'] )
-     self.assertEqual(len(view.repos), 2) 
+     self.assertEqual(len(view.repoList), 2) 
 
   def HomeView_setRepos_Exception(self):
      app = QApplication([])
