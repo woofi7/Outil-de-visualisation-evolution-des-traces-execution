@@ -19,7 +19,7 @@ class SelectCommitWindowView(QWidget):
         layout.addWidget(self.commit_list)
 
         for commit in commit_changes:
-            item = QListWidgetItem(commit[0], self.commit_list)
+            item = QListWidgetItem(commit[0][:7] + " by " + commit[4], self.commit_list)
             item.setData(Qt.ItemDataRole.UserRole, commit)  # Store the complete commit
 
         select_button = QPushButton("Select", self)
