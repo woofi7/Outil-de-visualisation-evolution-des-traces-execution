@@ -10,7 +10,7 @@ class CsvFileGenerator(LogInstructionsFileGenerator):
     
     # TODO
     def createFile(self, log_instructions):
-        path = 'csv/data.csv'
+        path = '../csv/data.csv'
         
         datesByIndex = {}
         i = 0

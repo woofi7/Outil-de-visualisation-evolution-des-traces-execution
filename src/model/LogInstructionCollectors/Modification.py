@@ -13,7 +13,7 @@ class Modification:
         self.filename = filename
     
     def get_commit_hash(self):
-        return self.commit
+        return self.hash
     
     def get_date(self):
         return self.date

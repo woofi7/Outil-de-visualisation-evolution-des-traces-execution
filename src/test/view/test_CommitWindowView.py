@@ -1,5 +1,4 @@
 import unittest
-from model.NewRepoModel import NewRepoModel
 from unittest.mock import Mock
 from view.CommitWindowView import CommitWindowView
 from PyQt6.QtWidgets import QApplication
