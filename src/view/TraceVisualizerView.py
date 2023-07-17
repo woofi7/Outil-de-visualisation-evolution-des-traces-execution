@@ -52,6 +52,7 @@ class TraceVisualizerView(QWidget):
         super().resizeEvent(event)
 
     def set_log_instructions(self, log_instructions, deleted_instruction):
+        try:
             if log_instructions is None:
                 raise ValueError("log_instructions cannot be None")
 
@@ -75,6 +76,10 @@ class TraceVisualizerView(QWidget):
                 if value is not None:
                     for log in value:
                         add_log_instruction(log)
+
+        except Exception as e:
+            traceback.print_exc()
+            PopupManager.show_info_popup("Caught Error", str(e))
 
 
 
