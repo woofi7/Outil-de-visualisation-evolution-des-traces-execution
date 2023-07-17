@@ -2,6 +2,8 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidget, QHBoxLayo
 from PyQt6 import QtCore,QtWidgets
 from view.PopupView import PopupManager
 import matplotlib.dates as mdates
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+
 import traceback
 
 class TraceVisualizerView(QWidget):
@@ -22,8 +24,8 @@ class TraceVisualizerView(QWidget):
 
             # Right Layout
             self.graphic = None
-            right_frame = QFrame()
-            self.right_layout = QVBoxLayout(right_frame)
+            self.right_frame = QFrame()
+            self.right_layout = QVBoxLayout(self.right_frame)
             filters_label = QLabel("Filters")
             filters_label.setSizePolicy(QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Fixed)
             filters = QComboBox()
@@ -33,14 +35,18 @@ class TraceVisualizerView(QWidget):
             self.right_layout.addWidget(filters)
 
             splitter_vertical = QSplitter(QtCore.Qt.Orientation.Vertical)
-            splitter_vertical.addWidget(right_frame)
+            splitter_vertical.addWidget(self.right_frame)
             splitter = QSplitter(QtCore.Qt.Orientation.Horizontal)
             splitter.addWidget(left_frame)
-            splitter.addWidget(right_frame)
+            splitter.addWidget(self.right_frame)
             splitter.setStretchFactor(1, 1)
             self_layout.addWidget(splitter)
             
             self.show()  # Show the widget
+
+    def handleResizeEvent(self, event):
+        self.resizeGraphic()
+        super().resizeEvent(event)
 
     def set_log_instructions(self, log_instructions, deleted_instruction):
             if log_instructions is None:
@@ -70,10 +76,27 @@ class TraceVisualizerView(QWidget):
             self.right_layout.removeWidget(self.graphic)
 
         # Set the new graphic
-        graphic.setGeometry(0, 0, self.right_layout.sizeHint().width(), self.right_layout.sizeHint().height())
         self.graphic = graphic
 
-        # Add the new graphic to right_layout
-        self.right_layout.addWidget(self.graphic)
+        # Create a new QFrame to contain the graphic
+        frame = QFrame()
+        layout = QVBoxLayout(frame)
+        layout.addWidget(self.graphic)
+
+        # Add the new frame to right_layout
+        self.right_layout.addWidget(frame)
+
+    def resizeGraphic(self):
+        # Retrieve the size of the QFrame
+        frameSize = self.right_layout.parent().size()
+
+        # Adjust the size of the graphic frame
+        self.graphic.parentWidget().resize(frameSize)
+
+        # Adjust the size of the FigureCanvas
+        self.graphic.setGeometry(0, 0, frameSize.width(), frameSize.height())
+
+        # Redraw the canvas
+        self.graphic.draw()
 
 

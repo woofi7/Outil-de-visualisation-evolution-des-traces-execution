@@ -2,8 +2,13 @@ import unittest
 from model.LogInstructionCollectors.LogInstruction import LogInstruction
 from model.LogInstructionCollectors.Modification import Modification
 from unittest.mock import Mock, MagicMock
+from model.LogInstructionsFileGenerators.CsvFileGenerator import CsvFileGenerator
+from model.GraphBuilders.GraphBuilder import GraphBuilder
 from view.TraceVisualizerView import TraceVisualizerView
-from PyQt6.QtWidgets import QApplication
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from PyQt6.QtWidgets import QApplication, QFrame
+import matplotlib.pyplot as plt
+
 
 
 
@@ -50,17 +55,6 @@ class test_TraceVisualizerView(unittest.TestCase):
       tvv.set_graphic(None)
      except ValueError as e:
       self.assertEqual(str(e),"graphic cannot be None")
-
-  def test_Graphic(self):
-     app = QApplication([])
-     tvv = TraceVisualizerView()
-     graphic = MagicMock(return_value='graphic')
-     tvv.right_layout.removeWidget = Mock()
-     graphic.setGeometry = Mock()
-     tvv.right_layout.addWidget = Mock()
-     tvv.set_graphic(graphic)
-     tvv.right_layout.addWidget.assert_called()
-     graphic.setGeometry.assert_called()
 
 
 

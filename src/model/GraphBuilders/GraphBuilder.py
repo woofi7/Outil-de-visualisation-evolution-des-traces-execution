@@ -28,11 +28,6 @@ class GraphBuilder:
         sns.lineplot(data=logData, x="Date", y="Log index", hue="Index", marker="o")
         # Retirer la légende
         ax.legend().remove()
-     
+
         canvas = FigureCanvas(fig)
-        scene = QGraphicsScene()
-        scene.addWidget(canvas)
-     
-        view = QGraphicsView(scene)
-     
-        return view
+        return canvas
