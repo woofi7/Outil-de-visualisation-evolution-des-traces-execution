@@ -8,31 +8,38 @@ class CsvFileGenerator(LogInstructionsFileGenerator):
         # Initialisation de la classe
         super().__init__()
     
-    # TODO
-    def createFile(self, log_instructions):
+    def createFile(self, log_instructions, deleted_instruction):
         path = 'csv/data.csv'
         
-        datesByIndex = {}
-        i = 0
-        
+        logs = []
         for filePath in log_instructions:
             fileLogs = log_instructions[filePath]
             for log in fileLogs:
-                i += 1
-                datesByIndex[i] = []
-                for modifiction in log.modifications:
-                    datesByIndex[i].append(modifiction.date)
-        
-        # datesByIndex = {1: ["2021-01-01", "2022-03-16", "2022-05-29", "2022-06-26"], 
-        #          2: ["2021-02-01", "2022-07-27", "2022-05-29"],
-        #          3: ["2021-03-01", "2022-07-01", "2022-07-22", "2022-08-09"], 
-        #          4: ["2022-09-15"]}
+                logs.append(log)
+        for deleted in deleted_instruction:
+            if deleted is not []:
+                for log in deleted:
+                    logs.append(log)
+
+        data = []
+        index_map = {}
+
+        for log in logs:
+            if log.instruction not in index_map:
+                index_map[log.instruction] = len(index_map) + 1
+                
+            for modification in log.modifications:
+                data.append({
+                    'index': index_map[log.instruction],
+                    'instruction': log.instruction,
+                    'date': modification.date,
+                    'type': modification.type
+                })
 
         with open(path, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow(['Index', 'Date'])
-            for index, date_list in datesByIndex.items():
-                for date in date_list:
-                    writer.writerow([index, date])
-                    
+            writer.writerow(['index', 'instruction', 'date', 'type'])
+            for row in data:
+                writer.writerow([row['index'], row['instruction'], row['date'], row['type']])
+
         return path

@@ -32,7 +32,7 @@ class TraceVisualizerController:
             # Create a new TraceVisualizerView and pass the retrieved commits to it
             self.trace_visualizer_view.set_log_instructions(log_instructions, deleted_instruction)
             self.strategy_generator_file = self._set_strategy_generator_file("csv")
-            self.trace_visualizer_view.set_graphic(GraphBuilder().build_graph(self.strategy_generator_file.createFile(log_instructions)))
+            self.trace_visualizer_view.set_graphic(GraphBuilder().build_graph(self.strategy_generator_file.createFile(log_instructions, deleted_instruction)))
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_info_popup("Caught Error", str(e))
