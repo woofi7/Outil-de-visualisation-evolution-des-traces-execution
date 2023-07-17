@@ -81,13 +81,13 @@ class Log4jCollector(LogInstructionCollector):
                         break
 
             for log in logs:
-                modification = Modification(log.level, log.instruction, date, 'deleted', before_code, after_code, hash, filename)
+                modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename)
                 log.modifications.append(modification)
 
             return afterMatches, logs
         else:
             for log in logs:
-                    modification = Modification(log.level, log.instruction, date, 'deleted', before_code, after_code, hash, filename)
+                    modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename)
                     log.modifications.append(modification)
             return [], logs        
 

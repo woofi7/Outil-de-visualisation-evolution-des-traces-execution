@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QGraphicsView, QGraphicsScene
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.lines import Line2D
 from matplotlib.ticker import MaxNLocator
 import pandas as pd
 import seaborn as sns
@@ -8,26 +9,40 @@ import matplotlib.pyplot as plt
 
 class GraphBuilder:
 
-     def build_graph(self, path_to_file_csv):
-        # Read the csv file
-        logData = pd.read_csv(path_to_file_csv)
-     
-        # Sort the dates in ascending order
-        logData['Date'] = pd.to_datetime(logData['Date'])
-        logData = logData.sort_values(by='Date')
-     
-        # Create a new column to store the Log index value for each index
-        logData['Log index'] = logData.groupby('Index').cumcount()
-     
-        # Replace the y values with the actual index values
-        logData['Log index'] = logData['Index']
-     
-        fig, ax = plt.subplots()
-        plt.style.use("ggplot")
-        plt.xticks(rotation=30)
-        sns.lineplot(data=logData, x="Date", y="Log index", hue="Index", marker="o")
-        # Retirer la légende
-        ax.legend().remove()
+   def build_graph(self, path_to_file_csv):
+      # Map the type values to colors
+      color_map = {'ModificationType.ADD': 'green', 'ModificationType.MODIFY': 'blue', 'ModificationType.DELETE': 'red'}
 
-        canvas = FigureCanvas(fig)
-        return canvas
+      # Read the csv file
+      logData = pd.read_csv(path_to_file_csv)
+
+      # Sort the dates in ascending order
+      logData['date'] = pd.to_datetime(logData['date'])
+      logData = logData.sort_values(by=['index', 'date'])
+
+      fig, ax = plt.subplots()
+      plt.style.use("ggplot")
+      plt.xticks(rotation=30)
+
+      for index, group in logData.groupby('index'):
+         x_values = group['date']
+         y_values = group['index']
+         instruction = group['instruction'].iloc[0]  # Get the instruction for the first row in the group
+         type_values = group['type']
+
+         ax.scatter(x_values, y_values, marker='o', c=[color_map.get(t, 'gray') for t in type_values])
+         ax.plot(x_values, y_values, linestyle='-', color='gray')
+
+      # Configure axis labels and legend
+      ax.set_xlabel('Date')
+      ax.set_ylabel('Index')
+       
+      # Add legend
+      legend_elements = [Line2D([0], [0], marker='o', color='w', label='Added', markerfacecolor='green', markersize=7),
+                       Line2D([0], [0], marker='o', color='w', label='Modified', markerfacecolor='blue', markersize=7),
+                       Line2D([0], [0], marker='o', color='w', label='Deleted', markerfacecolor='red', markersize=7),
+                       Line2D([0], [0], marker='o', color='w', label='Renamed', markerfacecolor='purple', markersize=7)]
+      ax.legend(handles=legend_elements, loc='upper left', bbox_to_anchor=(1.02, 1), borderaxespad=0.)
+
+      canvas = FigureCanvas(fig)
+      return canvas
