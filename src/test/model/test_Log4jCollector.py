@@ -15,7 +15,7 @@ class TestStrategyLog4j(unittest.TestCase):
     def test_logs_empty(self):
         beforeCode = None
         afterCode = None
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test', author='test')
         self.assertEqual(logs, [])
         self.assertEqual(deleted_logs, [])
     
@@ -30,7 +30,7 @@ class TestStrategyLog4j(unittest.TestCase):
                         public Test() {
                         logger.info('test1');
                         logger.info('test2');}}"""
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test', author='test')
         self.assertEqual(len(logs), 2)
         self.assertEqual(logs[0].instruction, "'test1'")
         self.assertEqual(deleted_logs, [])
@@ -42,7 +42,7 @@ class TestStrategyLog4j(unittest.TestCase):
                         public Test() {
                         logger.info("test1");
                         logger.info("test2");}}'''
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test', author='test')
         self.assertEqual(len(logs), 2)
         self.assertEqual(len(deleted_logs), 0)
 
@@ -56,7 +56,7 @@ class TestStrategyLog4j(unittest.TestCase):
                         public Test() {
                        logger.warn("test1");
                        logger.info("test2");}}'''
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=logs, type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=logs, type='test', author='test')
         self.assertEqual(len(logs), 2)
         self.assertEqual(len(deleted_logs), 0)
 
@@ -67,7 +67,7 @@ class TestStrategyLog4j(unittest.TestCase):
                         public Test() {
                         logger.info("test1");
                         logger.info("test2");}}'''
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test', author='test')
         self.assertEqual(len(logs), 2)
         self.assertEqual(len(deleted_logs), 0)
 
@@ -81,7 +81,7 @@ class TestStrategyLog4j(unittest.TestCase):
                         public Test() {
                        logger.warn("test1");
                        logger.info("test2");}}'''
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=logs, type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=logs, type='test', author='test')
         self.assertEqual(logs, [])
         self.assertEqual(len(deleted_logs), 2)
         
@@ -92,7 +92,7 @@ class TestStrategyLog4j(unittest.TestCase):
                         public Test() {
                         logger.info("test1");
                         logger.info("test2");}}'''
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test', author='test')
         self.assertEqual(len(logs), 2)
         self.assertEqual(len(deleted_logs), 0)
 
@@ -104,7 +104,7 @@ class TestStrategyLog4j(unittest.TestCase):
         afterCode = '''import log4j;
                         public class Test {
                         public Test() {}}'''
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=logs, type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=logs, type='test', author='test')
         self.assertEqual(len(logs), 0)
         self.assertEqual(len(deleted_logs), 2)
 
@@ -120,7 +120,7 @@ class TestStrategyLog4j(unittest.TestCase):
                         //java code ici, java code là
                         warn.info('test1');
                         logger.info('test2');}}"""
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test', author='test')
         self.assertEqual(len(logs), 3)
         self.assertEqual(len(deleted_logs), 0)
 
@@ -135,7 +135,7 @@ class TestStrategyLog4j(unittest.TestCase):
                         public class Test {
                         public Test() {
                         logger.info('test3');}}"""
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=logs, type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=logs, type='test', author='test')
         self.assertEqual(len(logs), 1)
         self.assertEqual(len(deleted_logs), 2)
         self.assertEqual(len(logs[0].modifications), 2)
@@ -164,7 +164,7 @@ class TestStrategyLog4j(unittest.TestCase):
                                 logger.info("Processing finished");
                             }
                         }'''
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=logs, type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=logs, type='test', author='test')
         self.assertEqual(len(logs), 7)
         self.assertEqual(len(deleted_logs), 0)
 
@@ -210,7 +210,7 @@ class TestStrategyLog4j(unittest.TestCase):
                                 logger.info("Processing finished");
                             }
                         }'''
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=logs, type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=logs, type='test', author='test')
         self.assertEqual(len(logs), 6)
         self.assertEqual(len(deleted_logs), 0)
 

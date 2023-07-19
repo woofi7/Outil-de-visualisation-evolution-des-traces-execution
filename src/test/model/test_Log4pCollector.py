@@ -131,7 +131,7 @@ log4p.info("Info message")""",
         beforeCode = None
         afterCode = None
         self.strat = Log4pCollector()
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='MODIFY')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='MODIFY', author='test')
         self.assertEqual(logs, [])
         self.assertEqual(deleted_logs, [])
 
@@ -148,7 +148,7 @@ logger.info('test1')
                         
 logger.info('test2')"""
         self.strat = Log4pCollector()
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test', author='test')
         self.assertEqual(len(logs), 2)
         self.assertEqual(logs[0].instruction, '"""test1"""')
         self.assertEqual(deleted_logs, [])
@@ -162,7 +162,7 @@ logger.info('test1')
                         
 logger.info('test2')"""
         self.strat = Log4pCollector()
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test', author='test')
         beforeCode = """import log4p
                         
 logger.info('test1')
@@ -175,7 +175,7 @@ logger.info('test1')
                         
 logger.info('test2')"""
         self.strat = Log4pCollector()
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=logs, type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=logs, type='test', author='test')
         self.assertEqual(len(logs), 2)
         self.assertEqual(logs[0].instruction, '"""test1"""')
         self.assertEqual(deleted_logs, [])
@@ -189,7 +189,7 @@ logger.info('test1')
                         
 logger.info('test2')"""
         self.strat = Log4pCollector()
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test', author='test')
         beforeCode = """import log4p
                         
 logger.info('test1')
@@ -202,7 +202,7 @@ logger.info('test1')
                         
 logger.info('test3')"""
         self.strat = Log4pCollector()
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=logs, type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=logs, type='test', author='test')
         self.assertEqual(len(logs), 2)
         self.assertEqual(logs[1].instruction, '"""test3"""')
         self.assertEqual(deleted_logs, [])
@@ -216,7 +216,7 @@ logger.info('test1')
                         
 logger.info('test2')"""
         self.strat = Log4pCollector()
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test', author='test')
         beforeCode = """import log4p
                         
 logger.info('test1')
@@ -229,7 +229,7 @@ logger.info('test1')
                         
 logger.info('test3')"""
         self.strat = Log4pCollector()
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=logs, type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=logs, type='test', author='test')
         self.assertEqual(logs, [])
         self.assertEqual(len(deleted_logs), 2)
 
@@ -244,7 +244,7 @@ def test(self):
                         
     logger.info('test2')"""
         self.strat = Log4pCollector()
-        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test')
+        logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=[], type='test', author='test')
         self.assertEqual(len(logs), 2)
         self.assertEqual(logs[1].instruction, '"""test2"""')
         self.assertEqual(deleted_logs, [])

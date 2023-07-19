@@ -25,8 +25,8 @@ class test_TraceVisualizerView(unittest.TestCase):
      app = QApplication([])
      tvv = TraceVisualizerView()
      tvv.log_instructions_list.addItem = Mock()
-     modification = Modification('commit', 'instruction','date', 'type', 'beforeCode', 'aftercode', 'hash', 'filename')
-     modification2 = Modification('commit', 'instruction','date', 'deleted', 'beforeCode', 'aftercode', 'hash', 'filename')
+     modification = Modification('commit', 'instruction','date', 'type', 'beforeCode', 'aftercode', 'hash', 'filename', 'author')
+     modification2 = Modification('commit', 'instruction','date', 'deleted', 'beforeCode', 'aftercode', 'hash', 'filename', 'author')
 
      logInstruction = LogInstruction('info','"info"', [modification], '2023-01-01')
      logInstruction2 = LogInstruction('info','"info"', [modification2], '2023-01-01')
@@ -37,8 +37,8 @@ class test_TraceVisualizerView(unittest.TestCase):
      app = QApplication([])
      tvv = TraceVisualizerView()
      tvv.log_instructions_list.addItem = Mock()
-     modification = Modification('commit', 'instruction','date', 'type', 'beforeCode', 'aftercode', 'hash', 'filename')
-     modification2 = Modification('commit', 'instruction','date', 'deleted', 'beforeCode', 'aftercode', 'hash', 'filename')
+     modification = Modification('commit', 'instruction','date', 'type', 'beforeCode', 'aftercode', 'hash', 'filename', 'author')
+     modification2 = Modification('commit', 'instruction','date', 'deleted', 'beforeCode', 'aftercode', 'hash', 'filename', 'author')
 
      logInstruction = LogInstruction('info','"info"', [modification], '2023-01-01')
      logInstruction2 = LogInstruction('info','"info"', [modification2], '2023-01-01')

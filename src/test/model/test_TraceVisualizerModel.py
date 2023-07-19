@@ -11,7 +11,7 @@ class test_TraceVizualizerModel(unittest.TestCase):
     
   def test_getCommitChanges(self):
     tvm = LogInstructionDiffGenerator()
-    modification = Modification('commit','instruction', 'date', 'type', 'beforeCode', 'aftercode', 'hash', 'filename')
+    modification = Modification('commit','instruction', 'date', 'type', 'beforeCode', 'aftercode', 'hash', 'filename', 'author')
     tvm.getCommitChanges([modification])
 
 
