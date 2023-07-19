@@ -9,6 +9,7 @@ import traceback
 class TraceVisualizerView(QWidget):
 
     def __init__(self):
+        try:
             super().__init__()
             self.setWindowTitle("Trace Visualizer")
             self.setGeometry(100, 100, 1000, 800)
