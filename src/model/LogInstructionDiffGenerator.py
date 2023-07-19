@@ -10,8 +10,8 @@ class LogInstructionDiffGenerator:
         try:
             result = []  # Initialize an empty list to store the result
             for modification in commits:
-                    if [modification.hash, modification.filename, modification.beforeCode, modification.afterCode] not in result:
-                         result.append([modification.hash, modification.filename, modification.beforeCode, modification.afterCode])
+                    if [modification.hash, modification.filename, modification.beforeCode, modification.afterCode, modification.author] not in result:
+                         result.append([modification.hash, modification.filename, modification.beforeCode, modification.afterCode, modification.author])
                          
             print(len(result))
             return result  # Return the list of commits that match the criteria
