@@ -53,12 +53,28 @@ class TraceVisualizerView(QWidget):
 
     def set_log_instructions(self, log_instructions, deleted_instruction):
         try:
+
             if log_instructions is None:
                 raise ValueError("log_instructions cannot be None")
 
             added_instructions = set()
 
-            def add_log_instruction(log):
+            
+
+            for log_instruction, value in log_instructions.items():
+                if value is not None:
+                    for log in value:
+                        self.add_log_instruction(log, added_instructions)
+
+            for value in deleted_instruction:
+                if value is not None:
+                    self.add_log_instruction(log, added_instructions)
+
+        except Exception as e:
+            traceback.print_exc()
+            PopupManager.show_info_popup("Caught Error", str(e))
+
+    def add_log_instruction(self, log, added_instructions):
                 if log.instruction is not None:
                     instruction_key = f"{log.level}, {log.instruction}"
                     if instruction_key not in added_instructions:
@@ -66,22 +82,6 @@ class TraceVisualizerView(QWidget):
                         item.setData(QtCore.Qt.ItemDataRole.UserRole, log)
                         self.log_instructions_list.addItem(item)
                         added_instructions.add(instruction_key)
-
-            for log_instruction, value in log_instructions.items():
-                if value is not None:
-                    for log in value:
-                        add_log_instruction(log)
-
-            for value in deleted_instruction:
-                if value is not None:
-                    for log in value:
-                        add_log_instruction(log)
-
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_info_popup("Caught Error", str(e))
-
-
 
     def set_graphic(self, graphic):
         if graphic is None:

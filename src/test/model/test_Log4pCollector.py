@@ -86,20 +86,20 @@ log4p.info("Info message")""",
             to_date=datetime(2023, 1, 31),
             path_in_directory='',
             branch='master',
-            author='John Doe'
+            author=''
         )
 
         # Assert the expected results
         expected_logs = {
             'src/file/file2.py': [
                 LogInstruction('debug', '"""After code"""', [
-                    Modification('debug', '"""After code"""', datetime(2023, 1, 15), 'modified', 'log4p.debug("Before code")', 'log4p.debug("After code")', 'hash1', 'file2.py')
+                    Modification('debug', '"""After code"""', datetime(2023, 1, 15), 'modified', 'log4p.debug("Before code")', 'log4p.debug("After code")', 'hash1', 'file2.py',  'John Doe')
                 ], datetime(2023, 1, 15)),
             ]
         }
         expected_deleted_logs = [[
                 LogInstruction('info', '"""Info message"""', [
-                    Modification('info', '"""Info message"""', datetime(2023, 1, 15), 'modified', 'log4p.info("Info message")', 'x = 10', 'hash2', 'file2.py')
+                    Modification('info', '"""Info message"""', datetime(2023, 1, 15), 'modified', 'log4p.info("Info message")', 'x = 10', 'hash2', 'file2.py', 'John Doe')
                 ], datetime(2023, 1, 15))]]
 
         self.assertEqual(logs['src/file/file2.py'][0].level, expected_logs['src/file/file2.py'][0].level)
@@ -112,7 +112,7 @@ log4p.info("Info message")""",
     def create_mock_commit(self, author, before_code, after_code, modifications_type, filename, old_path, new_path):
         # Create a mock commit object
         commit = MagicMock()
-        commit.author = author
+        commit.author.name = author
 
         # Create a mock modified file object
         modified_file = MagicMock()

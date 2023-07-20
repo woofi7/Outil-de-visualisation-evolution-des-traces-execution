@@ -29,7 +29,6 @@ class CommitWindowView(QWidget):
             # self.file_buttons = {}  # Dictionnaire pour stocker les boutons de chaque fichier
             self.code_tables = {}  # Dictionnaire pour stocker les tables de chaque fichierw
 
-            print(f"File: {commit[1]}\n")
             label1 = QLabel(f"File: {commit[1]}\n", self)
             layout.addWidget(label1)
 

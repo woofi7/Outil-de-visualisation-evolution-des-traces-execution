@@ -21,7 +21,7 @@ class test_CsvFileGenerator(unittest.TestCase):
             1: [log2]
         }
 
-        result = self.gen.createFile(log_instructions)
+        result = self.gen.createFile(log_instructions, [])
         
         self.assertEqual(result, "../csv/data.csv")
         

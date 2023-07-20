@@ -218,21 +218,21 @@ class TestStrategyLog4j(unittest.TestCase):
         app = QApplication([])
         # Mocked commit objects
         commit1 = MagicMock()
-        commit1.author = "John"
+        commit1.author.name = "John"
         commit1.modified_files = [
             MagicMock(filename="file1.java", old_path=None, new_path="dir/file1.java", change_type=ModificationType.ADD),
             MagicMock(filename="file2.java", old_path=None, new_path="dir/file2.java", change_type=ModificationType.ADD),
         ]
 
         commit2 = MagicMock()
-        commit2.author = "Jane"
+        commit2.author.name = "Jane"
         commit2.modified_files = [
             MagicMock(filename="file1.java", old_path="dir/file1.java", new_path="dir/file1_updated.java", change_type=ModificationType.RENAME),
             MagicMock(filename="file3.java", old_path=None, new_path="dir/file3.java", change_type=ModificationType.ADD),
         ]
 
         commit3 = MagicMock()
-        commit3.author = "Jane"
+        commit3.author.name = "Jane"
         commit3.modified_files = [
             MagicMock(filename="file1_updated.java", old_path="dir/file1_updated.java", new_path="", change_type=ModificationType.DELETE),
         ]
@@ -252,7 +252,8 @@ class TestStrategyLog4j(unittest.TestCase):
             to_date=datetime(2022, 12, 31),
             path_in_directory="",
             branch="master",
-            author="",
+            author=""
+
         )
 
         # Perform assertions on the results
