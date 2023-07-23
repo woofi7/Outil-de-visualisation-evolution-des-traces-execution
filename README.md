@@ -64,10 +64,6 @@ To facilitate collaboration and communication, we use the following channels:
 
 3. **Discussions**: For more extended or open-ended conversations, use GitHub Discussions.
 
-## Code of Conduct
-
-We follow a Code of Conduct to maintain a respectful and inclusive community. All contributors and users are expected to adhere to these guidelines when participating in any project-related activities.
-
 ## Conclusion
 
 Thank you for contributing to our open-source project! Your participation is invaluable to the success of this community-driven effort. Let's collaborate, learn from each other, and build something amazing together. Happy coding!
