@@ -8,23 +8,13 @@ class CsvFileGenerator(LogInstructionsFileGenerator):
         # Initialisation de la classe
         super().__init__()
     
-    def createFile(self, log_instructions, deleted_instruction):
+    def createFile(self, log_instructions):
         path = 'csv/data.csv'
-        
-        logs = []
-        for filePath in log_instructions:
-            fileLogs = log_instructions[filePath]
-            for log in fileLogs:
-                logs.append(log)
-        for deleted in deleted_instruction:
-            if deleted is not []:
-                for log in deleted:
-                    logs.append(log)
 
         data = []
         index_map = {}
 
-        for log in logs:
+        for log in log_instructions:
             if log.instruction not in index_map:
                 index_map[log.instruction] = len(index_map) + 1
                 

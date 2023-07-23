@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 class GraphBuilder:
 
-   def build_graph(self, path_to_file_csv):
+   def build_graph(self, path_to_file_csv, instruction=""):
       # Map the type values to colors
       color_map = {'ModificationType.ADD': 'green', 'ModificationType.MODIFY': 'blue', 'ModificationType.DELETE': 'red'}
 
@@ -25,23 +25,26 @@ class GraphBuilder:
       plt.xticks(rotation=30)
 
       for index, group in logData.groupby('index'):
-         x_values = group['date']
-         y_values = group['index']
-         instruction = group['instruction'].iloc[0]  # Get the instruction for the first row in the group
-         type_values = group['type']
+          x_values = group['date']
+          y_values = group['index']
+          group_instruction = group['instruction'].iloc[0]
+          type_values = group['type']
 
-         ax.scatter(x_values, y_values, marker='o', c=[color_map.get(t, 'gray') for t in type_values])
-         ax.plot(x_values, y_values, linestyle='-', color='gray')
+          # Determine the size of the marker based on the instruction
+          marker_size = 60 if group_instruction in instruction else 14
+
+          ax.scatter(x_values, y_values, marker='o', c=[color_map.get(t, 'gray') for t in type_values], s=marker_size)
+          ax.plot(x_values, y_values, linestyle='-', color='gray')
 
       # Configure axis labels and legend
       ax.set_xlabel('Date')
       ax.set_ylabel('Index')
-       
+
       # Add legend
       legend_elements = [Line2D([0], [0], marker='o', color='w', label='Added', markerfacecolor='green', markersize=7),
-                       Line2D([0], [0], marker='o', color='w', label='Modified', markerfacecolor='blue', markersize=7),
-                       Line2D([0], [0], marker='o', color='w', label='Deleted', markerfacecolor='red', markersize=7),
-                       Line2D([0], [0], marker='o', color='w', label='Renamed', markerfacecolor='purple', markersize=7)]
+                         Line2D([0], [0], marker='o', color='w', label='Modified', markerfacecolor='blue', markersize=7),
+                         Line2D([0], [0], marker='o', color='w', label='Deleted', markerfacecolor='red', markersize=7),
+                         Line2D([0], [0], marker='o', color='w', label='Renamed', markerfacecolor='purple', markersize=7)]
       ax.legend(handles=legend_elements, loc='upper left', bbox_to_anchor=(1.02, 1), borderaxespad=0.)
 
       canvas = FigureCanvas(fig)

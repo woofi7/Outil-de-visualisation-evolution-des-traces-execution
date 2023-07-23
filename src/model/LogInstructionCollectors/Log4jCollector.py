@@ -23,6 +23,7 @@ class Log4jCollector(LogInstructionCollector):
                         if modified_file.filename.endswith(tuple(FILE_TYPES)) and ((modified_file.old_path is not None and path_in_directory in modified_file.old_path) or (modified_file.new_path is not None and path_in_directory in modified_file.new_path)):
                             # filter logs by framework
                             if modified_file.change_type == ModificationType.RENAME:
+                                # TODO: deal with old_path
                                 tmp = self.logs[modified_file.old_path]
                                 self.logs[modified_file.new_path] = tmp
                                 self.logs[modified_file.old_path] =[]
@@ -35,9 +36,42 @@ class Log4jCollector(LogInstructionCollector):
                                 if deletedlogs is not None:
                                     self.deletedlogs.append(deletedlogs)
                                 self.logs[modified_file.new_path] = logs
+                        
+            # Combine logs and deletedLogs
+            logs = []
+            for filePath in self.logs:
+                fileLogs = self.logs[filePath]
+                for log in fileLogs:
+                    logs.append(log)
+            for deleted in self.deletedlogs:
+                if deleted is not []:
+                    for log in deleted:
+                        logs.append(log)
+            
+            # Add modifications from deletedLogs duplicates to logs 
+            i = 0
+            j = 0
+            iToDelete = []
+            jToDelete = []
+            for i in range(len(logs)):
+                for j in range(len(logs)):
+                    if i == j:
+                        break
+                    if logs[i].instruction == logs[j].instruction and logs[i].level == logs[j].level:
+                        if logs[j].modifications[0].type == 'ModificationType.DELETE':
+                            logs[i].modifications.extend(logs[j].modifications)
+                            jToDelete.append(j)
+                        else:
+                            logs[j].modifications.extend(logs[i].modifications)
+                            iToDelete.append(i)
+            # Clean logs that are duplications
+            for i in iToDelete:
+                del logs[i]
+            for j in jToDelete:
+                del logs[j]
                                 
                             
-            return self.logs, self.deletedlogs
+            return logs
     
     def getLogs(self, hash, filename, before_code, after_code, date, logs, type):
         # print(f"HASH : {hash}")

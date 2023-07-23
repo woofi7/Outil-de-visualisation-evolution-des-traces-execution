@@ -14,25 +14,32 @@ REPO_FOLDER = "./repo/"
 class TraceVisualizerController:
     def __init__(self, frameworks, from_date, to_date, repo_path, searched_path, searched_branch, searched_author):
         try:
-            log_instructions = {}
-            deleted_instruction = []
+            self.all_log_instructions = []
+            
+            
             self.trace_visualizer_view = TraceVisualizerView()
             self.log_instruction_diff_generator = LogInstructionDiffGenerator()
-            # Connect the searchButton's clicked signal to the search_button_clicked slot
-            self.trace_visualizer_view.log_instructions_list.itemClicked.connect(self._show_commit_changes)
 
             # Retrieve commits based on the selected dates using the model
             for framework in frameworks:
                 self.log_instruction_collector = self._set_strategy_collector(framework.text())
-                framework_log_instructions, framework_deleted_instruction = self.log_instruction_collector.get_log_instructions(repo_path, from_date, to_date, searched_path, searched_branch, searched_author)
-                if(framework_log_instructions and len(framework_log_instructions)):
-                    log_instructions.update(framework_log_instructions)
-                if(framework_deleted_instruction and len(framework_deleted_instruction)):
-                    deleted_instruction.extend(framework_deleted_instruction)
-            # Create a new TraceVisualizerView and pass the retrieved commits to it
-            self.trace_visualizer_view.set_log_instructions(log_instructions, deleted_instruction)
-            self.strategy_generator_file = self._set_strategy_generator_file("csv")
-            self.trace_visualizer_view.set_graphic(GraphBuilder().build_graph(self.strategy_generator_file.createFile(log_instructions, deleted_instruction)))
+                framework_logs = self.log_instruction_collector.get_log_instructions(repo_path, from_date, to_date, searched_path, searched_branch, searched_author)
+                self.all_log_instructions.extend(framework_logs)
+                
+            # Setup the view
+            self.filtered_log_instructions = self.all_log_instructions
+            self._set_view_data(self.all_log_instructions)
+            
+            # Connect the searchButton's clicked signal to the search_button_clicked slot
+            self.trace_visualizer_view.log_instructions_list.itemClicked.connect(self._show_commit_changes)
+            
+            # Connect the data from the list to the graph
+            self.trace_visualizer_view.log_instructions_list.itemEntered.connect(self._highlight_graph_element)
+            
+            # Connect the filters to the data
+            filterWidget = self.trace_visualizer_view.right_layout.itemAt(1).widget()
+            filterWidget.currentTextChanged.connect(lambda: self._filter_logs(filterWidget))
+            
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_info_popup("Caught Error", str(e))
@@ -66,3 +73,37 @@ class TraceVisualizerController:
             return CsvFileGenerator()
         else:
             raise ValueError("Invalid strategy name")
+        
+    def _set_view_data(self, log_instructions):
+        self.trace_visualizer_view.set_log_instructions(log_instructions)
+        self.strategy_generator_file = self._set_strategy_generator_file("csv")
+        self.trace_visualizer_view.set_graphic(GraphBuilder().build_graph(self.strategy_generator_file.createFile(log_instructions)))
+        
+    def _filter_logs(self, filterWidget):
+        types = {"Added": "ModificationType.ADD", "Deleted": "ModificationType.DELETE", "Modified": "ModificationType.MODIFY"}
+        filter = filterWidget.currentText()
+        filteredLogs = []
+        
+        for log in self.all_log_instructions:
+            filteredLogs.append(log.copy())
+        
+        if filter == "All":
+            pass
+        elif filter in types.keys():
+            modifType = types[filter]
+            for log in filteredLogs[:]:
+                for modif in log.modifications[:]:
+                    if str(modif.type) != modifType:
+                        log.modifications.remove(modif)
+                if len(log.modifications) == 0:
+                    filteredLogs.remove(log)
+        else:
+            raise ValueError("Invalid filter value: " + filter)
+        
+        self._set_view_data(filteredLogs)
+        self.filtered_log_instructions = filteredLogs
+
+    def _highlight_graph_element(self, item):
+        instruction = item.text()
+        self.trace_visualizer_view.set_graphic(GraphBuilder().build_graph(self.strategy_generator_file.createFile(self.filtered_log_instructions), instruction))
+        

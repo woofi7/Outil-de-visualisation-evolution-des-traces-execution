@@ -23,9 +23,10 @@ class TraceVisualizerView(QWidget):
             left_frame = QFrame()
             upper_left_layout = QVBoxLayout(left_frame)
             self.log_instructions_list = QListWidget()
+            self.log_instructions_list.setMouseTracking(True)
             upper_left_layout.addWidget(QLabel("log instructions"))  # Add the label to the layout
             upper_left_layout.addWidget(self.log_instructions_list)
-
+            
             # Right Layout
             self.graphic = None
             self.right_frame = QFrame()
@@ -56,11 +57,12 @@ class TraceVisualizerView(QWidget):
         self.resizeGraphic()
         super().resizeEvent(event)
 
-    def set_log_instructions(self, log_instructions, deleted_instruction):
+    def set_log_instructions(self, log_instructions):
         try:
             if log_instructions is None:
                 raise ValueError("log_instructions cannot be None")
 
+            self.log_instructions_list.clear()
             added_instructions = set()
 
             def add_log_instruction(log):
@@ -72,15 +74,8 @@ class TraceVisualizerView(QWidget):
                         self.log_instructions_list.addItem(item)
                         added_instructions.add(instruction_key)
 
-            for log_instruction, value in log_instructions.items():
-                if value is not None:
-                    for log in value:
-                        add_log_instruction(log)
-
-            for value in deleted_instruction:
-                if value is not None:
-                    for log in value:
-                        add_log_instruction(log)
+            for log in log_instructions:
+                add_log_instruction(log)
 
         except Exception as e:
             traceback.print_exc()
@@ -91,9 +86,12 @@ class TraceVisualizerView(QWidget):
     def set_graphic(self, graphic):
         if graphic is None:
             raise ValueError("graphic cannot be None")
+        
         # Remove existing graphic from right_layout if it's not None
         if self.graphic is not None:
-            self.right_layout.removeWidget(self.graphic)
+            old_frame = self.graphic.parentWidget()
+            self.right_layout.removeWidget(old_frame)
+            old_frame.setParent(None)
 
         # Set the new graphic
         self.graphic = graphic
@@ -146,9 +144,6 @@ class TraceVisualizerView(QWidget):
     def get_instruction_for_index(self, index):
         closerInt = round(index)
         
-        # print ("i:", index)
-        # print ("int: ", closerInt)
-        
         if abs(index - closerInt) <=0.2:
             index = closerInt
         else:
@@ -157,7 +152,6 @@ class TraceVisualizerView(QWidget):
         with open('csv/data.csv', 'r') as file:
             csv_data = csv.reader(file)
             next(csv_data)
-
             for row in csv_data:
                 if row[0] == str(index):
                     return row[1]

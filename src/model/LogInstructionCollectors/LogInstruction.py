@@ -1,5 +1,5 @@
 import traceback
-from view.PopupView import PopupManager
+from model.LogInstructionCollectors.Modification import Modification
 
 class LogInstruction:
     def __init__(self,level ,instruction, modifications, date):
@@ -14,3 +14,9 @@ class LogInstruction:
     def add_modification(self, modification):
         if(self.modifications is not None):
             self.modifications.append(modification)
+            
+    def copy(self):
+        logInstructionCopy = LogInstruction(self.level, self.instruction, [], self.date)
+        for modification in self.modifications:
+            logInstructionCopy.add_modification(Modification(modification.level, modification.instruction, modification.date, modification.type, modification.beforeCode, modification.afterCode, modification.hash, modification.filename))
+        return logInstructionCopy
