@@ -10,7 +10,7 @@ class test_SelectCommitWindowView(unittest.TestCase):
     
   def test_CommitWindowView_Init(self):
      app = QApplication([])
-     cwv = SelectCommitWindowView([['test','test','test','test'],'test','test','test'])
+     cwv = SelectCommitWindowView([['test','test','test','test'],'test','test','test','test'])
      self.assertIsNotNone(cwv.code_tables)
      self.assertIsNotNone(cwv.code_table)
 
