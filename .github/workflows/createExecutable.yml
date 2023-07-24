@@ -43,13 +43,13 @@ jobs:
         fi
         pyinstaller --onefile --name myscript_linux src/main.py
 
-    - name: Install Git LFS
-      run: |
-        sudo apt-get install git-lfs
-        git lfs install
+    # - name: Install Git LFS
+    #   run: |
+    #     sudo apt-get install git-lfs
+    #     git lfs install
 
-    - name: Track large files with Git LFS
-      run: git lfs track "dist/myscript_linux"
+    # - name: Track large files with Git LFS
+    #   run: git lfs track "dist/myscript_linux"
 
 
     - name: Configure Git
@@ -101,13 +101,13 @@ jobs:
     - name: Build Windows executable
       run: pyinstaller --onefile --name myscript_windows src/main.py
 
-    - name: Set up Git LFS
-      run: |
-        curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.ps1 | powershell
-        git lfs install
+    # - name: Set up Git LFS
+    #   run: |
+    #     curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.ps1 | powershell
+    #     git lfs install
 
-    - name: Track large files with Git LFS
-      run: git lfs track "dist/myscript_windows.exe"
+    # - name: Track large files with Git LFS
+    #   run: git lfs track "dist/myscript_windows.exe"
 
     - name: Configure Git
       run: |
