@@ -38,10 +38,7 @@ jobs:
 
     - name: Build Linux executable
       run: |
-        if [ -f dist/myscript_linux ]; then
-          rm dist/myscript_linux
-        fi
-        pyinstaller --name myscript_linux src/main.py
+        pyinstaller -y --name myscript_linux src/main.py
 
     # - name: Install Git LFS
     #   run: |
@@ -98,7 +95,7 @@ jobs:
         pip install pyinstaller
 
     - name: Build Windows executable
-      run: pyinstaller --onefile --name myscript_windows src/main.py
+      run: pyinstaller -y --name myscript_windows src/main.py
 
     # - name: Set up Git LFS
     #   run: |
