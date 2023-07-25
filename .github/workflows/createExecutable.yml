@@ -38,16 +38,13 @@ jobs:
 
     - name: Build Linux executable
       run: |
-        if [ -f dist/myscript_linux ]; then
-          rm dist/myscript_linux
-        fi
-        pyinstaller --onefile --name myscript_linux src/main.py
+        pyinstaller -y --name myscript_linux src/main.py
 
     - name: Configure Git
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add dist/myscript_linux
+        git add .
         git pull origin ${{ github.ref }}
         git commit -m "Add artifacts" || true
       
@@ -90,13 +87,13 @@ jobs:
         pip install pyinstaller
 
     - name: Build Windows executable
-      run: pyinstaller --onefile --name myscript_windows src/main.py
+      run: pyinstaller -y --name myscript_windows src/main.py
 
     - name: Configure Git
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add dist/myscript_windows.exe
+        git add .
         git pull origin ${{ github.ref }}
         git commit -m "Add artifacts" || true
     

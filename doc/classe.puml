@@ -1,4 +1,4 @@
-@startuml completeClassDiagram
+@startuml completeClassDiagramNew
 package controller {
     class HomeController{
         - search_button_clicked()
@@ -121,7 +121,6 @@ Log4PCollector .up.|> LogInstructionCollector
 Log4JCollector ..> LogInstruction
 Log4PCollector ..> LogInstruction
 LogInstruction "1" o-- "*"Modification
-
 @enduml
 
 

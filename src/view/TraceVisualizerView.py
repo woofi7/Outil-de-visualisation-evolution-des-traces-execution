@@ -1,18 +1,14 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidget, QHBoxLayout, QGridLayout, QTabWidget, QComboBox, QSplitter, QFrame, QListWidgetItem
-from PyQt6 import QtCore,QtWidgets, QtGui
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidget, QHBoxLayout, QComboBox, QSplitter, QFrame, QListWidgetItem
+from PyQt6 import QtCore,QtWidgets
 from view.PopupView import PopupManager
-import matplotlib.dates as mdates
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 import traceback
 import csv
-import time
 
 
 class TraceVisualizerView(QWidget):
 
     def __init__(self):
-        try:                           
             super().__init__()
             self.setWindowTitle("Trace Visualizer")
             self.setGeometry(100, 100, 1000, 800)
@@ -48,10 +44,6 @@ class TraceVisualizerView(QWidget):
             self_layout.addWidget(splitter)
             
             self.show()  # Show the widget
-            self.resizeEvent = self.handleResizeEvent
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_info_popup("Caught Error", str(e))
 
     def handleResizeEvent(self, event):
         self.resizeGraphic()

@@ -1,10 +1,7 @@
-from PyQt6.QtWidgets import QGraphicsView, QGraphicsScene
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.lines import Line2D
-from matplotlib.ticker import MaxNLocator
-import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 class GraphBuilder:
@@ -43,8 +40,7 @@ class GraphBuilder:
       # Add legend
       legend_elements = [Line2D([0], [0], marker='o', color='w', label='Added', markerfacecolor='green', markersize=7),
                          Line2D([0], [0], marker='o', color='w', label='Modified', markerfacecolor='blue', markersize=7),
-                         Line2D([0], [0], marker='o', color='w', label='Deleted', markerfacecolor='red', markersize=7),
-                         Line2D([0], [0], marker='o', color='w', label='Renamed', markerfacecolor='purple', markersize=7)]
+                         Line2D([0], [0], marker='o', color='w', label='Deleted', markerfacecolor='red', markersize=7)]
       ax.legend(handles=legend_elements, loc='upper left', bbox_to_anchor=(1.02, 1), borderaxespad=0.)
 
       canvas = FigureCanvas(fig)

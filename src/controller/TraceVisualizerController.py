@@ -1,4 +1,5 @@
 from view.PopupView import PopupManager
+from view.SelectCommitWindowView import SelectCommitWindowView
 from view.TraceVisualizerView import TraceVisualizerView
 from view.CommitWindowView import CommitWindowView
 from model.LogInstructionDiffGenerator import LogInstructionDiffGenerator
@@ -55,7 +56,7 @@ class TraceVisualizerController:
             commitChanges = self.log_instruction_diff_generator.getCommitChanges(commits)
 
             # Create a new CommitWindowView and pass the retrieved commit changes to it
-            self.CommitWindowView = CommitWindowView(commitChanges)
+            self.CommitWindowView = SelectCommitWindowView(commitChanges)
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_info_popup("Caught Error", str(e))

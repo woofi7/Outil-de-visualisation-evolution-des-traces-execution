@@ -5,15 +5,11 @@ from view.NewRepoView import NewRepoView
 
 class NewRepoController:
     def __init__(self, home_view):
-        try:
-            self.new_repo_view = NewRepoView()
-            self.home_view = home_view
-            self.repo_manager = ReposManager()
-            self.new_repo_view.okButton.clicked.connect(self._ok_button_clicked)
-            self.new_repo_view.cancelButton.clicked.connect(self._cancel_button_clicked)
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_info_popup("Caught Error", str(e))    
+        self.new_repo_view = NewRepoView()
+        self.home_view = home_view
+        self.repo_manager = ReposManager()
+        self.new_repo_view.okButton.clicked.connect(self._ok_button_clicked)
+        self.new_repo_view.cancelButton.clicked.connect(self._cancel_button_clicked)
 
     def _ok_button_clicked(self):
         try:
