@@ -2,8 +2,6 @@ from model.LogInstructionCollectors.LogInstructionCollector import LogInstructio
 import javalang
 from javalang.tree import MethodInvocation, BinaryOperation, Literal, MemberReference, ClassCreator, Cast
 from pydriller import Repository, ModificationType
-import traceback
-from view.PopupView import PopupManager
 from model.LogInstructionCollectors.LogInstruction import LogInstruction
 from model.LogInstructionCollectors.Modification import Modification
 
@@ -23,7 +21,8 @@ class Log4jCollector(LogInstructionCollector):
                         if modified_file.filename.endswith(tuple(FILE_TYPES)) and ((modified_file.old_path is not None and path_in_directory in modified_file.old_path) or (modified_file.new_path is not None and path_in_directory in modified_file.new_path)):
                             # filter logs by framework
                             if modified_file.change_type == ModificationType.RENAME:
-                                # TODO: deal with old_path
+                                if modified_file.old_path not in self.logs:
+                                    self.logs[modified_file.old_path] = []
                                 tmp = self.logs[modified_file.old_path]
                                 self.logs[modified_file.new_path] = tmp
                                 self.logs[modified_file.old_path] =[]
