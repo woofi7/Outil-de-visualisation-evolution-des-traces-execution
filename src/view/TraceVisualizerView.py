@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidget, QHBoxLayout, QComboBox, QSplitter, QFrame, QListWidgetItem
 from PyQt6 import QtCore,QtWidgets
+import matplotlib.pyplot as plt
 from view.PopupView import PopupManager
 
 import traceback
@@ -73,14 +74,13 @@ class TraceVisualizerView(QWidget):
             traceback.print_exc()
             PopupManager.show_info_popup("Caught Error", str(e))
 
-
-
     def set_graphic(self, graphic):
         if graphic is None:
             raise ValueError("graphic cannot be None")
-        
+
         # Remove existing graphic from right_layout if it's not None
         if self.graphic is not None:
+            plt.close(self.graphic.figure)
             old_frame = self.graphic.parentWidget()
             self.right_layout.removeWidget(old_frame)
             old_frame.setParent(None)
