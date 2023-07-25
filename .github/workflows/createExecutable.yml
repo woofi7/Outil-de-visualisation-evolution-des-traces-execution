@@ -38,25 +38,13 @@ jobs:
 
     - name: Build Linux executable
       run: |
-        if [ -f dist/myscript_linux ]; then
-          rm dist/myscript_linux
-        fi
-        pyinstaller --onefile --name myscript_linux src/main.py
-
-    - name: Install Git LFS
-      run: |
-        sudo apt-get install git-lfs
-        git lfs install
-
-    - name: Track large files with Git LFS
-      run: git lfs track "dist/myscript_linux"
-
+        pyinstaller -y --name myscript_linux src/main.py
 
     - name: Configure Git
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add dist/myscript_linux
+        git add .
         git pull origin ${{ github.ref }}
         git commit -m "Add artifacts" || true
       
@@ -99,21 +87,13 @@ jobs:
         pip install pyinstaller
 
     - name: Build Windows executable
-      run: pyinstaller --onefile --name myscript_windows src/main.py
-
-    - name: Set up Git LFS
-      run: |
-        curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.ps1 | powershell
-        git lfs install
-
-    - name: Track large files with Git LFS
-      run: git lfs track "dist/myscript_windows.exe"
+      run: pyinstaller -y --name myscript_windows src/main.py
 
     - name: Configure Git
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add dist/myscript_windows.exe
+        git add .
         git pull origin ${{ github.ref }}
         git commit -m "Add artifacts" || true
     
