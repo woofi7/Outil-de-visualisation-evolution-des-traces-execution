@@ -9,14 +9,13 @@ class CsvFileGenerator(LogInstructionsFileGenerator):
         super().__init__()
     
     def createFile(self, log_instructions):
-        path = 'csv/data.csv'
+        path = '../csv/data.csv'
 
         data = []
         index_map = {}
 
         for log in log_instructions:
-            if log.instruction not in index_map:
-                index_map[log.instruction] = len(index_map) + 1
+            index_map[log.instruction] = len(index_map) + 1
                 
             for modification in log.modifications:
                 data.append({

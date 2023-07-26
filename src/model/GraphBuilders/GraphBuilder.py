@@ -6,7 +6,7 @@ import pandas as pd
 
 class GraphBuilder:
 
-   def build_graph(self, path_to_file_csv, instruction=""):
+   def build_graph(self, path_to_file_csv, instruction=-1):
       # Map the type values to colors
       color_map = {'ModificationType.ADD': 'green', 'ModificationType.MODIFY': 'blue', 'ModificationType.DELETE': 'red'}
 
@@ -28,8 +28,10 @@ class GraphBuilder:
           type_values = group['type']
 
           # Determine the size of the marker based on the instruction
-          marker_size = 60 if group_instruction in instruction else 14
-
+          if index == instruction:
+             marker_size = 60
+          else:
+             marker_size = 14  
           ax.scatter(x_values, y_values, marker='o', c=[color_map.get(t, 'gray') for t in type_values], s=marker_size)
           ax.plot(x_values, y_values, linestyle='-', color='gray')
 
