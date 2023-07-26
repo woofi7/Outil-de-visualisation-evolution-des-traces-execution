@@ -14,71 +14,69 @@ class Log4jCollector(LogInstructionCollector):
     def get_log_instructions(self, repo, from_date, to_date, path_in_directory, branch, author):
             self.logs = {}
             self.deletedlogs = []
+            repo_filter = Repository(repo, since=from_date, to=to_date, only_modifications_with_file_types=FILE_TYPES, only_in_branch=branch)
+            file_types_set = set(FILE_TYPES)
+            author_match = (lambda commit: commit.author == author) if author else (lambda _: True)
             # filter commits by repo, dates, file types and branch
-            for commit in Repository(repo, since=from_date, to=to_date, only_modifications_with_file_types=FILE_TYPES, only_in_branch=branch).traverse_commits():
+            for commit in repo_filter.traverse_commits():
                 # filter commits by authors
-                if(commit.author is author or author == ''):
+                if author_match(commit):
                     for modified_file in commit.modified_files:
+                        print(f"FILE : {modified_file.filename}")
                         # filter files by file types and paths
-                        if modified_file.filename.endswith(tuple(FILE_TYPES)) and ((modified_file.old_path is not None and path_in_directory in modified_file.old_path) or (modified_file.new_path is not None and path_in_directory in modified_file.new_path)):
+                        if modified_file.filename.endswith(tuple(file_types_set)):
+                            old_path_in_directory = modified_file.old_path and (path_in_directory in modified_file.old_path)
+                            new_path_in_directory = modified_file.new_path and (path_in_directory in modified_file.new_path)
+                            if old_path_in_directory or new_path_in_directory:
                             # filter logs by framework
-                            if modified_file.change_type == ModificationType.RENAME:
-                                tmp = self.logs[modified_file.old_path]
-                                self.logs[modified_file.new_path] = tmp
-                                self.logs[modified_file.old_path] =[]
-                            elif modified_file.change_type == ModificationType.DELETE:
-                                self.logs[modified_file.old_path] = []
-                            else:
-                                if modified_file.new_path not in self.logs:
-                                    self.logs[modified_file.new_path] = []
-                                logs, deletedlogs = self.getLogs(commit.hash, modified_file.filename, modified_file.source_code_before, modified_file.source_code, commit.committer_date, self.logs[modified_file.new_path], modified_file.change_type)
-                                if deletedlogs is not None:
-                                    self.deletedlogs.append(deletedlogs)
-                                self.logs[modified_file.new_path] = logs
+                                if modified_file.change_type == ModificationType.RENAME and modified_file.old_path in self.logs:
+                                    self.logs[modified_file.new_path] =  self.logs.get(modified_file.old_path)
+                                    self.logs.pop(modified_file.old_path)
+                                elif modified_file.change_type == ModificationType.DELETE and modified_file.old_path in self.logs:
+                                    self.logs.pop(modified_file.old_path)
+                                else:
+                                    if modified_file.new_path not in self.logs:
+                                        self.logs[modified_file.new_path] = []
+                                    logs, deletedlogs = self.getLogs(commit.hash, modified_file.filename, modified_file.source_code_before, modified_file.source_code, commit.committer_date, self.logs.get(modified_file.new_path), modified_file.change_type)
+                                    if deletedlogs is not None:
+                                        self.deletedlogs.append(deletedlogs)
+                                    self.logs[modified_file.new_path] = logs     
                                 
-                            
+                       
             return self.logs, self.deletedlogs
     
-    def getLogs(self, hash, filename, before_code, after_code, date, logs, type):
-        # print(f"HASH : {hash}")
-        # print(f"FILENAME : {filename}")
+    def getLogs(self, hash, filename, before_code, after_code, date, logs, modification_type):
         if before_code is None:
             before_code = ''
         if after_code is None:
             after_code = ''
-        # Check for log4j import in the before and after code
-        
-        if ("import " in after_code) and "log4j" in  after_code:
-            logPattern = {'debug','info','warn','error','fatal'}
-            beforeMatches = []
+        # Check for log4j import in the after code
+        if ("import " in after_code) and "log4j" in after_code:
+            logPattern = {'debug', 'info', 'warn', 'error', 'fatal'}
             afterMatches = []
-            #beforeParse = self.parse_java_code(before_code)
             afterParse = self.parse_java_code(after_code)
-            #for _, node in beforeParse:
-            #    if isinstance(node, MethodInvocation) and node.member in logPattern:
-            #        beforeMatches.append(self.get_Log_Instruction(node, date, before_code, after_code, hash, filename, type))
-                    
+
             for _, node in afterParse:
                 if isinstance(node, MethodInvocation) and node.member in logPattern:
-                    afterMatches.append(self.get_Log_Instruction(node, date, before_code, after_code, hash, filename, type))
-                
-            #if(len(beforeMatches) != len(logs)):
-            #    return afterMatches, logs
-                
+                    afterMatches.append(self.get_Log_Instruction(node, date, before_code, after_code, hash, filename, modification_type))
+
+            logs_dict = {log.level + log.instruction: log for log in logs}
             for afterMatch in afterMatches:
-                for index, log in enumerate (logs):
-                    if (afterMatch.level == log.level and afterMatch.instruction == log.instruction) and len(logs) > 0:
-                        afterMatch.modifications = logs[index].modifications
-                        logs.remove(logs[index])
-                        break
+                log_key = afterMatch.level + afterMatch.instruction
+                if log_key in logs_dict:
+                    log = logs_dict[log_key]
+                    afterMatch.modifications = log.modifications
+                    logs.remove(log)
+
             for afterMatch in afterMatches:
-                for index, log in enumerate (logs):
-                    if ((afterMatch.level != log.level and afterMatch.instruction == log.instruction) or (afterMatch.level == log.level and afterMatch.instruction != log.instruction)) and len(logs) > 0:
-                        modification = Modification(afterMatch.level, afterMatch.instruction, date, type, before_code, after_code, hash, filename)
-                        afterMatch.modifications = logs[index].modifications
+                log_key = afterMatch.level + afterMatch.instruction
+                if log_key in logs_dict:
+                    log = logs_dict[log_key]
+                    if afterMatch.level != log.level or afterMatch.instruction != log.instruction:
+                        modification = Modification(afterMatch.level, afterMatch.instruction, date, modification_type, before_code, after_code, hash, filename)
+                        afterMatch.modifications = log.modifications
                         afterMatch.modifications.append(modification)
-                        logs.remove(logs[index])
-                        break
+                        logs.remove(log)
 
             for log in logs:
                 modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename)
@@ -87,9 +85,10 @@ class Log4jCollector(LogInstructionCollector):
             return afterMatches, logs
         else:
             for log in logs:
-                    modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename)
-                    log.modifications.append(modification)
-            return [], logs        
+                modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename)
+                log.modifications.append(modification)
+            return [], logs
+      
 
     def parse_java_code(self, code):
         return javalang.parse.parse(code)
