@@ -46,35 +46,11 @@ class Log4jCollector(LogInstructionCollector):
                 if deleted is not []:
                     for log in deleted:
                         logs.append(log)
-            
-            # Add modifications from deletedLogs duplicates to logs 
-            i = 0
-            j = 0
-            iToDelete = []
-            jToDelete = []
-            for i in range(len(logs)):
-                for j in range(len(logs)):
-                    if i == j:
-                        break
-                    if logs[i].instruction == logs[j].instruction and logs[i].level == logs[j].level:
-                        if logs[j].modifications[0].type == 'ModificationType.DELETE':
-                            logs[i].modifications.extend(logs[j].modifications)
-                            jToDelete.append(j)
-                        else:
-                            logs[j].modifications.extend(logs[i].modifications)
-                            iToDelete.append(i)
-            # Clean logs that are duplications
-            for i in iToDelete:
-                del logs[i]
-            for j in jToDelete:
-                del logs[j]
                                 
-                            
             return logs
     
     def getLogs(self, hash, filename, before_code, after_code, date, logs, type, author):
-        # print(f"HASH : {hash}")
-        # print(f"FILENAME : {filename}")
+        
         if before_code is None:
             before_code = ''
         if after_code is None:
@@ -83,20 +59,12 @@ class Log4jCollector(LogInstructionCollector):
         
         if ("import " in after_code) and "log4j" in  after_code:
             logPattern = {'debug','info','warn','error','fatal'}
-            beforeMatches = []
             afterMatches = []
-            #beforeParse = self.parse_java_code(before_code)
             afterParse = self.parse_java_code(after_code)
-            #for _, node in beforeParse:
-            #    if isinstance(node, MethodInvocation) and node.member in logPattern:
-            #        beforeMatches.append(self.get_Log_Instruction(node, date, before_code, after_code, hash, filename, type))
                     
             for _, node in afterParse:
                 if isinstance(node, MethodInvocation) and node.member in logPattern:
                     afterMatches.append(self.get_Log_Instruction(node, date, before_code, after_code, hash, filename, type, author))
-                
-            #if(len(beforeMatches) != len(logs)):
-            #    return afterMatches, logs
                 
             for afterMatch in afterMatches:
                 for index, log in enumerate (logs):
@@ -129,7 +97,7 @@ class Log4jCollector(LogInstructionCollector):
     
     def get_Log_Instruction(self, node, date, before_code, after_code, hash, filename, type, author):
         instruction = self.get_instruction(node.arguments)
-        modification = Modification(node.member, instruction, date, type, before_code, after_code, hash, filename, author)
+        modification = Modification(node.member, instruction, date, 'ModificationType.ADD', before_code, after_code, hash, filename, author)
         return LogInstruction(node.member, instruction, [modification], date)
 
     def get_instruction(self, arguments):

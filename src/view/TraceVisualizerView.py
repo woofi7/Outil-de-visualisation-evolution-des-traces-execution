@@ -57,15 +57,13 @@ class TraceVisualizerView(QWidget):
 
             self.log_instructions_list.clear()
             added_instructions = set()
-
             def add_log_instruction(log):
                 if log.instruction is not None:
                     instruction_key = f"{log.level}, {log.instruction}"
-                    if instruction_key not in added_instructions:
-                        item = QListWidgetItem(instruction_key)
-                        item.setData(QtCore.Qt.ItemDataRole.UserRole, log)
-                        self.log_instructions_list.addItem(item)
-                        added_instructions.add(instruction_key)
+                    item = QListWidgetItem(instruction_key)
+                    item.setData(QtCore.Qt.ItemDataRole.UserRole, log)
+                    self.log_instructions_list.addItem(item)
+                    added_instructions.add(instruction_key)
 
             for log in log_instructions:
                 add_log_instruction(log)
@@ -122,13 +120,8 @@ class TraceVisualizerView(QWidget):
             # print(str(x_date))
 
             # Find the corresponding row in the table
-            for row in range(log_instructions_list.count()):
-                item = log_instructions_list.item(row)
-                log = item.data(QtCore.Qt.ItemDataRole.UserRole)
-                
-                if log.instruction == self.get_instruction_for_index(y):
                     # print("IN: ", y)
-                    log_instructions_list.setCurrentRow(row)
+            log_instructions_list.setCurrentRow(round(y)-1)
                 # else:
                 #     print("OUT: ", y)
                 #     log_instructions_list.clearSelection()
@@ -141,7 +134,7 @@ class TraceVisualizerView(QWidget):
         else:
             return None
         
-        with open('csv/data.csv', 'r') as file:
+        with open('../csv/data.csv', 'r') as file:
             csv_data = csv.reader(file)
             next(csv_data)
             for row in csv_data:

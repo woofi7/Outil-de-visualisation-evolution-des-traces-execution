@@ -26,7 +26,7 @@ class TraceVisualizerController:
                 self.log_instruction_collector = self._set_strategy_collector(framework.text())
                 framework_logs = self.log_instruction_collector.get_log_instructions(repo_path, from_date, to_date, searched_path, searched_branch, searched_author)
                 self.all_log_instructions.extend(framework_logs)
-                
+
             # Setup the view
             self.filtered_log_instructions = self.all_log_instructions
             self._set_view_data(self.all_log_instructions)
@@ -105,6 +105,6 @@ class TraceVisualizerController:
         self.filtered_log_instructions = filteredLogs
 
     def _highlight_graph_element(self, item):
-        instruction = item.text()
-        self.trace_visualizer_view.set_graphic(GraphBuilder().build_graph(self.strategy_generator_file.createFile(self.filtered_log_instructions), instruction))
+        instruction = self.trace_visualizer_view.log_instructions_list.row(item)
+        self.trace_visualizer_view.set_graphic(GraphBuilder().build_graph(self.strategy_generator_file.createFile(self.filtered_log_instructions), instruction+1))
         
