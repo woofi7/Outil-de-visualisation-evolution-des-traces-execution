@@ -9,7 +9,7 @@ class CsvFileGenerator(LogInstructionsFileGenerator):
         super().__init__()
     
     def createFile(self, log_instructions, deleted_instruction):
-        path = 'csv/data.csv'
+        path = '../csv/data.csv'
         
         logs = []
         for filePath in log_instructions:
