@@ -2,4 +2,4 @@ venv/
 repo/
 **/__pycache__/*.pyc
 .vscode
-csv/
+*.csv
