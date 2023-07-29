@@ -23,7 +23,7 @@ class test_CsvFileGenerator(unittest.TestCase):
 
         result = self.gen.createFile(log_instructions, [])
         
-        self.assertEqual(result, "../csv/data.csv")
+        self.assertEqual(result, "./csv/data.csv")
         
 if __name__ == '__main__':
     unittest.main()

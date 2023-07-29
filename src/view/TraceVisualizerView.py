@@ -149,7 +149,7 @@ class TraceVisualizerView(QWidget):
         else:
             return None
         
-        with open('../csv/data.csv', 'r') as file:
+        with open('./csv/data.csv', 'r') as file:
             csv_data = csv.reader(file)
             next(csv_data)
 
