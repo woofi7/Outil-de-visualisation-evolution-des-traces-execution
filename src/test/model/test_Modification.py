@@ -6,7 +6,7 @@ class test_Modification(unittest.TestCase):
         
     
   def test_modification(self):
-     modification = Modification('commit','instruction', 'date', 'type', 'beforeCode', 'aftercode', 'hash', 'filename')
+     modification = Modification('commit','instruction', 'date', 'type', 'beforeCode', 'aftercode', 'hash', 'filename', 'author')
      commit = modification.get_commit_hash()
      date = modification.get_date()
      self.assertEqual(modification.get_commit_hash(), 'hash')

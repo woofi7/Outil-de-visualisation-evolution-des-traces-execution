@@ -79,7 +79,7 @@ class Log4jCollector(LogInstructionCollector):
                         logs.remove(log)
 
             for log in logs:
-                modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename)
+                modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename, author)
                 log.modifications.append(modification)
 
             return afterMatches, logs
@@ -93,9 +93,9 @@ class Log4jCollector(LogInstructionCollector):
     def parse_java_code(self, code):
         return javalang.parse.parse(code)
     
-    def get_Log_Instruction(self, node, date, before_code, after_code, hash, filename, type):
+    def get_Log_Instruction(self, node, date, before_code, after_code, hash, filename, type, author):
         instruction = self.get_instruction(node.arguments)
-        modification = Modification(node.member, instruction, date, type, before_code, after_code, hash, filename)
+        modification = Modification(node.member, instruction, date, type, before_code, after_code, hash, filename, author)
         return LogInstruction(node.member, instruction, [modification], date)
 
     def get_instruction(self, arguments):

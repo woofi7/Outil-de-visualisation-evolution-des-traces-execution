@@ -72,8 +72,8 @@ class test_HomeController(unittest.TestCase):
     @patch('view.HomeView.HomeView.setRepos')
     def test_search_button_clicked(self, mock_trace_visualizer_controller, mock_repos_manager, mock_set_repos):
         app = QApplication([])
-        modification = Modification('commit','instruction', 'date', 'type', 'beforeCode', 'aftercode', 'hash', 'filename')
-        modification2 = Modification('commit','instruction' ,'date', 'deleted', 'beforeCode', 'aftercode', 'hash', 'filename')
+        modification = Modification('commit','instruction', 'date', 'type', 'beforeCode', 'aftercode', 'hash', 'filename', 'author')
+        modification2 = Modification('commit','instruction' ,'date', 'deleted', 'beforeCode', 'aftercode', 'hash', 'filename', 'author')
         logInstruction = LogInstruction('log.info("info")','instruction', [modification], '2023-01-01')
         logInstruction2 = LogInstruction('log.info("info")','instruction', [modification2], '2023-01-01')
         mock_repos_manager.return_value = None
