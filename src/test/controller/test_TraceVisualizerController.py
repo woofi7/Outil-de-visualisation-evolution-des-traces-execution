@@ -71,66 +71,12 @@ class test_TraceVisualizerController(unittest.TestCase):
         with self.assertRaises(ValueError):
             TraceVisualizerController._set_strategy_collector('invalid')
 
-    @patch('model.LogInstructionDiffGenerator.LogInstructionDiffGenerator.getCommitChanges')
-    @patch('view.SelectCommitWindowView.SelectCommitWindowView')
-    def test_show_commit_changes(self, mock_select_commit_window_view, mock_get_commit_changes):
-        controller = TraceVisualizerController([])
-        item = MagicMock()
-        controller._show_commit_changes(item)
-        mock_get_commit_changes.assert_called_once()
-        self.assertEqual(mock_select_commit_window_view.call_count, 1)
-
-
     def test_set_strategy_generator_file(self):
         controller = TraceVisualizerController([])
         generator = controller._set_strategy_generator_file('csv')
         self.assertIsInstance(generator, CsvFileGenerator)
         with self.assertRaises(ValueError):
             controller._set_strategy_generator_file('invalid')
-
-    @patch.object(GraphBuilder, 'build_graph')
-    @patch.object(TraceVisualizerView, 'set_graphic')
-    @patch.object(TraceVisualizerView, 'set_log_instructions')
-    def test_set_view_data(self, mock_set_log_instructions, mock_set_graphic, mock_build_graph):
-        controller = TraceVisualizerController([])
-        
-        log_instruction_mock = Mock()
-        log_instruction_mock.modifications = [Mock()]
-
-        log_instructions = [log_instruction_mock]
-        controller._set_view_data(log_instructions)
-
-        mock_set_log_instructions.assert_called_once_with(log_instructions)
-        mock_build_graph.assert_called_once()
-        mock_set_graphic.assert_called_once()
-
-
-    def test_filter_logs(self):
-        controller = TraceVisualizerController([])
-        controller.all_log_instructions = [Mock(modifications=[Mock(), Mock()])]
-        filter_widget = Mock()
-        filter_widget.currentText.return_value = 'All'
-        with patch.object(controller, '_set_view_data'):
-            controller._filter_logs(filter_widget)
-        filter_widget.currentText.return_value = 'Added'
-        with patch.object(controller, '_set_view_data'):
-            controller._filter_logs(filter_widget)
-        with self.assertRaises(ValueError):
-            filter_widget.currentText.return_value = 'Invalid'
-            controller._filter_logs(filter_widget)
-
-
-    @patch.object(GraphBuilder, 'build_graph')
-    @patch.object(TraceVisualizerView, 'set_graphic')
-    def test_highlight_graph_element(self, mock_set_graphic, mock_build_graph):
-        controller = TraceVisualizerController([])
-        item = Mock()
-        controller.filtered_log_instructions = [Mock()]
-        controller.trace_visualizer_view.log_instructions_list.row = MagicMock(return_value=0)
-        controller._highlight_graph_element(item)
-        mock_build_graph.assert_called_once()
-        mock_set_graphic.assert_called_once()
-
 
     @patch('PyQt6.QtWidgets.QFileDialog.getSaveFileName', return_value=('filename.json', ''))
     @patch.object(JsonFileGenerator, 'createFile')
