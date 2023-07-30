@@ -30,6 +30,4 @@ class SelectCommitWindowView(QWidget):
         selected_item = self.commit_list.currentItem()
         if selected_item:
             selected_commit = selected_item.data(Qt.ItemDataRole.UserRole)  # Get the complete commit
-            #self.close()
             self.commit_window = CommitWindowView(selected_commit)
-            #commit_window.show()

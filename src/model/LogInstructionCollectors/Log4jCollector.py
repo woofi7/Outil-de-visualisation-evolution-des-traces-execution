@@ -8,6 +8,7 @@ from git import Repo, Diff
 from datetime import datetime, timezone, timedelta
 from model.LogInstructionCollectors.LogInstruction import LogInstruction
 from model.LogInstructionCollectors.Modification import Modification
+from model.ReposManager import ReposManager
 
 FILE_TYPES = {".java"}
 
@@ -19,11 +20,7 @@ class Log4jCollector(LogInstructionCollector):
         self.logs = {}
         self.deletedlogs = []
 
-        # Open the Git repository using GitPython
-        repo = Repo(repo_path)
-
-        # Get the specified branch
-        branch_ref = repo.refs[branch]
+        repo, branch_ref = ReposManager.get_repo_branch(repo_path, branch)
         
         # Traverse the commits in the specified date range and branch
         for commit in repo.iter_commits(rev=branch_ref, since=from_date, until=to_date, reverse=True):

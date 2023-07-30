@@ -43,6 +43,5 @@ class test_TraceVisualizerView(unittest.TestCase):
       self.assertEqual(str(e),"graphic cannot be None")
 
 
-
 if __name__ == "__main__":
     unittest.main()

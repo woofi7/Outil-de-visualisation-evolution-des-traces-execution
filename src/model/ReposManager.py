@@ -74,3 +74,10 @@ class ReposManager:
             except Exception as e:
                 traceback.print_exc()
                 PopupManager.show_error_popup("Caught Error", str(e))
+
+        def get_repo_branch(self, main_repo_path, branch):
+            # Open the Git repository using GitPython
+            repo = Repo(main_repo_path)
+            branch_rev = repo.refs[branch]
+            # Get the specified branch
+            return repo, branch_rev

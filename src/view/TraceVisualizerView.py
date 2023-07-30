@@ -51,7 +51,6 @@ class TraceVisualizerView(QWidget):
         super().resizeEvent(event)
 
     def set_log_instructions(self, log_instructions):
-        try:
             if log_instructions is None:
                 raise ValueError("log_instructions cannot be None")
 
@@ -67,10 +66,6 @@ class TraceVisualizerView(QWidget):
 
             for log in log_instructions:
                 add_log_instruction(log)
-
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_info_popup("Caught Error", str(e))
 
     def set_graphic(self, graphic):
         if graphic is None:
@@ -98,33 +93,18 @@ class TraceVisualizerView(QWidget):
         self.graphic.mpl_connect('motion_notify_event', lambda event: self.highlight_log(event, self.log_instructions_list))
 
     def resizeGraphic(self):
-        # Retrieve the size of the QFrame
         frameSize = self.right_layout.parent().size()
 
-        # Adjust the size of the graphic frame
         self.graphic.parentWidget().resize(frameSize)
 
-        # Adjust the size of the FigureCanvas
         self.graphic.setGeometry(0, 0, frameSize.width(), frameSize.height())
 
-        # Redraw the canvas
         self.graphic.draw()
 
     def highlight_log(self, event, log_instructions_list):
         if event.inaxes:
             x, y = event.xdata, event.ydata
-            # x_after, y_after = event.x, event.y
-            # x_date = mdates.num2date(x)
-            
-            # print(str(y))
-            # print(str(x_date))
-
-            # Find the corresponding row in the table
-                    # print("IN: ", y)
             log_instructions_list.setCurrentRow(round(y)-1)
-                # else:
-                #     print("OUT: ", y)
-                #     log_instructions_list.clearSelection()
                 
     def get_instruction_for_index(self, index):
         closerInt = round(index)
