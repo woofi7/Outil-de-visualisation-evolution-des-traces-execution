@@ -1,12 +1,10 @@
-from view.NewRepoView import NewRepoView
 from controller.NewRepoController import NewRepoController
 from view.PopupView import PopupManager
-from view.TraceVisualizerView import TraceVisualizerView
 from controller.TraceVisualizerController import TraceVisualizerController
 from model.ReposManager import ReposManager
 from datetime import datetime
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QPushButton, QFileDialog
+from PyQt6.QtWidgets import QFileDialog
 from functools import partial
 from view.HomeView import HomeView
 import traceback
@@ -44,7 +42,7 @@ class HomeController:
             self.repos_manager.git_pull(repo_path)
 
             # Create a new TraceVisualizerView and pass the retrieved commits to it
-            self.trace_visualizer_controller = TraceVisualizerController(frameworks, from_date, to_date, repo_path, searched_path, searched_branch, searched_author)
+            self.trace_visualizer_controller = TraceVisualizerController.fromArgs(frameworks, from_date, to_date, repo_path, searched_path, searched_branch, searched_author)
             # Close the current view
             self.home_view.close()
 
@@ -80,6 +78,7 @@ class HomeController:
             PopupManager.show_error_popup("Caught Error", str(e))
 
     def load_csv_file(self):
-        file_name, _ = QFileDialog.getOpenFileName(self.home_view, "Load CSV File", "", "CSV Files (*.csv);;All Files (*)", options=QFileDialog.Option.ReadOnly)
-        # if file_name:
-        #     self.show_csv_file_info(file_name)
+        file_name, _ = QFileDialog.getOpenFileName(self.home_view, "Load File", "./files", "JSON Files (*.json);;All Files (*)", options=QFileDialog.Option.ReadOnly)
+        print("File name: " + file_name)
+        self.trace_visualizer_controller = TraceVisualizerController.fromFile(file_name)
+        self.home_view.close()

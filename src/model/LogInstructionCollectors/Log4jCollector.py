@@ -20,7 +20,7 @@ class Log4jCollector(LogInstructionCollector):
         self.logs = {}
         self.deletedlogs = []
 
-        repo, branch_ref = ReposManager.get_repo_branch(repo_path, branch)
+        repo, branch_ref = ReposManager.get_repo_branch(self, repo_path, branch)
         
         # Traverse the commits in the specified date range and branch
         for commit in repo.iter_commits(rev=branch_ref, since=from_date, until=to_date, reverse=True):

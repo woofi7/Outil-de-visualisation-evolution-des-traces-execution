@@ -10,9 +10,11 @@ from model.LogInstructionCollectors.LogInstruction import LogInstruction
 
 
 class TestStrategyLog4j(unittest.TestCase):
-        
-    def setUp(self):
-        self.strat = Log4jCollector()
+    
+    @classmethod
+    def setUpClass(cls):
+        cls.strat = Log4jCollector()
+        cls.app = QApplication([])
 
     def test_logs_empty(self):
         beforeCode = None
@@ -216,7 +218,6 @@ class TestStrategyLog4j(unittest.TestCase):
         self.assertEqual(len(logs), 6)
 
     def test_get_log_instructions(self):
-        app = QApplication([])
 
         # Mocked commit objects
         commit1 = MagicMock()

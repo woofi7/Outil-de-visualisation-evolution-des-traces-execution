@@ -1,21 +1,27 @@
 import unittest
-from unittest.mock import Mock
+import json
+from unittest.mock import Mock, patch, MagicMock
+from model.GraphBuilders.GraphBuilder import GraphBuilder
 from model.LogInstructionCollectors.Modification import Modification
 from model.LogInstructionCollectors.LogInstruction import LogInstruction
 from controller.TraceVisualizerController import TraceVisualizerController
 from model.LogInstructionCollectors.Log4pCollector import Log4pCollector
 from model.LogInstructionCollectors.Log4jCollector import Log4jCollector
 from unittest.mock import MagicMock, patch
-from PyQt6.QtWidgets import QLineEdit, QApplication
-from view.PopupView import PopupManager
-import traceback
+from PyQt6.QtWidgets import QLineEdit, QApplication, QMessageBox
+from PyQt6.QtCore import Qt
+from model.LogInstructionsFileGenerators.CsvFileGenerator import CsvFileGenerator
+from model.LogInstructionsFileGenerators.JsonFileGenerator import JsonFileGenerator
 
-
+from view.TraceVisualizerView import TraceVisualizerView
 
 class test_TraceVisualizerController(unittest.TestCase):
+    
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication([])
         
     def test_TraceVisualizerController_(self):
-        app = QApplication([])
         view = Mock()
         model = Mock()
         home_view = Mock()
@@ -30,14 +36,13 @@ class test_TraceVisualizerController(unittest.TestCase):
         with patch('model.LogInstructionCollectors.Log4pCollector.Log4pCollector.get_log_instructions', mock_get_log_instructions), \
             patch('view.TraceVisualizerView.TraceVisualizerView.set_graphic', mock_set_graphic),\
             patch('model.GraphBuilders.GraphBuilder.GraphBuilder.build_graph', mock_build_graph) :
-            tvc = TraceVisualizerController([QLineEdit('log4p')], 'from_date', 'to_date', 'repo_path', 'searched_path', 'searched_branch', 'searched_author')
+            tvc = TraceVisualizerController.fromArgs([QLineEdit('log4p')], 'from_date', 'to_date', 'repo_path', 'searched_path', 'searched_branch', 'searched_author')
         mock_get_log_instructions.assert_called_once()
         mock_set_graphic.assert_called_once()
         mock_build_graph.assert_called_once()
         self.assertIsInstance(tvc.log_instruction_collector, Log4pCollector)
 
     def test_TraceVisualizerController_Log4j(self):
-        app = QApplication([])
         view = Mock()
         model = Mock()
         home_view = Mock()
@@ -52,12 +57,91 @@ class test_TraceVisualizerController(unittest.TestCase):
         with patch('model.LogInstructionCollectors.Log4jCollector.Log4jCollector.get_log_instructions', mock_get_log_instructions), \
             patch('view.TraceVisualizerView.TraceVisualizerView.set_graphic', mock_set_graphic),\
             patch('model.GraphBuilders.GraphBuilder.GraphBuilder.build_graph', mock_build_graph) :
-            tvc = TraceVisualizerController([QLineEdit('log4j')], 'from_date', 'to_date', 'repo_path', 'searched_path', 'searched_branch', 'searched_author')
+            tvc = TraceVisualizerController.fromArgs([QLineEdit('log4j')], 'from_date', 'to_date', 'repo_path', 'searched_path', 'searched_branch', 'searched_author')
         mock_get_log_instructions.assert_called_once()
         mock_set_graphic.assert_called_once()
         mock_build_graph.assert_called_once()
         self.assertIsInstance(tvc.log_instruction_collector, Log4jCollector)
+        
+    def test_set_strategy_collector(self):
+        collector = TraceVisualizerController._set_strategy_collector('log4p')
+        self.assertIsInstance(collector, Log4pCollector)
+        collector = TraceVisualizerController._set_strategy_collector('log4j')
+        self.assertIsInstance(collector, Log4jCollector)
+        with self.assertRaises(ValueError):
+            TraceVisualizerController._set_strategy_collector('invalid')
 
+    @patch('model.LogInstructionDiffGenerator.LogInstructionDiffGenerator.getCommitChanges')
+    @patch('view.SelectCommitWindowView.SelectCommitWindowView')
+    def test_show_commit_changes(self, mock_select_commit_window_view, mock_get_commit_changes):
+        controller = TraceVisualizerController([])
+        item = MagicMock()
+        controller._show_commit_changes(item)
+        mock_get_commit_changes.assert_called_once()
+        self.assertEqual(mock_select_commit_window_view.call_count, 1)
+
+
+    def test_set_strategy_generator_file(self):
+        controller = TraceVisualizerController([])
+        generator = controller._set_strategy_generator_file('csv')
+        self.assertIsInstance(generator, CsvFileGenerator)
+        with self.assertRaises(ValueError):
+            controller._set_strategy_generator_file('invalid')
+
+    @patch.object(GraphBuilder, 'build_graph')
+    @patch.object(TraceVisualizerView, 'set_graphic')
+    @patch.object(TraceVisualizerView, 'set_log_instructions')
+    def test_set_view_data(self, mock_set_log_instructions, mock_set_graphic, mock_build_graph):
+        controller = TraceVisualizerController([])
+        
+        log_instruction_mock = Mock()
+        log_instruction_mock.modifications = [Mock()]
+
+        log_instructions = [log_instruction_mock]
+        controller._set_view_data(log_instructions)
+
+        mock_set_log_instructions.assert_called_once_with(log_instructions)
+        mock_build_graph.assert_called_once()
+        mock_set_graphic.assert_called_once()
+
+
+    def test_filter_logs(self):
+        controller = TraceVisualizerController([])
+        controller.all_log_instructions = [Mock(modifications=[Mock(), Mock()])]
+        filter_widget = Mock()
+        filter_widget.currentText.return_value = 'All'
+        with patch.object(controller, '_set_view_data'):
+            controller._filter_logs(filter_widget)
+        filter_widget.currentText.return_value = 'Added'
+        with patch.object(controller, '_set_view_data'):
+            controller._filter_logs(filter_widget)
+        with self.assertRaises(ValueError):
+            filter_widget.currentText.return_value = 'Invalid'
+            controller._filter_logs(filter_widget)
+
+
+    @patch.object(GraphBuilder, 'build_graph')
+    @patch.object(TraceVisualizerView, 'set_graphic')
+    def test_highlight_graph_element(self, mock_set_graphic, mock_build_graph):
+        controller = TraceVisualizerController([])
+        item = Mock()
+        controller.filtered_log_instructions = [Mock()]
+        controller.trace_visualizer_view.log_instructions_list.row = MagicMock(return_value=0)
+        controller._highlight_graph_element(item)
+        mock_build_graph.assert_called_once()
+        mock_set_graphic.assert_called_once()
+
+
+    @patch('PyQt6.QtWidgets.QFileDialog.getSaveFileName', return_value=('filename.json', ''))
+    @patch.object(JsonFileGenerator, 'createFile')
+    @patch.object(QMessageBox, 'exec')
+    def test_save_data(self, mock_exec, mock_create_file, mock_get_save_file_name):
+        controller = TraceVisualizerController([])
+        controller.all_log_instructions = [Mock()]
+        controller._save_data()
+        mock_get_save_file_name.assert_called_once()
+        mock_create_file.assert_called_once()
+        mock_exec.assert_called_once()
    
 
 if __name__ == "__main__":

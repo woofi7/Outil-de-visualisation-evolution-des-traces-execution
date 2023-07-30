@@ -1,5 +1,5 @@
 from view.PopupView import PopupManager
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QCalendarWidget, QHBoxLayout, QComboBox, QLineEdit, QListWidget, QPushButton, QFileDialog
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QCalendarWidget, QHBoxLayout, QComboBox, QLineEdit, QListWidget, QPushButton
 from PyQt6.QtCore import QDate
 import traceback
 
@@ -71,11 +71,8 @@ class HomeView(QWidget):
             layout.addWidget(self.searchButton)
 
             # Create the "Load from csv" button
-            self.load_from_csv_button = QPushButton("Load from csv", self)
+            self.load_from_csv_button = QPushButton("Load from file", self)
             layout.addWidget(self.load_from_csv_button)
-
-            # # Connect the button's clicked signal to the load_csv_file method
-            # self.load_from_csv_button.clicked.connect(self.load_csv_file)
 
             self.show()
         except Exception as e:

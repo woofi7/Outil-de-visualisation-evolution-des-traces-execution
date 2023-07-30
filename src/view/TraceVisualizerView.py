@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidget, QHBoxLayout, QComboBox, QSplitter, QFrame, QListWidgetItem
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidget, QHBoxLayout, QComboBox, QSplitter, QFrame, QListWidgetItem, QPushButton
 from PyQt6 import QtCore,QtWidgets
 import matplotlib.pyplot as plt
 from view.PopupView import PopupManager
@@ -32,9 +32,11 @@ class TraceVisualizerView(QWidget):
             filters_label.setSizePolicy(QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Fixed)
             filters = QComboBox()
             filters.addItems(["All", "Added", "Deleted", "Modified"])
+            self.save_data_button = QPushButton("Save data", self)
             
             self.right_layout.addWidget(filters_label)
             self.right_layout.addWidget(filters)
+            self.right_layout.addWidget(self.save_data_button)
 
             splitter_vertical = QSplitter(QtCore.Qt.Orientation.Vertical)
             splitter_vertical.addWidget(self.right_frame)
@@ -114,7 +116,7 @@ class TraceVisualizerView(QWidget):
         else:
             return None
         
-        with open('./csv/data.csv', 'r') as file:
+        with open('./files/graphData.csv', 'r') as file:
             csv_data = csv.reader(file)
             next(csv_data)
             for row in csv_data:
