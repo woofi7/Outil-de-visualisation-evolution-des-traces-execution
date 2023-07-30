@@ -47,8 +47,6 @@ class TraceVisualizerController:
 
     def _show_commit_changes(self, item):
         try:
-            print('ITEM : ')
-            print(item.data(QtCore.Qt.ItemDataRole.UserRole).modifications)
             commits = []
             modifications = item.data(QtCore.Qt.ItemDataRole.UserRole).modifications
             for modification in modifications:

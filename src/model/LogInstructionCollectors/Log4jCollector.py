@@ -117,9 +117,10 @@ class Log4jCollector(LogInstructionCollector):
             return afterMatches, logs
         else:
             for log in logs:
-                    modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename, author)
-                    log.modifications.append(modification)
-            return [], logs        
+                modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename, author)
+                log.modifications.append(modification)
+            return [], logs
+      
 
     def parse_java_code(self, code):
         try:

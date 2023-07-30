@@ -23,7 +23,7 @@ class test_GraphBuilder(unittest.TestCase):
         plt.subplots = MagicMock(return_value = (figMock, axesMock))
         plt.xticks = Mock()
         sns.lineplot = Mock()
-        view =self.gen.build_graph('../csv/data.csv')
+        view =self.gen.build_graph('./csv/data.csv')
         self.assertIsNotNone(view)
         plt.subplots.assert_called_once()
 

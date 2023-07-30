@@ -30,9 +30,9 @@ class test_TraceVisualizerView(unittest.TestCase):
 
      logInstruction = LogInstruction('info','"info"', [modification], '2023-01-01')
      logInstruction2 = LogInstruction('info','"info"', [modification2], '2023-01-01')
-     tvv.set_log_instructions( log_instructions={'list':[logInstruction]}, deleted_instruction=[logInstruction2])
+     tvv.set_log_instructions( log_instructions=[logInstruction])
      tvv.log_instructions_list.addItem.assert_called()
-   
+
   
   def test_Graphic_None(self):
      app = QApplication([])
