@@ -31,4 +31,3 @@ jobs:
           run: |
             cd src
             coverage report --rcfile=.coveragerc --fail-under=50
-  
