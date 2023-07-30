@@ -6,6 +6,7 @@ from controller.TraceVisualizerController import TraceVisualizerController
 from model.ReposManager import ReposManager
 from datetime import datetime
 from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QPushButton, QFileDialog
 from functools import partial
 from view.HomeView import HomeView
 import traceback
@@ -26,6 +27,7 @@ class HomeController:
         self.home_view.to_calendar.selectionChanged.connect(self._validate_date_range)
         self.home_view.deleteRepoButton.clicked.connect(self._delete_repo_button_clicked)
         self.home_view.repoList.currentTextChanged.connect(self._update_branch_list)
+        self.home_view.load_from_csv_button.clicked.connect(self.load_csv_file)
 
     def _search_button_clicked(self):
             # Retrieve selected dates and repository name from the view
@@ -76,3 +78,8 @@ class HomeController:
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_error_popup("Caught Error", str(e))
+
+    def load_csv_file(self):
+        file_name, _ = QFileDialog.getOpenFileName(self.home_view, "Load CSV File", "", "CSV Files (*.csv);;All Files (*)", options=QFileDialog.Option.ReadOnly)
+        # if file_name:
+        #     self.show_csv_file_info(file_name)

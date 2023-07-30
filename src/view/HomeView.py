@@ -1,5 +1,5 @@
 from view.PopupView import PopupManager
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QCalendarWidget, QHBoxLayout, QComboBox, QLineEdit, QListWidget
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QCalendarWidget, QHBoxLayout, QComboBox, QLineEdit, QListWidget, QPushButton, QFileDialog
 from PyQt6.QtCore import QDate
 import traceback
 
@@ -69,6 +69,14 @@ class HomeView(QWidget):
             # Create the search button
             self.searchButton = QPushButton("Search")
             layout.addWidget(self.searchButton)
+
+            # Create the "Load from csv" button
+            self.load_from_csv_button = QPushButton("Load from csv", self)
+            layout.addWidget(self.load_from_csv_button)
+
+            # # Connect the button's clicked signal to the load_csv_file method
+            # self.load_from_csv_button.clicked.connect(self.load_csv_file)
+
             self.show()
         except Exception as e:
             traceback.print_exc()
@@ -91,6 +99,11 @@ class HomeView(QWidget):
         except Exception as e:
             #traceback.print_exc()
             PopupManager.show_info_popup("Caught Error", str(e))
+
+    # def load_csv_file(self):
+    #     file_name, _ = QFileDialog.getOpenFileName(self, "Load CSV File", "", "CSV Files (*.csv);;All Files (*)", options=QFileDialog.Option.ReadOnly)
+    #     # if file_name:
+    #     #     self.show_csv_file_info(file_name)
     
     def popupError(self,title,  message):
        PopupManager.show_info_popup(title, message)
