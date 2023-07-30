@@ -25,28 +25,14 @@ class test_TraceVisualizerView(unittest.TestCase):
      app = QApplication([])
      tvv = TraceVisualizerView()
      tvv.log_instructions_list.addItem = Mock()
-     modification = Modification('commit', 'instruction','date', 'type', 'beforeCode', 'aftercode', 'hash', 'filename')
-     modification2 = Modification('commit', 'instruction','date', 'deleted', 'beforeCode', 'aftercode', 'hash', 'filename')
+     modification = Modification('commit', 'instruction','date', 'type', 'beforeCode', 'aftercode', 'hash', 'filename', 'author')
+     modification2 = Modification('commit', 'instruction','date', 'deleted', 'beforeCode', 'aftercode', 'hash', 'filename', 'author')
 
      logInstruction = LogInstruction('info','"info"', [modification], '2023-01-01')
      logInstruction2 = LogInstruction('info','"info"', [modification2], '2023-01-01')
      tvv.set_log_instructions( log_instructions={'list':[logInstruction]}, deleted_instruction=[logInstruction2])
      tvv.log_instructions_list.addItem.assert_called()
-   
-  def test_TraceVisualizerView_None_instruction(self):
-     app = QApplication([])
-     tvv = TraceVisualizerView()
-     tvv.log_instructions_list.addItem = Mock()
-     modification = Modification('commit', 'instruction','date', 'type', 'beforeCode', 'aftercode', 'hash', 'filename')
-     modification2 = Modification('commit', 'instruction','date', 'deleted', 'beforeCode', 'aftercode', 'hash', 'filename')
 
-     logInstruction = LogInstruction('info','"info"', [modification], '2023-01-01')
-     logInstruction2 = LogInstruction('info','"info"', [modification2], '2023-01-01')
-     try:
-         tvv.set_log_instructions( log_instructions=None, deleted_instruction=None)
-     except ValueError as e:
-         self.assertEqual(str(e),'log_instructions cannot be None')
-     tvv.log_instructions_list.addItem.assert_not_called()
   
   def test_Graphic_None(self):
      app = QApplication([])

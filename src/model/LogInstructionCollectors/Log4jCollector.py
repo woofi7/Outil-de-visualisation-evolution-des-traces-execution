@@ -31,7 +31,7 @@ class Log4jCollector(LogInstructionCollector):
                             else:
                                 if modified_file.new_path not in self.logs:
                                     self.logs[modified_file.new_path] = []
-                                logs, deletedlogs = self.getLogs(commit.hash, modified_file.filename, modified_file.source_code_before, modified_file.source_code, commit.committer_date, self.logs[modified_file.new_path], modified_file.change_type)
+                                logs, deletedlogs = self.getLogs(commit.hash, modified_file.filename, modified_file.source_code_before, modified_file.source_code, commit.committer_date, self.logs[modified_file.new_path], modified_file.change_type, commit.author.name)
                                 if deletedlogs is not None:
                                     self.deletedlogs.append(deletedlogs)
                                 self.logs[modified_file.new_path] = logs
@@ -39,7 +39,7 @@ class Log4jCollector(LogInstructionCollector):
                             
             return self.logs, self.deletedlogs
     
-    def getLogs(self, hash, filename, before_code, after_code, date, logs, type):
+    def getLogs(self, hash, filename, before_code, after_code, date, logs, type, author):
         # print(f"HASH : {hash}")
         # print(f"FILENAME : {filename}")
         if before_code is None:
@@ -60,7 +60,7 @@ class Log4jCollector(LogInstructionCollector):
                     
             for _, node in afterParse:
                 if isinstance(node, MethodInvocation) and node.member in logPattern:
-                    afterMatches.append(self.get_Log_Instruction(node, date, before_code, after_code, hash, filename, type))
+                    afterMatches.append(self.get_Log_Instruction(node, date, before_code, after_code, hash, filename, type, author))
                 
             #if(len(beforeMatches) != len(logs)):
             #    return afterMatches, logs
@@ -74,29 +74,29 @@ class Log4jCollector(LogInstructionCollector):
             for afterMatch in afterMatches:
                 for index, log in enumerate (logs):
                     if ((afterMatch.level != log.level and afterMatch.instruction == log.instruction) or (afterMatch.level == log.level and afterMatch.instruction != log.instruction)) and len(logs) > 0:
-                        modification = Modification(afterMatch.level, afterMatch.instruction, date, type, before_code, after_code, hash, filename)
+                        modification = Modification(afterMatch.level, afterMatch.instruction, date, type, before_code, after_code, hash, filename, author)
                         afterMatch.modifications = logs[index].modifications
                         afterMatch.modifications.append(modification)
                         logs.remove(logs[index])
                         break
 
             for log in logs:
-                modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename)
+                modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename, author)
                 log.modifications.append(modification)
 
             return afterMatches, logs
         else:
             for log in logs:
-                    modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename)
+                    modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename, author)
                     log.modifications.append(modification)
             return [], logs        
 
     def parse_java_code(self, code):
         return javalang.parse.parse(code)
     
-    def get_Log_Instruction(self, node, date, before_code, after_code, hash, filename, type):
+    def get_Log_Instruction(self, node, date, before_code, after_code, hash, filename, type, author):
         instruction = self.get_instruction(node.arguments)
-        modification = Modification(node.member, instruction, date, type, before_code, after_code, hash, filename)
+        modification = Modification(node.member, instruction, date, type, before_code, after_code, hash, filename, author)
         return LogInstruction(node.member, instruction, [modification], date)
 
     def get_instruction(self, arguments):
