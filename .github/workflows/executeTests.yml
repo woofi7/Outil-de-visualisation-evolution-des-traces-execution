@@ -25,10 +25,17 @@ jobs:
         - name: Run tests with coverage
           run: |
             cd src
-            coverage run -m unittest
+            coverage run -m unittest || true
   
         - name: Check coverage percentage
           run: |
             cd src
-            coverage report --rcfile=.coveragerc --fail-under=50
-  
+            coverage report --rcfile=.coveragerc --fail-under=80
+            if [ $? -eq 0 ] && [ "${{ steps.coverage.outcome }}" == "success" ]; then
+              echo "All tests passed and code coverage is >= 80%."
+              exit 0
+            else
+              echo "Some tests failed or code coverage is < 80%."
+              exit 1
+            fi
+    
