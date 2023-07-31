@@ -30,15 +30,6 @@ jobs:
         - name: Check coverage percentage
           run: |
             cd src
-            $coverageOutput = coverage report --rcfile=.coveragerc --fail-under=80
-            $coveragePercentage = $coverageOutput | Select-String -Pattern '\d+%' -AllMatches | ForEach-Object { $_.Matches } | ForEach-Object { $_.Value }
-            $allTestsPassed = $coverageOutput -notmatch 'FAILED'
-            if ($allTestsPassed) {
-              Write-Host "All tests passed and code coverage is $coveragePercentage."
-              exit 0
-            }
-            else {
-              Write-Host "Some tests failed or code coverage is < 80%."
-              exit 1
-            }
+            python -m unittest
+            coverage report --rcfile=.coveragerc --fail-under=80
     
