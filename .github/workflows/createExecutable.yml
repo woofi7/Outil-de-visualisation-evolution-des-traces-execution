@@ -13,7 +13,7 @@ jobs:
       run: |
         if [[ "${{ github.actor }}" == "bot-actions-user" ]]; then
           echo "Skipping workflow execution for BOT."
-          exit 0
+          exit 78
         fi
     - name: Checkout code
       uses: actions/checkout@v3
@@ -62,7 +62,7 @@ jobs:
       run: |
         if ($env:GITHUB_ACTOR -eq "bot-actions-user") {
           Write-Host "Skipping workflow execution for BOT."
-          exit 0
+          exit 78
         }
          
     - name: Checkout code
