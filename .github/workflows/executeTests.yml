@@ -7,7 +7,7 @@ on:
 
 jobs:
     build-and-test:
-      runs-on: macos-latest
+      runs-on: windows-latest
       steps:
         - name: Checkout code
           uses: actions/checkout@v2
@@ -25,10 +25,11 @@ jobs:
         - name: Run tests with coverage
           run: |
             cd src
-            coverage run -m unittest
+            coverage run -m unittest || true
   
         - name: Check coverage percentage
           run: |
             cd src
+            python -m unittest
             coverage report --rcfile=.coveragerc --fail-under=80
-  
+    
