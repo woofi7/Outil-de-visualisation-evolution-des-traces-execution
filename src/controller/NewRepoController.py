@@ -1,36 +1,34 @@
 import traceback
 from view.PopupView import PopupManager
+from model.ReposManager import ReposManager
+from view.NewRepoView import NewRepoView
 
 class NewRepoController:
-    def __init__(self, newRepoView, newRepomodel, homeController):
-        try:
-            self.view = newRepoView
-            self.model = newRepomodel
-            self.view.okButton.clicked.connect(self.ok_button_clicked)
-            self.view.cancelButton.clicked.connect(self.cancel_button_clicked)
-            self.homeController = homeController
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))    
+    def __init__(self, home_view):
+        self.new_repo_view = NewRepoView()
+        self.home_view = home_view
+        self.repo_manager = ReposManager()
+        self.new_repo_view.okButton.clicked.connect(self._ok_button_clicked)
+        self.new_repo_view.cancelButton.clicked.connect(self._cancel_button_clicked)
 
-    def ok_button_clicked(self):
+    def _ok_button_clicked(self):
         try:
-            # Get the repository name and path from the view
-            repoName = self.view.newRepo.text().split("/")[-1].split(".")[0]
-            repoPath = "./repo/" + repoName + "/"
+            # Get the repository name and convert it to path
+            repo_name = self.new_repo_view.newRepo.text().split("/")[-1].split(".")[0]
+            repo_path = "./repo/" + repo_name + "/"
 
             # Clone the repository using the model
-            self.model.cloneRepo(self.view.newRepo.text(), repoPath)
+            self.repo_manager.clone_repo(self.new_repo_view.newRepo.text(), repo_path)
 
             # Close the current view
-            self.view.close()
+            self.new_repo_view.close()
 
             # Update the repository list in the home controller
-            self.homeController.update_repo_list()
+            self.home_view.setRepos(self.repo_manager.get_repos("./repo/"))
         except Exception as e:
             traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
+            PopupManager.show_info_popup("Caught Error", str(e))
 
-    def cancel_button_clicked(self):
-        # Close the current view
-        self.view.close()
+    def _cancel_button_clicked(self):
+        #Close the current view
+        self.new_repo_view.close()

@@ -2,3 +2,5 @@ venv/
 repo/
 **/__pycache__/*.pyc
 .vscode
+*.csv
+pfe-env/

@@ -28,4 +28,4 @@ class NewRepoView(QWidget):
             self.show()
         except Exception as e:
             traceback.print_exc()
-            PopupManager.show_error_popup("Caught Error", str(e))
+            PopupManager.show_info_popup("Caught Error", str(e))
