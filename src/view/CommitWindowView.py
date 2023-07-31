@@ -5,11 +5,9 @@ import traceback
 
 class CommitWindowView(QWidget):
     def __init__(self, commit):
-        try:
             super().__init__()
             print(commit)
             print(f"commit length : {len(commit[0][:7])}")
-            #commit_hash = commit[0]
             self.setWindowTitle(f"Commit Changes: {commit[0][:7]}")
             print(f"COMMIT HASH : {commit[0][:7]}")
             self.setGeometry(200, 200, 800, 600)
@@ -19,14 +17,6 @@ class CommitWindowView(QWidget):
             label = QLabel(f"Commit: {commit[0][:7]}", self)
             layout.addWidget(label)
 
-            # AUTEUR ET DATE WIP
-            # author_label = QLabel(f"Auteur: {commit.author.name}", self)
-            # layout.addWidget(author_label)
-
-            # date_label = QLabel(f"Date: {commit.author_date}", self)
-            # layout.addWidget(date_label)
-
-            # self.file_buttons = {}  # Dictionnaire pour stocker les boutons de chaque fichier
             self.code_tables = {}  # Dictionnaire pour stocker les tables de chaque fichierw
 
             label1 = QLabel(f"File: {commit[1]}\n", self)
@@ -63,17 +53,7 @@ class CommitWindowView(QWidget):
 
             self.setLayout(layout)
             self.show()  # Show the widget
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_info_popup("Caught Error", str(e))
 
-    # def toggle_code_table(self, checked, filename):
-    #     table = self.code_tables.get(filename)
-    #     if table:
-    #         if checked:
-    #             table.show()
-    #         else:
-    #             table.hide()
 
     def highlight_code(self, item, color):
         item.setBackground(color)

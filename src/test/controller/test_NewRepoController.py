@@ -8,9 +8,11 @@ from PyQt6.QtWidgets import QLineEdit, QApplication
 
 class test_NewRepoController(unittest.TestCase):
         
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication([])
     
     def test_ok_button_clicked(self):
-        app = QApplication([])
         view = Mock()
         view.newRepo = MagicMock(return_values = QLineEdit('test/test/test.py'))
         newRepoController = NewRepoController(view)
@@ -21,18 +23,12 @@ class test_NewRepoController(unittest.TestCase):
         view.setRepos.assert_called_once()
 
     def test_cancel_button_clicked(self):
-        app = QApplication([])
         view = Mock()
         view.newRepo = MagicMock(return_values = QLineEdit('test/test/test.py'))
         newRepoController = NewRepoController(view)
         newRepoController.new_repo_view = Mock()
         newRepoController._cancel_button_clicked()
         newRepoController.new_repo_view.close.assert_called_once()
-
-        
-
-
-   
 
 if __name__ == "__main__":
     unittest.main()

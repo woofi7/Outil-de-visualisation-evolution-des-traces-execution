@@ -10,10 +10,11 @@ import traceback
 
 class test_HomeView(unittest.TestCase):
         
-
+  @classmethod
+  def setUpClass(cls):
+      cls.app = QApplication([])
     
   def test_HomeView_init(self):
-     app = QApplication([])
      view = HomeView()
      self.assertIsNotNone(view.repoList)
      self.assertIsNotNone(view.newRepoButton)
@@ -28,13 +29,11 @@ class test_HomeView(unittest.TestCase):
      self.assertIsNotNone(view.to_calendar)
 
   def test_HomeView_setRepos(self):
-     app = QApplication([])
      view = HomeView()
      view.setRepos(['repo1', 'repo2'] )
      self.assertEqual(len(view.repoList), 2) 
 
   def HomeView_setRepos_Exception(self):
-     app = QApplication([])
      PopupManager.show_info_popup = Mock()
      traceback.print_exc = Mock()
      view = HomeView()
@@ -44,7 +43,6 @@ class test_HomeView(unittest.TestCase):
      traceback.print_exc.assert_called_once()
 
   def test_HomeView_setBranche(self):
-     app = QApplication([])
      view = HomeView()
      view.setBranches(['branche1', 'branche'] )
      self.assertEqual(len(view.branches), 2) 
@@ -52,7 +50,6 @@ class test_HomeView(unittest.TestCase):
   @patch('view.PopupView.PopupManager.show_error_popup')
   @patch('traceback.print_exc')
   def HomeView_setBranch_Exception(self, mock_popup, mock_traceback):
-     app = QApplication([])
      mock_popup = Mock()
      mock_traceback = Mock()
      view = HomeView()

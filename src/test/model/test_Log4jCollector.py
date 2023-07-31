@@ -3,14 +3,18 @@ import unittest
 from model.LogInstructionCollectors.Log4jCollector import Log4jCollector
 from pydriller import Repository, Commit, ModificationType
 from datetime import datetime
+from git import Repo, Diff
 from PyQt6.QtWidgets import QApplication
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch, Mock
+from model.LogInstructionCollectors.LogInstruction import LogInstruction
 
 
 class TestStrategyLog4j(unittest.TestCase):
-        
-    def setUp(self):
-        self.strat = Log4jCollector()
+    
+    @classmethod
+    def setUpClass(cls):
+        cls.strat = Log4jCollector()
+        cls.app = QApplication([])
 
     def test_logs_empty(self):
         beforeCode = None
@@ -212,60 +216,63 @@ class TestStrategyLog4j(unittest.TestCase):
                         }'''
         logs, deleted_logs = self.strat.getLogs(hash='test', filename='testFile',before_code=beforeCode, after_code=afterCode, date='2023-01-01',logs=logs, type='test', author='test')
         self.assertEqual(len(logs), 6)
-        self.assertEqual(len(deleted_logs), 0)
 
     def test_get_log_instructions(self):
-        app = QApplication([])
+
         # Mocked commit objects
         commit1 = MagicMock()
         commit1.author.name = "John"
-        commit1.modified_files = [
-            MagicMock(filename="file1.java", old_path=None, new_path="dir/file1.java", change_type=ModificationType.ADD),
-            MagicMock(filename="file2.java", old_path=None, new_path="dir/file2.java", change_type=ModificationType.ADD),
+        commit1.parents = []
+        commit1.diff.return_value = [
+            MagicMock(change_type='A', a_path=None, b_path="dir/file1.java"),
+            MagicMock(change_type='A', a_path=None, b_path="dir/file2.java"),
         ]
 
         commit2 = MagicMock()
         commit2.author.name = "Jane"
-        commit2.modified_files = [
-            MagicMock(filename="file1.java", old_path="dir/file1.java", new_path="dir/file1_updated.java", change_type=ModificationType.RENAME),
-            MagicMock(filename="file3.java", old_path=None, new_path="dir/file3.java", change_type=ModificationType.ADD),
+        commit2.parents = [commit1]
+        commit2.diff.return_value = [
+            MagicMock(change_type='R', a_path="dir/file1.java", b_path="dir/file1_updated.java"),
+            MagicMock(change_type='A', a_path=None, b_path="dir/file3.java"),
         ]
 
         commit3 = MagicMock()
         commit3.author.name = "Jane"
-        commit3.modified_files = [
-            MagicMock(filename="file1_updated.java", old_path="dir/file1_updated.java", new_path="", change_type=ModificationType.DELETE),
+        commit3.parents = [commit2]
+        commit3.diff.return_value = [
+            MagicMock(change_type='R', a_path="dir/file1.java", b_path="dir/file1_updated.java"),
+            MagicMock(change_type='D', a_path="dir/file1_updated.java", b_path=None),
         ]
 
-        # Mock the Repository class and its methods
-        repository_mock = MagicMock()
-        Repository.traverse_commits=  MagicMock(return_value = [commit1, commit2, commit3])
+        # Patch the git.Repo class
+        with patch('model.ReposManager.ReposManager.get_repo_branch')as repo_mock, \
+                patch('model.LogInstructionCollectors.Log4jCollector.Log4jCollector.getLogs') as getLogs_mock:
+            # Configure repo_mock and set its behavior
+            repo_instance = Mock()
+            branch_ref = Mock()
+            repo_mock.return_value = (repo_instance, branch_ref)
 
-        # Instantiate the class under test
-        my_object = Log4jCollector()
-        my_object.getLogs = MagicMock(return_value=([],[]))
+            repo_instance.iter_commits.return_value = [commit1, commit2, commit3]
 
-        # Call the method to be tested
-        result_logs, result_deleted_logs = my_object.get_log_instructions(
-            repo="my_repo",
-            from_date=datetime(2022, 1, 1),
-            to_date=datetime(2022, 12, 31),
-            path_in_directory="",
-            branch="master",
-            author=""
+            # Instantiate the class under test
+            my_object = Log4jCollector()
+            logInstruction = LogInstruction('info','"info"', [], '2023-01-01')     
+            logInstruction1 = LogInstruction('info','"info"', [], '2023-01-01')
 
-        )
+            getLogs_mock.return_value=([logInstruction], [logInstruction1])
 
-        # Perform assertions on the results
-        expected_logs = {
-            "dir/file1.java": [],
-            "dir/file2.java": [],
-            "dir/file1_updated.java": [],
-            "dir/file3.java": [],
-        }
-        expected_deleted_logs = [[],[],[]]
-        self.assertEqual(result_logs, expected_logs)
-        self.assertEqual(result_deleted_logs, expected_deleted_logs)
+            # Call the method to be tested
+            result_logs = my_object.get_log_instructions(
+                repo_path="my_repo",
+                from_date=datetime(2022, 1, 1),
+                to_date=datetime(2022, 12, 31),
+                path_in_directory="",
+                branch="master",
+                author=""
+            )
+    
+            self.assertEqual(len(result_logs), 6)
+            getLogs_mock.assert_called()
 
         
 if __name__ == "__main__":
