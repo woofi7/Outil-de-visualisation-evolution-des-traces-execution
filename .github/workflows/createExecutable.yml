@@ -8,13 +8,12 @@ jobs:
   create-executable-linux:
     runs-on: ubuntu-latest
     steps:
-    - name: Check if workflow should be skipped for Bot
+    - name: Checkout code
       run: |
         if [[ "${{ github.actor }}" == "bot-actions-user" ]]; then
           echo "Skipping workflow execution for BOT."
-          exit 78
+          exit 0
         fi
-    - name: Checkout code
       uses: actions/checkout@v3
       with:
         ref: ${{ github.head_ref }}
@@ -22,25 +21,46 @@ jobs:
         token: ${{ secrets.BOT_PAT_TOKEN }}
 
     - name: Set up Python
+      run: |
+        if [[ "${{ github.actor }}" == "bot-actions-user" ]]; then
+          echo "Skipping workflow execution for BOT."
+          exit 0
+        fi
       uses: actions/setup-python@v2
       with:
         python-version: '3.9'
 
     - name: Install dependencies
       run: |
+        if [[ "${{ github.actor }}" == "bot-actions-user" ]]; then
+          echo "Skipping workflow execution for BOT."
+          exit 0
+        fi
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
     - name: Install dependencies
       run: |
+        if [[ "${{ github.actor }}" == "bot-actions-user" ]]; then
+          echo "Skipping workflow execution for BOT."
+          exit 0
+        fi
         pip install pyinstaller
 
     - name: Build Linux executable
       run: |
+        if [[ "${{ github.actor }}" == "bot-actions-user" ]]; then
+          echo "Skipping workflow execution for BOT."
+          exit 0
+        fi
         pyinstaller -y --name myscript_linux src/main.py
 
     - name: Configure Git
       run: |
+        if [[ "${{ github.actor }}" == "bot-actions-user" ]]; then
+          echo "Skipping workflow execution for BOT."
+          exit 0
+        fi
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add .
@@ -48,6 +68,11 @@ jobs:
         git commit -m "Add artifacts" || true
       
     - name: push artifacts
+      run: |
+        if [[ "${{ github.actor }}" == "bot-actions-user" ]]; then
+          echo "Skipping workflow execution for BOT."
+          exit 0
+        fi
       uses: ad-m/github-push-action@master
       with:
         branch: ${{ github.ref }}
