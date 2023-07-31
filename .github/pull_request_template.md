@@ -1,34 +1,33 @@
 ## Description
 
-Décrivez les changements apportés par cette demande d'extraction (PR).
+Describe the changes made by this pull request (PR).
 
-## Problèmes résolus
+## Issues Resolved
 
-Indiquez les numéros des problèmes GitHub (issues) résolus par cette PR (le cas échéant).
+Specify the GitHub issue numbers resolved by this PR (if applicable).
 
-## Changements de comportement
+## Behavior Changes
 
-Décrivez les changements de comportement qui pourraient affecter les utilisateurs de votre application ou de votre code.
+Describe any behavior changes that could affect users of your application or code.
 
-## Capture(s) d'écran
+## Screenshots
 
-Ajoutez des captures d'écran pour illustrer les changements, le cas échéant.
+Add screenshots to illustrate the changes, if applicable.
 
-## Tests effectués
+## Tests Performed
 
-Indiquez les tests que vous avez effectués pour vérifier que les changements fonctionnent correctement.
+Specify the tests you have performed to verify that the changes work correctly.
 
-## Instructions de déploiement
+## Deployment Instructions
 
-Si des instructions de déploiement sont nécessaires, ajoutez-les ici.
+If deployment instructions are necessary, add them here.
 
-## Tâches à accomplir
+## Tasks to Complete
 
-Listez les tâches qui doivent être accomplies avant que cette PR puisse être fusionnée.
+List the tasks that need to be accomplished before this PR can be merged.
 
-## Conformité
+## Compliance
 
-- [ ] J'ai lu et accepté le [CODE DE CONDUITE](link to code of conduct).
-- [ ] Cette PR est conforme aux normes de codage du projet.
-- [ ] Les tests ont été effectués et sont passés avec succès.
-- [ ] La documentation a été mise à jour, le cas échéant.
+- [ ] This PR complies with the project's coding standards.
+- [ ] Tests have been performed and passed successfully.
+- [ ] Documentation has been updated, if applicable.
