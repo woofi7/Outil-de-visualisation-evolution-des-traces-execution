@@ -1,0 +1,48 @@
+@startuml component
+skinparam component {
+  FontSize 13
+  BackgroundColor<<library>> Pink
+  BackgroundColor<<cache file>> Orange
+  BackgroundColor<<code package>> Blue
+  BackgroundColor<<external system>> Green
+}
+
+
+component "desktop application"{
+    component "controller" as controller << code package >>
+    component "data.csv" as data.csv << cache file >>
+    component "LogInstructionFileGenerator" as LogInstructionFileGenerator << code package >>
+    component "GraphBuilder" as GraphBuilder << code package >>
+    component "LogInstructionGenerator" as LogInstructionGenerator << code package >>
+    component "View" as View << code package >>
+    component "GitPyhon" as GitPython << library >>
+    component "Pyqt6" as Pyqt6 << library >>
+    portout " "
+}
+
+controller ..> "GraphBuilder"
+"GraphBuilder" ..> controller
+controller ..> "LogInstructionGenerator"
+LogInstructionGenerator ..> controller
+controller ..> "LogInstructionFileGenerator"
+LogInstructionFileGenerator ..>controller
+controller ..> View
+View ..> Pyqt6
+GraphBuilder ..> Pyqt6
+controller ..> data.csv
+component "GitHub" as GitHub << external system >>
+
+GitPython ..> " "
+" " ..> GitHub
+LogInstructionGenerator ..> GitPython
+LogInstructionFileGenerator ..> data.csv
+
+json legende{
+    "bleu" : "package de code",
+    "rose" : "bibliothèque",
+    "vert" : "système externe",
+    "oragne" : "fichier de mise en cache"
+}
+
+
+@enduml
