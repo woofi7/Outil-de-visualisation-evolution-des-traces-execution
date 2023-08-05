@@ -30,13 +30,13 @@ jobs:
 
       - name: Build Linux executable
         run: |
-          pyinstaller -y --name myscript_linux src/main.py
+          pyinstaller -y --name linux_runnable src/main.py
 
       - name: Configure Git
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add .
+          git add linux_runnable
           git pull origin ${{ github.ref }}
           git commit -m "Add artifacts" || true
 
@@ -69,13 +69,13 @@ jobs:
           pip install pyinstaller
 
       - name: Build Windows executable
-        run: pyinstaller -y --name myscript_windows src/main.py
+        run: pyinstaller -y --name windows_runnable src/main.py
 
       - name: Configure Git
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add .
+          git add windows_runnable.exe
           git pull origin ${{ github.ref }}
           git commit -m "Add artifacts" || true
 

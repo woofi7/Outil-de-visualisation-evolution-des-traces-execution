@@ -1,0 +1,33 @@
+@startuml component
+
+component "desktop application"{
+    component "GitPython"
+    component "controller"
+    component "data.csv"
+    component "LogInstructionFileGenerator"
+    component "GraphBuilder"
+    component "LogInstructionGenerator"
+    component "View"
+    component "Pyqt6"
+    portout " "
+}
+
+controller ..> "GraphBuilder"
+"GraphBuilder" ..> controller
+controller ..> "LogInstructionGenerator"
+LogInstructionGenerator ..> controller
+controller ..> "LogInstructionFileGenerator"
+LogInstructionFileGenerator ..>controller
+controller ..> View
+View ..> Pyqt6
+GraphBuilder ..> Pyqt6
+GraphBuilder ..> data.csv
+View ..> data.csv
+component "GitHub"
+
+GitPython ..> " "
+" " ..> GitHub
+LogInstructionGenerator ..> GitPython
+LogInstructionFileGenerator ..> data.csv
+
+@enduml
