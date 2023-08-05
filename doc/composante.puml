@@ -1,14 +1,22 @@
 @startuml component
+skinparam component {
+  FontSize 13
+  BackgroundColor<<library>> Pink
+  BackgroundColor<<cache file>> Orange
+  BackgroundColor<<code file>> Blue
+}
+
+
 
 component "desktop application"{
-    component "GitPython"
-    component "controller"
-    component "data.csv"
-    component "LogInstructionFileGenerator"
-    component "GraphBuilder"
-    component "LogInstructionGenerator"
-    component "View"
-    component "Pyqt6"
+    component "controller" as controller << code file >>
+    component "data.csv" as data.csv << cache file >>
+    component "LogInstructionFileGenerator" as LogInstructionFileGenerator << code file >>
+    component "GraphBuilder" as GraphBuilder << code file >>
+    component "LogInstructionGenerator" as LogInstructionGenerator << code file >>
+    component "View" as View << code file >>
+    component "GitPyhon" as GitPython << library >>
+    component "Pyqt6" as Pyqt6 << library >>
     portout " "
 }
 
