@@ -37,6 +37,12 @@ GitPython ..> " "
 LogInstructionGenerator ..> GitPython
 LogInstructionFileGenerator ..> data.csv
 
-note top of GitHub : a top note
+json legende{
+    "bleu" : "package de code",
+    "rose" : "bibliothèque",
+    "vert" : "système externe",
+    "oragne" : "fichier de mise en cache"
+}
+
 
 @enduml
