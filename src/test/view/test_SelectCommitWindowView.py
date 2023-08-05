@@ -8,9 +8,11 @@ from PyQt6.QtTest import QTest
 
 class test_SelectCommitWindowView(unittest.TestCase):
         
-    
+  @classmethod
+  def setUpClass(cls):
+      cls.app = QApplication([])
+      
   def test_CommitWindowView_Init(self):
-     app = QApplication([])
     #  scwv = SelectCommitWindowView([['test','test','test','test','test'],['test','test','test','test','test'],['test','test','test','test','test'],['test','test','test','test','test'],['test','test','test','test','test']])
     #  self.assertIsNotNone(scwv.commit_list)
      commit_changes = [['test', 'test', 'test', 'test', 'test'],
@@ -21,7 +23,7 @@ class test_SelectCommitWindowView(unittest.TestCase):
      scwv = SelectCommitWindowView(commit_changes)
 
     # Simulate a button click
-     select_button = scwv.findChild(QPushButton, "Select")
+     scwv.findChild(QPushButton, "Select")
      #QTest.mouseClick(select_button, Qt.MouseButton.LeftButton)
 
      scwv.handleSelect()
@@ -40,7 +42,7 @@ class test_SelectCommitWindowView(unittest.TestCase):
         # on the behavior of CommitWindowView and whether you want to test its display or not.
 
         # Clean up the application event loop
-     app.exit()
+   #   app.exit()
 
 if __name__ == "__main__":
     unittest.main()

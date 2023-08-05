@@ -9,11 +9,13 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 class test_GraphBuilder(unittest.TestCase):
-    def setUp(self):
-        self.gen = GraphBuilder()
+        
+    @classmethod
+    def setUpClass(cls):
+        cls.gen = GraphBuilder()
+        cls.app = QApplication([])
 
     def test_build_graph(self):
-        app = QApplication([])
         self.gen = GraphBuilder()
         figMock = Mock()
         axesMock = Mock()
@@ -23,7 +25,7 @@ class test_GraphBuilder(unittest.TestCase):
         plt.subplots = MagicMock(return_value = (figMock, axesMock))
         plt.xticks = Mock()
         sns.lineplot = Mock()
-        view =self.gen.build_graph('./csv/data.csv')
+        view =self.gen.build_graph('./files/graphData.csv')
         self.assertIsNotNone(view)
         plt.subplots.assert_called_once()
 

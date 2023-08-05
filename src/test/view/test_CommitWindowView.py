@@ -6,10 +6,12 @@ from PyQt6.QtWidgets import QApplication
 
 
 class test_CommitWindowView(unittest.TestCase):
+  
+  @classmethod
+  def setUpClass(cls):
+      cls.app = QApplication([])
         
-    
   def test_CommitWindowView_Init(self):
-     app = QApplication([])
      cwv = CommitWindowView([['test','test','test','test'],'test','test','test'])
      self.assertIsNotNone(cwv.code_tables)
      self.assertIsNotNone(cwv.code_table)

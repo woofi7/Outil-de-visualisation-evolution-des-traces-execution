@@ -14,11 +14,14 @@ import sys
 
 
 class test_HomeController(unittest.TestCase):
+    
+    @classmethod
+    def setUpClass(cls):
+        cls.app = QApplication([])
         
     @patch('model.ReposManager.ReposManager.get_repos')
     @patch('view.HomeView.HomeView.setRepos')
     def test_validate_date_range_range_valid(self, mock_repos_manager, mock_set_repos):
-        app = QApplication([])
         homePage = Mock()
         homeModel =  Mock()
         homePage.repoList.currentText =  MagicMock(return_value='path')
@@ -39,7 +42,6 @@ class test_HomeController(unittest.TestCase):
     @patch('model.ReposManager.ReposManager.get_repos')
     @patch('view.HomeView.HomeView.setRepos')
     def test_validate_date_range_range_invalid(self, mock_repos_manager, mock_set_repos):
-        app = QApplication([])
         homePage = Mock()
         homeModel =  Mock()
         mock_repos_manager.return_value = None
@@ -57,7 +59,6 @@ class test_HomeController(unittest.TestCase):
     @patch('model.ReposManager.ReposManager.get_repos')
     @patch('view.HomeView.HomeView.setRepos')
     def test_new_repo_button_clicked(self, mock_repos_manager, mock_set_repos):
-        app = QApplication([])
         homePage = Mock()
         homeModel =  Mock()
         homePage.repoList.currentText =  MagicMock(return_value='path')
@@ -71,7 +72,6 @@ class test_HomeController(unittest.TestCase):
     @patch('model.ReposManager.ReposManager.get_repos')
     @patch('view.HomeView.HomeView.setRepos')
     def test_search_button_clicked(self, mock_trace_visualizer_controller, mock_repos_manager, mock_set_repos):
-        app = QApplication([])
         modification = Modification('commit','instruction', 'date', 'type', 'beforeCode', 'aftercode', 'hash', 'filename', 'author')
         modification2 = Modification('commit','instruction' ,'date', 'deleted', 'beforeCode', 'aftercode', 'hash', 'filename', 'author')
         logInstruction = LogInstruction('log.info("info")','instruction', [modification], '2023-01-01')
@@ -90,7 +90,6 @@ class test_HomeController(unittest.TestCase):
     @patch('model.ReposManager.ReposManager.get_repos')
     @patch('view.HomeView.HomeView.setRepos')
     def test_delete_repo_button_clicked(self, mock_repos_manager, mock_set_repos):
-        app = QApplication([])
         homePage = Mock()
         mock_repos_manager.return_value = None
         homeController = HomeController()
@@ -103,13 +102,6 @@ class test_HomeController(unittest.TestCase):
         homePage.to_calendar.selectedDate = MagicMock(return_value=QDate(2023, 1, 2))
         homeController._delete_repo_button_clicked()
         homeController.repos_manager.deleteRepo.assert_called_once()
-
-
-
-    
-
-        
-   
 
 if __name__ == "__main__":
     unittest.main()
