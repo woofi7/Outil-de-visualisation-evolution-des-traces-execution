@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, Mock
 from datetime import datetime
 from pydriller import Repository
 from pydriller.domain.commit import ModificationType
@@ -11,122 +11,60 @@ from model.LogInstructionCollectors.Log4pCollector import Log4pCollector
 class Log4pCollectorTestCase(unittest.TestCase):
     def test_get_log_instructions(self):
 
-        # Create some mock commit objects
-        commit1 = self.create_mock_commit(
-            author='John Doe',
-            before_code="""import log4p
-                        
-log4p.info("Info message")""",
-            after_code="""import log4p
-                        
-log4p.debug("After code")""",
-            modifications_type=ModificationType.MODIFY,
-            filename='src/file2.py',
-            old_path='src/file2.py',
-            new_path='src/file2.py'
-        )
-        commit2 = self.create_mock_commit(
-            author='Jane Smith',
-            before_code='''import log4p
-                        
-log4p.info("Info message")
-            ''',
-            after_code='x = 10',
-            modifications_type=ModificationType.MODIFY,
-            filename='src/file2.py',
-            old_path='src/file2.py',
-            new_path='src/file2.py'
-        )
-        commit3 = self.create_mock_commit(
-            author='John Doe',
-            before_code='''''',
-            after_code='''import log4p
-                        
-log4p.info("Info message")
-            ''',
-            modifications_type=ModificationType.MODIFY,
-            filename='src/file2.py',
-            old_path='src/file2.py',
-            new_path='src/file2.py'
-        )
-        commit4 = self.create_mock_commit(
-            author='John Doe',
-            before_code="""import log4p
-                        
-log4p.info("Info message")""",
-            after_code="""import log4p
-                        
-log4p.debug("After code")""",
-            modifications_type=ModificationType.RENAME,
-            filename='src/file2.py',
-            old_path='src/file2.py',
-            new_path='src/file/file2.py'
-        )
-        commit5 = self.create_mock_commit(
-            author='John Doe',
-            before_code="""import log4p
-                        
-log4p.info("Info message")""",
-            after_code="",
-            modifications_type=ModificationType.DELETE,
-            filename='src/file2.py',
-            old_path='src/file2.py',
-            new_path='src/file/file2.py'
-        )
+        # Mocked commit objects
+        commit1 = MagicMock()
+        commit1.author.name = "John"
+        commit1.parents = []
+        commit1.diff.return_value = [
+            MagicMock(change_type='A', a_path=None, b_path="dir/file1.py"),
+            MagicMock(change_type='A', a_path=None, b_path="dir/file2.py"),
+        ]
 
-        Repository.traverse_commits =  MagicMock(return_value = [commit3, commit2, commit1, commit4, commit5])
+        commit2 = MagicMock()
+        commit2.author.name = "Jane"
+        commit2.parents = [commit1]
+        commit2.diff.return_value = [
+            MagicMock(change_type='R', a_path="dir/file1.py", b_path="dir/file1_updated.py"),
+            MagicMock(change_type='A', a_path=None, b_path="dir/file3.py"),
+        ]
 
-        # Create an instance of Log4pCollector
-        collector = Log4pCollector()
+        commit3 = MagicMock()
+        commit3.author.name = "Jane"
+        commit3.parents = [commit2]
+        commit3.diff.return_value = [
+            MagicMock(change_type='R', a_path="dir/file1.py", b_path="dir/file1_updated.py"),
+            MagicMock(change_type='D', a_path="dir/file1_updated.py", b_path=None),
+        ]
 
-        # Call the method under test
-        logs, deleted_logs = collector.get_log_instructions(
-            repo='https://github.com/example/repo.git',
-            from_date=datetime(2023, 1, 1),
-            to_date=datetime(2023, 1, 31),
-            path_in_directory='',
-            branch='master',
-            author=''
-        )
+        # Patch the git.Repo class
+        with patch('model.ReposManager.ReposManager.get_repo_branch')as repo_mock, \
+                patch('model.LogInstructionCollectors.Log4pCollector.Log4pCollector.getLogs') as getLogs_mock:
+            # Configure repo_mock and set its behavior
+            repo_instance = Mock()
+            branch_ref = Mock()
+            repo_mock.return_value = (repo_instance, branch_ref)
 
-        # Assert the expected results
-        expected_logs = {
-            'src/file/file2.py': [
-                LogInstruction('debug', '"""After code"""', [
-                    Modification('debug', '"""After code"""', datetime(2023, 1, 15), 'modified', 'log4p.debug("Before code")', 'log4p.debug("After code")', 'hash1', 'file2.py',  'John Doe')
-                ], datetime(2023, 1, 15)),
-            ]
-        }
-        expected_deleted_logs = [[
-                LogInstruction('info', '"""Info message"""', [
-                    Modification('info', '"""Info message"""', datetime(2023, 1, 15), 'modified', 'log4p.info("Info message")', 'x = 10', 'hash2', 'file2.py', 'John Doe')
-                ], datetime(2023, 1, 15))]]
+            repo_instance.iter_commits.return_value = [commit1, commit2, commit3]
 
-        self.assertEqual(logs['src/file/file2.py'][0].level, expected_logs['src/file/file2.py'][0].level)
-        self.assertEqual(logs['src/file/file2.py'][0].instruction, expected_logs['src/file/file2.py'][0].instruction)
-        self.assertEqual(logs['src/file2.py'], [])
-        print(deleted_logs)
-        self.assertEqual(deleted_logs[1][0].level, expected_deleted_logs[0][0].level)
-        self.assertEqual(deleted_logs[1][0].instruction, expected_deleted_logs[0][0].instruction)
+            # Instantiate the class under test
+            my_object = Log4pCollector()
+            logInstruction = LogInstruction('info','"info"', [], '2023-01-01')     
+            logInstruction1 = LogInstruction('info','"info"', [], '2023-01-01')
 
-    def create_mock_commit(self, author, before_code, after_code, modifications_type, filename, old_path, new_path):
-        # Create a mock commit object
-        commit = MagicMock()
-        commit.author.name = author
+            getLogs_mock.return_value=([logInstruction], [logInstruction1])
 
-        # Create a mock modified file object
-        modified_file = MagicMock()
-        modified_file.filename = filename
-        modified_file.old_path = old_path
-        modified_file.new_path = new_path
-        modified_file.change_type = modifications_type
-        modified_file.source_code_before = before_code
-        modified_file.source_code = after_code
-
-        # Set up the commit to return the mock modified file object
-        commit.modified_files = [modified_file]
-
-        return commit
+            # Call the method to be tested
+            result_logs = my_object.get_log_instructions(
+                repo_path="my_repo",
+                from_date=datetime(2022, 1, 1),
+                to_date=datetime(2022, 12, 31),
+                path_in_directory="",
+                branch="master",
+                author=""
+            )
+    
+            self.assertEqual(len(result_logs), 6)
+            getLogs_mock.assert_called()
     def test_logs_empty(self):
         beforeCode = None
         afterCode = None
