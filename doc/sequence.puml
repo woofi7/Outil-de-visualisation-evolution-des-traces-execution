@@ -1,0 +1,48 @@
+@startuml TraceVisualizerController
+
+participant "trace_visualizer_controller : TraceVisualizerController" as tvc
+participant "all_log_instructions : LogInstructions[]" as all
+participant ":LogInstructionCollector" as lic
+participant ":LogInstructionFileGenerarot" as lifg
+participant "trace_visualizer_view:TraceVisualizerView" as tvv
+participant ":GraphBuilder" as gb
+
+
+--> tvc : trace_visualizer_controller = fromArgs(frameworks, from_date, to_date, repo_path, searched_path, searched_branch, searched_author)
+tvc -> all ** : <<create>>
+loop framework in frameworks
+    tvc -> tvc : _set_framework(framework)
+    tvc -> lic : framework_logs = get_log_instructions(repo_path, from_date, to_date, searched_path, searched_branch, searched_author)
+    tvc -> all : extend(framework_logs)
+end
+tvc -> tvv : set_log_instructions(all_log_instructions)
+tvc -> tvc : _set_strategy_generator_file("csv")
+tvc -> lifg : path = createFile(all_log_instructions)
+tvc -> gb : graphic = build_graph(path)
+tvc -> tvv : set_graphic(graphic)
+@enduml
+
+@startuml CsvFileGenerator
+participant ":CsvFileGenerator" as cfg
+participant "data:dict{index,instruction,date,type}" as data
+participant "index_map:int[]" as index
+participant ":csv" as csv
+participant "writer:Writer" as writer
+-> cfg : csvPath = createFile(self, log_instructions)
+cfg -> data ** : <<create>>
+cfg -> index ** : <<create>>
+loop log in log_instructions
+    cfg -> index : index = len(index_map) + 1
+    cfg -> index : index_map[index] = index
+    loop modification in log.modifications
+    cfg -> data : append({'index': index_map[index], 'instruction': log.instruction, 'date': modification.date, 'type': modification.type})
+    end
+end
+
+cfg -> cfg : csvfile = open('./files/graphData.csv', 'w', newline='') 
+cfg -> csv : writer = csv.writer(csvfile)
+cfg -> writer : writerow(['index', 'instruction', 'date', 'type'])
+loop row in date :
+    cfg -> writer : writerow([row['index'], row['instruction'], row['date'], row['type']])
+end
+@enduml

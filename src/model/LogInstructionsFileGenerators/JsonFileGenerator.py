@@ -9,5 +9,6 @@ class JsonFileGenerator(LogInstructionsFileGenerator):
         super().__init__()
     
     def createFile(self, log_instructions, path):
-        with open(path, 'w') as f:
-            json.dump([log.to_dict() for log in log_instructions], f)
+        if path != None and path != '':
+            with open(path, 'w') as f:
+                json.dump([log.to_dict() for log in log_instructions], f)

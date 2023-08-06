@@ -35,6 +35,9 @@ class TraceVisualizerController:
             # Connect to save data button
             self.trace_visualizer_view.save_data_button.clicked.connect(self._save_data)
             
+            # Connect to go back to home
+            self.trace_visualizer_view.home_button.clicked.connect(self._navigate_to_home)
+            
             # Connect the filters to the data
             filterWidget = self.trace_visualizer_view.right_layout.itemAt(1).widget()
             filterWidget.currentTextChanged.connect(lambda: self._filter_logs(filterWidget))
@@ -143,3 +146,8 @@ class TraceVisualizerController:
         msg.setText(file_name + " has been saved.")
         msg.setIcon(QMessageBox.Icon.Information)
         msg.exec()
+
+    def _navigate_to_home(self):
+        from controller.HomeController import HomeController
+        self.trace_visualizer_view.close()
+        HomeController()
