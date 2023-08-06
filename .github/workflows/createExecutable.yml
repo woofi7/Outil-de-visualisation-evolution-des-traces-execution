@@ -36,7 +36,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add dist/linux_runnable/linux_runnable
+          git add dist/linux_runnable
           git pull origin ${{ github.ref }}
           git commit -m "Add artifacts" || true
 
@@ -75,7 +75,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add dist/windows_runnable/windows_runnable.exe
+          git add dist/windows_runnable
           git pull origin ${{ github.ref }}
           git commit -m "Add artifacts" || true
 
