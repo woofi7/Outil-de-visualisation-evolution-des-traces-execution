@@ -34,8 +34,6 @@ class Log4pCollector(LogInstructionCollector):
                                 if deletedlogs is not None:
                                     self.deletedlogs.append(deletedlogs)
                                 self.logs[modified_file.new_path] = logs
-                                
-                            
             return self.logs, self.deletedlogs
 
        # Function to get the logs specific to this framework

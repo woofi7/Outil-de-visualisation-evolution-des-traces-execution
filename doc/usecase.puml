@@ -1,0 +1,17 @@
+@startuml usecase
+left to right direction
+actor utilisateur
+package système{
+    usecase "Afficher détails commits" as UC1
+    usecase "Visualiser graphique" as UC2
+    usecase "Filtrer graphique" as UC3
+    usecase "Visualiser liste d'instruction de log" as UC4
+    usecase "Sauvegarder les recherches" as UC5
+}
+
+utilisateur --> UC1
+utilisateur --> UC2
+utilisateur --> UC3
+utilisateur --> UC4
+utilisateur --> UC5
+@enduml
