@@ -1,9 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidget, QHBoxLayout, QComboBox, QSplitter, QFrame, QListWidgetItem, QPushButton
 from PyQt6 import QtCore,QtWidgets
 import matplotlib.pyplot as plt
-from view.PopupView import PopupManager
 
-import traceback
 import csv
 
 
@@ -14,7 +12,19 @@ class TraceVisualizerView(QWidget):
             self.setWindowTitle("Trace Visualizer")
             self.setGeometry(100, 100, 1000, 800)
 
-            self_layout = QHBoxLayout(self)
+            main_layout = QVBoxLayout(self)
+            top_button_layout = QHBoxLayout()
+            self.home_button = QPushButton("Home", self)
+            self.save_data_button = QPushButton("Save data", self)
+            
+            top_button_layout.addWidget(self.home_button)
+            top_button_layout.addStretch(1)
+            top_button_layout.addWidget(self.save_data_button)
+            main_layout.addLayout(top_button_layout)
+
+            self_layout = QHBoxLayout()
+            main_layout.addLayout(self_layout)
+
 
             # Left Layout
             left_frame = QFrame()
@@ -32,11 +42,9 @@ class TraceVisualizerView(QWidget):
             filters_label.setSizePolicy(QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Fixed)
             filters = QComboBox()
             filters.addItems(["All", "Added", "Deleted", "Modified"])
-            self.save_data_button = QPushButton("Save data", self)
             
             self.right_layout.addWidget(filters_label)
             self.right_layout.addWidget(filters)
-            self.right_layout.addWidget(self.save_data_button)
 
             splitter_vertical = QSplitter(QtCore.Qt.Orientation.Vertical)
             splitter_vertical.addWidget(self.right_frame)

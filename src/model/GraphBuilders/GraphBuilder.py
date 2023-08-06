@@ -2,6 +2,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.lines import Line2D
 import matplotlib.pyplot as plt
 import pandas as pd
+from matplotlib.dates import DateFormatter
 
 
 class GraphBuilder:
@@ -23,7 +24,7 @@ class GraphBuilder:
 
       for index, group in logData.groupby('index'):
           x_values = group['date']
-          y_values = group['index']
+          y_values = [instruction[:16] + "..." if len(instruction) > 16 else instruction for instruction in group['instruction']]
           group_instruction = group['instruction'].iloc[0]
           type_values = group['type']
 
@@ -36,8 +37,10 @@ class GraphBuilder:
           ax.plot(x_values, y_values, linestyle='-', color='gray')
 
       # Configure axis labels and legend
+      date_format = DateFormatter("%Y/%m/%d")
+      ax.xaxis.set_major_formatter(date_format)
       ax.set_xlabel('Date')
-      ax.set_ylabel('Index')
+      ax.set_ylabel('Instruction')
 
       # Add legend
       legend_elements = [Line2D([0], [0], marker='o', color='w', label='Added', markerfacecolor='green', markersize=7),
