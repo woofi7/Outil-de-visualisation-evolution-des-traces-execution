@@ -8,7 +8,8 @@ participant "trace_visualizer_view:TraceVisualizerView" as tvv
 participant ":GraphBuilder" as gb
 
 
---> tvc : trace_visualizer_controller = fromArgs(frameworks, from_date, to_date, repo_path, searched_path, searched_branch, searched_author)
+-> tvc : trace_visualizer_controller = fromArgs(frameworks, from_date, to_date, repo_path, searched_path, searched_branch, searched_author)
+tvc -> tvv ** : <<create>>
 tvc -> all ** : <<create>>
 loop framework in frameworks
     tvc -> tvc : _set_framework(framework)
