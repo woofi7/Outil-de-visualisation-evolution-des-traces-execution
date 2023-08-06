@@ -40,7 +40,7 @@ class GraphBuilder:
       date_format = DateFormatter("%Y/%m/%d")
       ax.xaxis.set_major_formatter(date_format)
       ax.set_xlabel('Date')
-      ax.set_ylabel('Index')
+      ax.set_ylabel('Instruction')
 
       # Add legend
       legend_elements = [Line2D([0], [0], marker='o', color='w', label='Added', markerfacecolor='green', markersize=7),
