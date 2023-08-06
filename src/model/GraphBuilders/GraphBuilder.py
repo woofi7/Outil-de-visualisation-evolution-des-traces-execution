@@ -24,7 +24,7 @@ class GraphBuilder:
 
       for index, group in logData.groupby('index'):
           x_values = group['date']
-          y_values = [instruction[:16] for instruction in group['instruction']]
+          y_values = [instruction[:16] + "..." if len(instruction) > 16 else instruction for instruction in group['instruction']]
           group_instruction = group['instruction'].iloc[0]
           type_values = group['type']
 
