@@ -1,0 +1,271 @@
+@startuml completeClassDiagramNew
+package controller {
+    class HomeController{
+        - search_button_clicked()
+        - validate_date_range()
+        - update_branch_list(repo_name : String)
+        - new_repo_button_clicked()
+        - delete_repo_button_clicked()
+    }
+    class TraceVisualizerController{
+        - set_strategy_collector(strategy : String) : LogInstructionCollectorsStrategy
+        - set_strategy_generator_file(strategy : String) : LogInstructionFileGeneratorsStrategy
+    }
+
+    class NewRepoController{
+        - ok_button_clicked()
+        - cancel_button_clicked()
+    }
+}
+
+package model {
+
+    class LogInstructionDiffGenerator{
+        + getCommitChanges(commits : List<Commit>) : List<Modification>
+    }
+    class ReposManager{
+        + get_repos(main_repo_path : String)
+        + git_pull(repo_path:String)
+        + delete_repo(repo_path:String)
+        + getBranches(repo_path : String)
+        + clone_repo(repo_url:String, repo_path:String)
+    }
+    package GraphBuilders{
+        
+        class GraphBuilder{
+            + build_graph(path_to_file : String) : QGraphicsView
+        }
+    }
+    package LogInstructionCollectors{
+        interface LogInstructionCollector{
+            + getLogInstructions():LogInstruction[]
+        }
+        class Log4JCollector{
+            + getLogInstructions():LogInstruction[]
+        }
+        class Log4PCollector{
+            + getLogInstructions():LogInstruction[]
+        }
+
+        class LogInstruction{
+            - intruction : String
+        }
+        class Modification{
+            - type : String
+            - commit : Commit
+        }
+    }
+
+    package LogInstructionFileGenerators{
+        interface LogInstructionFileGenerator{
+            + createFile(logInstructions : List<LogInstruction>) : String
+        }
+
+        class CsvFileGenerator implements LogInstructionFileGenerator{
+            + createFile(logInstructions : List<LogInstruction>) : String
+        }
+    }
+}
+
+package view {
+    class CommitWindowView{
+        - code_table : QTableWidget
+    }
+
+    class HomeView {
+        - branches : QComboBox
+        - repo_list : QComboBox
+        - new_repo_button : QPushButton
+        - delete_repo_button : QPushButton
+        - searched_path : QLineEdit
+        - searched_author : QLineEdit
+        - slected_framework : QListWidget
+        - from_date_label : QLabel
+        - from_calendar : QCalendarWidget
+        - to_date_label : QLabel
+        - to_calendat : QCalendarWidget
+        - search_button : QPushButton
+        + setRepos(repos : List<String>)
+        + setBranches(branches : List<String>)
+    }
+    class NewRepoView{
+        - new_repo : QLineEdit
+        - ok_button : QPushButton
+        - delete_button : QPushButton
+    }
+    class TraceVisualizerView{
+        - log_instructions_list : QListWidget
+        - graphic : QGraphicsView
+        + set_log_instructions(logInstructions : List<LogInstruction>)
+        + set_graphic(graphic : QGraphicsView)
+    }
+}
+
+HomeController "1" o-- "1" HomeView
+HomeController ..> TraceVisualizerController
+HomeController ..> ReposManager
+HomeController ..> NewRepoController
+
+TraceVisualizerController "1" o-- "1" TraceVisualizerView
+TraceVisualizerController ..> LogInstructionDiffGenerator
+TraceVisualizerController "1" o-- "1" LogInstructionCollector
+TraceVisualizerController "1" o-- "1" LogInstructionFileGenerator
+TraceVisualizerController "1" o-- "1" CommitWindowView
+TraceVisualizerController ..> GraphBuilder
+
+NewRepoController ..> ReposManager
+NewRepoController "1" o-- "1" NewRepoView
+
+Log4JCollector .up.|> LogInstructionCollector
+Log4PCollector .up.|> LogInstructionCollector
+Log4JCollector ..> LogInstruction
+Log4PCollector ..> LogInstruction
+LogInstruction "1" o-- "*"Modification
+@enduml
+
+@startuml viewControllerNew
+package controller {
+    class HomeController{
+        - search_button_clicked()
+        - validate_date_range()
+        - update_branch_list(repo_name : String)
+        - new_repo_button_clicked()
+        - delete_repo_button_clicked()
+    }
+    class TraceVisualizerController{
+        - set_strategy_collector(strategy : String) : LogInstructionCollectorsStrategy
+        - set_strategy_generator_file(strategy : String) : LogInstructionFileGeneratorsStrategy
+    }
+
+    class NewRepoController{
+        - ok_button_clicked()
+        - cancel_button_clicked()
+    }
+}
+
+package view {
+    class CommitWindowView{
+        - code_table : QTableWidget
+    }
+
+    class HomeView {
+        - branches : QComboBox
+        - repo_list : QComboBox
+        - new_repo_button : QPushButton
+        - delete_repo_button : QPushButton
+        - searched_path : QLineEdit
+        - searched_author : QLineEdit
+        - slected_framework : QListWidget
+        - from_date_label : QLabel
+        - from_calendar : QCalendarWidget
+        - to_date_label : QLabel
+        - to_calendat : QCalendarWidget
+        - search_button : QPushButton
+        + setRepos(repos : List<String>)
+        + setBranches(branches : List<String>)
+    }
+    class NewRepoView{
+        - new_repo : QLineEdit
+        - ok_button : QPushButton
+        - delete_button : QPushButton
+    }
+    class TraceVisualizerView{
+        - log_instructions_list : QListWidget
+        - graphic : QGraphicsView
+        + set_log_instructions(logInstructions : List<LogInstruction>)
+        + set_graphic(graphic : QGraphicsView)
+    }
+}
+
+HomeController "1" o-- "1" HomeView
+HomeController ..> TraceVisualizerController
+HomeController ..> NewRepoController
+
+TraceVisualizerController "1" o-- "1" TraceVisualizerView
+TraceVisualizerController "1" o-- "1" CommitWindowView
+NewRepoController "1" o-- "1" NewRepoView
+@enduml
+
+@startuml modelControllerNew
+package controller {
+    class HomeController{
+        - search_button_clicked()
+        - validate_date_range()
+        - update_branch_list(repo_name : String)
+        - new_repo_button_clicked()
+        - delete_repo_button_clicked()
+    }
+    class TraceVisualizerController{
+        - set_strategy_collector(strategy : String) : LogInstructionCollectorsStrategy
+        - set_strategy_generator_file(strategy : String) : LogInstructionFileGeneratorsStrategy
+    }
+
+    class NewRepoController{
+        - ok_button_clicked()
+        - cancel_button_clicked()
+    }
+}
+
+package model {
+    package GraphBuilders{
+        
+        class GraphBuilder{
+            + build_graph(path_to_file : String) : QGraphicsView
+        }
+    }
+    package LogInstructionCollectors{
+        interface LogInstructionCollector{
+            + getLogInstructions():LogInstruction[]
+        }
+        class Log4JCollector{
+            + getLogInstructions():LogInstruction[]
+        }
+        class Log4PCollector{
+            + getLogInstructions():LogInstruction[]
+        }
+
+        class LogInstruction{
+            - intruction : String
+        }
+        class Modification{
+            - type : String
+            - commit : Commit
+        }
+    }
+
+    package LogInstructionFileGenerators{
+        interface LogInstructionFileGenerator{
+            + createFile(logInstructions : List<LogInstruction>) : String
+        }
+
+        class CsvFileGenerator implements LogInstructionFileGenerator{
+            + createFile(logInstructions : List<LogInstruction>) : String
+        }
+    }
+}
+HomeController ..> TraceVisualizerController
+HomeController ..> NewRepoController
+
+TraceVisualizerController "1" o-- "1" LogInstructionCollector
+TraceVisualizerController "1" o-- "1" LogInstructionFileGenerator
+TraceVisualizerController ..> GraphBuilder
+
+Log4JCollector .up.|> LogInstructionCollector
+Log4PCollector .up.|> LogInstructionCollector
+Log4JCollector ..> LogInstruction
+Log4PCollector ..> LogInstruction
+LogInstruction "1" o-- "*"Modification
+@enduml
+
+@startuml newCohesiveClass
+    class LogInstructionDiffGenerator{
+        + getCommitChanges(commits : List<Commit>) : List<Modification>
+    }
+    class ReposManager{
+        + get_repos(main_repo_path : String)
+        + git_pull(repo_path:String)
+        + delete_repo(repo_path:String)
+        + getBranches(repo_path : String)
+        + clone_repo(repo_url:String, repo_path:String)
+    }
+@enduml

@@ -1,41 +1,42 @@
 @startuml component
 skinparam component {
   FontSize 13
-  BackgroundColor<<library>> Pink
-  BackgroundColor<<cache file>> Orange
-  BackgroundColor<<code package>> Blue
-  BackgroundColor<<external system>> Green
+  BackgroundColor<<Librairie >> Pink
+  BackgroundColor<<Fichier de mise en cache>> Orange
+  BackgroundColor<<Package de code>> Blue
+  BackgroundColor<<Système externe>> Green
 }
 
 
 component "desktop application"{
-    component "controller" as controller << code package >>
-    component "data.csv" as data.csv << cache file >>
-    component "LogInstructionFileGenerator" as LogInstructionFileGenerator << code package >>
-    component "GraphBuilder" as GraphBuilder << code package >>
-    component "LogInstructionGenerator" as LogInstructionGenerator << code package >>
-    component "View" as View << code package >>
-    component "GitPyhon" as GitPython << library >>
-    component "Pyqt6" as Pyqt6 << library >>
+    component "controller" as controller << Package de code >>
+    component "data.csv" as data.csv << Fichier de mise en cache >>
+    component "research.json" as research.json << Fichier de mise en cache >>
+    component "LogInstructionFileGenerator" as LogInstructionFileGenerator << Package de code >>
+    component "GraphBuilder" as GraphBuilder << Package de code >>
+    component "LogInstructionGenerator" as LogInstructionGenerator << Package de code >>
+    component "View" as View << Package de code >>
+    component "GitPyhon" as GitPython << Librairie >>
+    component "Pyqt6" as Pyqt6 << Librairie >>
     portout " "
 }
 
+component "GitHub" as GitHub << Système externe >>
+
 controller ..> "GraphBuilder"
-"GraphBuilder" ..> controller
 controller ..> "LogInstructionGenerator"
-LogInstructionGenerator ..> controller
 controller ..> "LogInstructionFileGenerator"
-LogInstructionFileGenerator ..>controller
 controller ..> View
 View ..> Pyqt6
 GraphBuilder ..> Pyqt6
 controller ..> data.csv
-component "GitHub" as GitHub << external system >>
+controller ..> research.json
 
 GitPython ..> " "
 " " ..> GitHub
 LogInstructionGenerator ..> GitPython
 LogInstructionFileGenerator ..> data.csv
+LogInstructionFileGenerator ..> research.json
 
 json legende{
     "bleu" : "package de code",
