@@ -42,7 +42,7 @@ class GraphBuilder:
       # Configure axis labels and legend
       date_format = DateFormatter("%Y/%m/%d")
       ax.xaxis.set_major_formatter(date_format)
-      ax.set_xlabel('Date')
+      ax.set_xlabel('Date (YYYY/MM/DD)')
       ax.set_ylabel('Instruction')
       ax.set_yticks(list(y_labels.keys()))  # Set y-ticks based on the index
       ax.set_yticklabels(list(y_labels.values()))
