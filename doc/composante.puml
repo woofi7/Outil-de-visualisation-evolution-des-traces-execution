@@ -3,12 +3,12 @@ skinparam component {
   FontSize 13
   BackgroundColor<<Librairie >> Pink
   BackgroundColor<<Fichier de mise en cache>> Orange
-  BackgroundColor<<Package de code>> Blue
+  BackgroundColor<<Package de code>> Yellow
   BackgroundColor<<Système externe>> Green
 }
 
 
-component "desktop application"{
+component "desktop application\n\n\n\n\n"{
     component "controller" as controller << Package de code >>
     component "data.csv" as data.csv << Fichier de mise en cache >>
     component "research.json" as research.json << Fichier de mise en cache >>
@@ -39,7 +39,7 @@ LogInstructionFileGenerator ..> data.csv
 LogInstructionFileGenerator ..> research.json
 
 json legende{
-    "bleu" : "package de code",
+    "jaune" : "package de code",
     "rose" : "bibliothèque",
     "vert" : "système externe",
     "oragne" : "fichier de mise en cache"
