@@ -124,6 +124,8 @@ class Log4jCollector(LogInstructionCollector):
             return javalang.parse.parse(code)
         except javalang.parser.JavaSyntaxError:
             return []
+        except javalang.tokenizer.LexerError:
+            return []
     
     def get_Log_Instruction(self, node, date, before_code, after_code, hash, filename, type, author):
         instruction = self.get_instruction(node.arguments)

@@ -1,0 +1,493 @@
+@startuml classOld
+package controller {
+    class HomeController{
+        - search_button_clicked()
+        - validate_date_range()
+        - update_from_date()
+        - update_to_date()
+        - new_repo_button_clicked()
+        - update_repo_list()
+        - update_branch_list()
+        - delete_repo_button_clicked()
+        - create_directory(directory_path : String)
+    }
+    class NewRepoController{
+        -  ok_button_clicked()
+        - cancel_button_clicked()
+    }
+
+    class TraceVisualizerController{
+        - show_commit_changes(item : QTCore.QT.ItemDataRole)
+    }
+}
+
+package model {
+
+    package frameworks{
+        interface framework{
+            + get_logs(): List<LogInstruction>
+            + add_logs(logs : List<LogInstruction>, instruction : String, newInstruction : String, type : String, date : DateTime, source_code_before : String, source_code : String, hash : String, filename : String)
+        }
+        class Log4J implements framework{
+            + get_logs() : List<LogInstruction>
+            + add_logs(logs : List<LogInstruction>, instruction : String, newInstruction : String, type : String, date : DateTime, source_code_before : String, source_code : String, hash : String, filename : String)
+        }
+        class Log4P implements framework{
+            + get_logs() : List<LogInstruction>
+            + add_logs(logs : List<LogInstruction>, instruction : String, newInstruction : String, type : String, date : DateTime, source_code_before : String, source_code : String, hash : String, filename : String)
+        }
+    }
+
+    class DataModel{
+        - repo : Stirng
+        - branch : String
+        - commits : List<Commit>
+        - logs : List<LogInstruction>
+    }
+
+    class GlobalModel{
+        - repos : Dictionnary<String, List<String>>
+        + get_repo_branch(repo : String, branch : String)
+        + add_repos_branch(repo : String, branch : String, instructions : Instructions)
+        + remove_repo(repo : String)
+        + remove_repo_branch(repo : String, branch : String)
+    }
+    class HomeModel{
+        - added_log_instructions : List<Dictionnary<String, List<String>>>
+        - deleted_log_instructions : List<Dictionnary<String, List<String>>>
+        + get_repos(repo_path : String) : list<String>
+        + git_pull(repo_path : String)
+        + delete_repo(path : String)
+        + get_branches(repo_path : String) : list<String>
+    }
+    class Instructions{
+        - dates : List<DateTime>
+        - frameworks : List<String>
+        - file_types : List<String>
+        - path : String
+        - authors : List<String>
+        + set_frameworks(frameworks : List<String>)
+    }
+    class LogInstruction{
+        - instruction : String
+        - date : DateTime
+        + add_modification(modification : Modification)
+    }
+    class Modification{
+        - commit : Commit
+        - date : DateTime
+        - type : String
+        - before_code : String
+        - after_code : String
+        - hash : String
+        - file_name : String
+    }
+    class NewRepoModel{
+        + clone_repo(repo_url : String, repo_path : String)
+    }
+    class TraceVisualizerModel{
+        + get_commit_changes(commits : List<modification>)
+    }
+}
+
+
+package view {
+    class CommitWindowView{
+        - code_table : QTableWidget
+    }
+
+    class HomeView {
+        - branches : QComboBox
+        - repo_list : QComboBox
+        - new_repo_button : QPushButton
+        - delete_repo_button : QPushButton
+        - searched_path : QLineEdit
+        - searched_author : QLineEdit
+        - slected_framework : QListWidget
+        - from_date_label : QLabel
+        - from_calendar : QCalendarWidget
+        - to_date_label : QLabel
+        - to_calendat : QCalendarWidget
+        - search_button : QPushButton
+        + setRepos(repos : List<String>)
+        + setBranches(branches : List<String>)
+    }
+
+    class NewRepoView{
+        - new_repo : QLineEdit
+        - ok_button : QPushButton
+        - delete_button : QPushButton
+    }
+
+    class TraceVisualizerView{
+        - log_instructions_list : QListWidget
+        - graphic : QGraphicsView
+        + set_log_instructions(logInstructions : List<LogInstruction>)
+        + set_graphic(graphic : QGraphicsView)
+    }
+}
+
+HomeController "1" o-- "1" HomeView
+HomeController "1" o-- "1" HomeModel
+HomeController ..> TraceVisualizerView
+HomeController ..> TraceVisualizerModel
+HomeController ..> TraceVisualizerController
+HomeController ..> NewRepoView
+HomeController ..> NewRepoModel
+HomeController ..> NewRepoController
+
+NewRepoController "1" o-- "1" NewRepoView
+NewRepoController "1" o-- "1" NewRepoModel
+NewRepoController "1" o-- "1" HomeController
+
+TraceVisualizerController "1" o-- "1" TraceVisualizerView
+TraceVisualizerController "1" o-- "1" TraceVisualizerModel
+TraceVisualizerController "1" o-- "1" HomeView
+TraceVisualizerController ..> CommitWindowView
+
+HomeModel ..> GlobalModel
+HomeModel ..> Instructions
+
+GlobalModel ..> DataModel
+GlobalModel ..> Instructions
+
+DataModel "1" o-- "1" Instructions
+
+LogInstruction "1" o-- "1..*" Modification
+
+Instructions "1" o-- "*" framework
+
+Log4J ..> LogInstruction
+Log4J ..> Modification
+
+Log4P ..> LogInstruction
+Log4P..> Modification
+@enduml
+
+@startuml controllerViewOld
+package controller {
+    class HomeController{
+        - search_button_clicked()
+        - validate_date_range()
+        - update_from_date()
+        - update_to_date()
+        - new_repo_button_clicked()
+        - update_repo_list()
+        - update_branch_list()
+        - delete_repo_button_clicked()
+        - create_directory(directory_path : String)
+    }
+    class NewRepoController{
+        -  ok_button_clicked()
+        - cancel_button_clicked()
+    }
+
+    class TraceVisualizerController{
+        - show_commit_changes(item : QTCore.QT.ItemDataRole)
+    }
+}
+
+package view {
+    class CommitWindowView{
+        - code_table : QTableWidget
+    }
+
+    class HomeView {
+        - branches : QComboBox
+        - repo_list : QComboBox
+        - new_repo_button : QPushButton
+        - delete_repo_button : QPushButton
+        - searched_path : QLineEdit
+        - searched_author : QLineEdit
+        - slected_framework : QListWidget
+        - from_date_label : QLabel
+        - from_calendar : QCalendarWidget
+        - to_date_label : QLabel
+        - to_calendat : QCalendarWidget
+        - search_button : QPushButton
+        + setRepos(repos : List<String>)
+        + setBranches(branches : List<String>)
+    }
+
+    class NewRepoView{
+        - new_repo : QLineEdit
+        - ok_button : QPushButton
+        - delete_button : QPushButton
+    }
+
+    class TraceVisualizerView{
+        - log_instructions_list : QListWidget
+        - graphic : QGraphicsView
+        + set_log_instructions(logInstructions : List<LogInstruction>)
+        + set_graphic(graphic : QGraphicsView)
+    }
+}
+
+HomeController "1" o-- "1" HomeView
+HomeController ..> TraceVisualizerView
+HomeController ..> TraceVisualizerController
+HomeController ..> NewRepoView
+HomeController ..> NewRepoController
+
+NewRepoController "1" o-- "1" NewRepoView
+NewRepoController "1" o-- "1" HomeController
+
+TraceVisualizerController "1" o-- "1" TraceVisualizerView
+TraceVisualizerController "1" o-- "1" HomeView
+TraceVisualizerController ..> CommitWindowView
+@enduml
+
+@startuml modelOld
+package controller {
+    class HomeController{
+        - search_button_clicked()
+        - validate_date_range()
+        - update_from_date()
+        - update_to_date()
+        - new_repo_button_clicked()
+        - update_repo_list()
+        - update_branch_list()
+        - delete_repo_button_clicked()
+        - create_directory(directory_path : String)
+    }
+    class NewRepoController{
+        -  ok_button_clicked()
+        - cancel_button_clicked()
+    }
+
+    class TraceVisualizerController{
+        - show_commit_changes(item : QTCore.QT.ItemDataRole)
+    }
+}
+
+package model {
+
+    package frameworks{
+        interface framework{
+            + get_logs(): List<LogInstruction>
+            + add_logs(logs : List<LogInstruction>, instruction : String, newInstruction : String, type : String, date : DateTime, source_code_before : String, source_code : String, hash : String, filename : String)
+        }
+        class Log4J implements framework{
+            + get_logs() : List<LogInstruction>
+            + add_logs(logs : List<LogInstruction>, instruction : String, newInstruction : String, type : String, date : DateTime, source_code_before : String, source_code : String, hash : String, filename : String)
+        }
+        class Log4P implements framework{
+            + get_logs() : List<LogInstruction>
+            + add_logs(logs : List<LogInstruction>, instruction : String, newInstruction : String, type : String, date : DateTime, source_code_before : String, source_code : String, hash : String, filename : String)
+        }
+    }
+
+    class DataModel{
+        - repo : Stirng
+        - branch : String
+        - commits : List<Commit>
+        - logs : List<LogInstruction>
+    }
+
+    class GlobalModel{
+        - repos : Dictionnary<String, List<String>>
+        + get_repo_branch(repo : String, branch : String)
+        + add_repos_branch(repo : String, branch : String, instructions : Instructions)
+        + remove_repo(repo : String)
+        + remove_repo_branch(repo : String, branch : String)
+    }
+    class HomeModel{
+        - added_log_instructions : List<Dictionnary<String, List<String>>>
+        - deleted_log_instructions : List<Dictionnary<String, List<String>>>
+        + get_repos(repo_path : String) : list<String>
+        + git_pull(repo_path : String)
+        + delete_repo(path : String)
+        + get_branches(repo_path : String) : list<String>
+    }
+    class Instructions{
+        - dates : List<DateTime>
+        - frameworks : List<String>
+        - file_types : List<String>
+        - path : String
+        - authors : List<String>
+        + set_frameworks(frameworks : List<String>)
+    }
+    class LogInstruction{
+        - instruction : String
+        - date : DateTime
+        + add_modification(modification : Modification)
+    }
+    class Modification{
+        - commit : Commit
+        - date : DateTime
+        - type : String
+        - before_code : String
+        - after_code : String
+        - hash : String
+        - file_name : String
+    }
+    class NewRepoModel{
+        + clone_repo(repo_url : String, repo_path : String)
+    }
+    class TraceVisualizerModel{
+        + get_commit_changes(commits : List<modification>)
+    }
+}
+HomeController "1" o-- "1" HomeModel
+HomeController ..> TraceVisualizerModel
+HomeController ..> TraceVisualizerController
+HomeController ..> NewRepoModel
+HomeController ..> NewRepoController
+
+NewRepoController "1" o-- "1" NewRepoModel
+NewRepoController "1" o-- "1" HomeController
+
+TraceVisualizerController "1" o-- "1" TraceVisualizerModel
+
+HomeModel ..> GlobalModel
+HomeModel ..> Instructions
+
+GlobalModel ..> DataModel
+GlobalModel ..> Instructions
+
+DataModel "1" o-- "1" Instructions
+
+LogInstruction "1" o-- "1..*" Modification
+
+Instructions "1" o-- "*" framework
+
+Log4J ..> LogInstruction
+Log4J ..> Modification
+
+Log4P ..> LogInstruction
+Log4P..> Modification
+
+@enduml
+
+@startuml oldclassDiagramSplitted
+package model {
+
+    package frameworks{
+        interface framework{
+            + get_logs(): List<LogInstruction>
+            + add_logs(logs : List<LogInstruction>, instruction : String, newInstruction : String, type : String, date : DateTime, source_code_before : String, source_code : String, hash : String, filename : String)
+        }
+        class Log4J implements framework{
+            + get_logs() : List<LogInstruction>
+            + add_logs(logs : List<LogInstruction>, instruction : String, newInstruction : String, type : String, date : DateTime, source_code_before : String, source_code : String, hash : String, filename : String)
+        }
+        class Log4P implements framework{
+            + get_logs() : List<LogInstruction>
+            + add_logs(logs : List<LogInstruction>, instruction : String, newInstruction : String, type : String, date : DateTime, source_code_before : String, source_code : String, hash : String, filename : String)
+        }
+    }
+        class LogInstruction{
+        - instruction : String
+        - date : DateTime
+        + add_modification(modification : Modification)
+    }
+    class Modification{
+        - commit : Commit
+        - date : DateTime
+        - type : String
+        - before_code : String
+        - after_code : String
+        - hash : String
+        - file_name : String
+    }
+
+    Log4J ..> LogInstruction
+Log4J ..> Modification
+
+Log4P ..> LogInstruction
+Log4P..> Modification
+LogInstruction "1" o-- "1..*" Modification
+}
+@enduml
+
+@startuml modelOldSplitted
+package controller {
+    class HomeController{
+        - search_button_clicked()
+        - validate_date_range()
+        - update_from_date()
+        - update_to_date()
+        - new_repo_button_clicked()
+        - update_repo_list()
+        - update_branch_list()
+        - delete_repo_button_clicked()
+        - create_directory(directory_path : String)
+    }
+    class NewRepoController{
+        -  ok_button_clicked()
+        - cancel_button_clicked()
+    }
+
+    class TraceVisualizerController{
+        - show_commit_changes(item : QTCore.QT.ItemDataRole)
+    }
+}
+
+package model {
+
+    package frameworks{
+        interface framework{
+            + get_logs(): List<LogInstruction>
+            + add_logs(logs : List<LogInstruction>, instruction : String, newInstruction : String, type : String, date : DateTime, source_code_before : String, source_code : String, hash : String, filename : String)
+        }
+    }
+
+    class DataModel{
+        - repo : Stirng
+        - branch : String
+        - commits : List<Commit>
+        - logs : List<LogInstruction>
+    }
+
+    class GlobalModel{
+        - repos : Dictionnary<String, List<String>>
+        + get_repo_branch(repo : String, branch : String)
+        + add_repos_branch(repo : String, branch : String, instructions : Instructions)
+        + remove_repo(repo : String)
+        + remove_repo_branch(repo : String, branch : String)
+    }
+    class HomeModel{
+        - added_log_instructions : List<Dictionnary<String, List<String>>>
+        - deleted_log_instructions : List<Dictionnary<String, List<String>>>
+        + get_repos(repo_path : String) : list<String>
+        + git_pull(repo_path : String)
+        + delete_repo(path : String)
+        + get_branches(repo_path : String) : list<String>
+    }
+    class Instructions{
+        - dates : List<DateTime>
+        - frameworks : List<String>
+        - file_types : List<String>
+        - path : String
+        - authors : List<String>
+        + set_frameworks(frameworks : List<String>)
+    }
+    class NewRepoModel{
+        + clone_repo(repo_url : String, repo_path : String)
+    }
+    class TraceVisualizerModel{
+        + get_commit_changes(commits : List<modification>)
+    }
+}
+HomeController "1" o-- "1" HomeModel
+HomeController ..> TraceVisualizerModel
+HomeController ..> TraceVisualizerController
+HomeController ..> NewRepoModel
+HomeController ..> NewRepoController
+
+NewRepoController "1" o-- "1" NewRepoModel
+NewRepoController "1" o-- "1" HomeController
+
+TraceVisualizerController "1" o-- "1" TraceVisualizerModel
+
+HomeModel ..> GlobalModel
+HomeModel ..> Instructions
+
+GlobalModel ..> DataModel
+GlobalModel ..> Instructions
+
+DataModel "1" o-- "1" Instructions
+
+Instructions "1" o-- "*" framework
+
+@enduml

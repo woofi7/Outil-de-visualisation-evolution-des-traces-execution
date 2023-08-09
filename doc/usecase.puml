@@ -1,0 +1,17 @@
+@startuml usecase
+left to right direction
+actor "Analyste informatique" as ana
+package système{
+    usecase "Afficher les détails d'un commit" as UC1
+    usecase "Visualiser un graphique représentant les instructions de log et leurs commits associés" as UC2
+    usecase "Filtrer les commits du graphique" as UC3
+    usecase "Visualiser une liste d'instruction de log" as UC4
+    usecase "Sauvegarder les recherches" as UC5
+}
+
+ana --> UC1
+ana --> UC2
+ana --> UC3
+ana --> UC4
+ana --> UC5
+@enduml
