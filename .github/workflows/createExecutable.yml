@@ -32,13 +32,12 @@ jobs:
         run: |
           cd src
           pyinstaller -y --name linux_runnable main.py
-          cd ..
 
       - name: Configure Git
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add dist/linux_runnable
+          git add src/dist/linux_runnable
           git pull origin ${{ github.ref }}
           git commit -m "Add artifacts" || true
 
@@ -74,13 +73,12 @@ jobs:
         run: |
           cd src
           pyinstaller -y --name windows_runnable main.py
-          cd ..
 
       - name: Configure Git
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add dist/windows_runnable
+          git add src/dist/windows_runnable
           git pull origin ${{ github.ref }}
           git commit -m "Add artifacts" || true
 
