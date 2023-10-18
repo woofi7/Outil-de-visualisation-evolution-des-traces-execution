@@ -30,7 +30,8 @@ jobs:
 
       - name: Build Linux executable
         run: |
-          pyinstaller -y --name linux_runnable src/main.py
+          cd src
+          pyinstaller -y --name linux_runnable main.py
 
       - name: Configure Git
         run: |
