@@ -69,7 +69,9 @@ jobs:
           pip install pyinstaller
 
       - name: Build Windows executable
-        run: pyinstaller -y --name windows_runnable src/main.py
+        run: |
+          cd src
+          pyinstaller -y --name windows_runnable src/main.py
 
       - name: Configure Git
         run: |
