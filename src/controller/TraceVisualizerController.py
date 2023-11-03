@@ -52,11 +52,11 @@ class TraceVisualizerController:
         try:
             all_log_instructions = []
 
+            cls.from_date = from_date
+            cls.to_date = to_date
             # Retrieve commits based on the selected dates using the model
             for framework in frameworks:
                 cls.log_instruction_collector = cls._set_strategy_collector(framework.text())
-                cls.from_date = from_date
-                cls.to_date = to_date
                 framework_logs = cls.log_instruction_collector.get_log_instructions(repo_path, searched_path, searched_branch, searched_author)
                 all_log_instructions.extend(framework_logs)
                 
