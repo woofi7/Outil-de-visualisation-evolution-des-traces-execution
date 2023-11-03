@@ -1,3 +1,4 @@
+from matplotlib.backend_bases import MouseEvent
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.lines import Line2D
 import matplotlib.pyplot as plt
@@ -5,9 +6,23 @@ import pandas as pd
 from matplotlib.dates import DateFormatter
 
 
+def scroll_event(event: MouseEvent):
+   xmin, xmax = plt.xlim()
+   range = xmax - xmin
+   if event.button == 'up':
+      x = xmin + range / 20
+   else:
+      x = xmin - range / 20
+
+   plt.xlim(x, x + range)
+
+   plt.draw()
+   pass
+
+
 class GraphBuilder:
 
-   def build_graph(self, path_to_file_csv, instruction=-1):
+   def build_graph(self, path_to_file_csv, instruction=-1, from_date=0, to_date=0):
       # Map the type values to colors
       color_map = {'ModificationType.ADD': 'green', 'ModificationType.MODIFY': 'blue', 'ModificationType.DELETE': 'red'}
 
@@ -21,6 +36,7 @@ class GraphBuilder:
       fig, ax = plt.subplots()
       plt.style.use("ggplot")
       plt.xticks(rotation=30)
+      plt.xlim(pd.to_datetime(from_date), pd.to_datetime(to_date))
       
       y_labels = {}
 
@@ -54,4 +70,5 @@ class GraphBuilder:
       ax.legend(handles=legend_elements, loc='upper left', bbox_to_anchor=(1.02, 1), borderaxespad=0.)
 
       canvas = FigureCanvas(fig)
+      canvas.mpl_connect('scroll_event', lambda event: scroll_event(event))
       return canvas

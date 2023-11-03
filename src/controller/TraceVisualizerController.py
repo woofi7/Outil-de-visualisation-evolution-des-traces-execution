@@ -16,6 +16,8 @@ import traceback
 REPO_FOLDER = "./repo/"
 
 class TraceVisualizerController:
+    log_instruction_collector = None
+
     def __init__(self, all_log_instructions):
         try:
             self.all_log_instructions = all_log_instructions
@@ -53,7 +55,9 @@ class TraceVisualizerController:
             # Retrieve commits based on the selected dates using the model
             for framework in frameworks:
                 cls.log_instruction_collector = cls._set_strategy_collector(framework.text())
-                framework_logs = cls.log_instruction_collector.get_log_instructions(repo_path, from_date, to_date, searched_path, searched_branch, searched_author)
+                cls.from_date = from_date
+                cls.to_date = to_date
+                framework_logs = cls.log_instruction_collector.get_log_instructions(repo_path, searched_path, searched_branch, searched_author)
                 all_log_instructions.extend(framework_logs)
                 
             return cls(all_log_instructions)
@@ -106,7 +110,7 @@ class TraceVisualizerController:
     def _set_view_data(self, log_instructions):
         self.trace_visualizer_view.set_log_instructions(log_instructions)
         self.strategy_generator_file = self._set_strategy_generator_file("csv")
-        self.trace_visualizer_view.set_graphic(GraphBuilder().build_graph(self.strategy_generator_file.createFile(log_instructions)))
+        self.trace_visualizer_view.set_graphic(GraphBuilder().build_graph(self.strategy_generator_file.createFile(log_instructions), -1, self.from_date, self.to_date))
         
     def _filter_logs(self, filterWidget):
         types = {"Added": "ModificationType.ADD", "Deleted": "ModificationType.DELETE", "Modified": "ModificationType.MODIFY"}
@@ -134,7 +138,7 @@ class TraceVisualizerController:
 
     def _highlight_graph_element(self, item):
         instruction = self.trace_visualizer_view.log_instructions_list.row(item)
-        self.trace_visualizer_view.set_graphic(GraphBuilder().build_graph(self.strategy_generator_file.createFile(self.filtered_log_instructions), instruction+1))
+        self.trace_visualizer_view.set_graphic(GraphBuilder().build_graph(self.strategy_generator_file.createFile(self.filtered_log_instructions), instruction+1, self.from_date, self.to_date))
         
     def _save_data(self):
         file_name, _ = QFileDialog.getSaveFileName(self.trace_visualizer_view, "Save File", "./files", "JSON Files (*.json);;All Files (*)")
