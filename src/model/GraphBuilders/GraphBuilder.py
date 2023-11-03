@@ -94,6 +94,7 @@ class GraphBuilder:
         ax.legend(handles=legend_elements, loc='upper left', bbox_to_anchor=(1.02, 1), borderaxespad=0.)
 
         canvas = FigureCanvas(fig)
+        canvas.mpl_connect('scroll_event', lambda event: self.scroll_event(event))
         canvas.mpl_connect("motion_notify_event", lambda event: self.hover(event, annotations, canvas))
         canvas.mpl_connect('scroll_event', lambda event: scroll_event(event))
         return canvas
@@ -110,3 +111,41 @@ class GraphBuilder:
                 if annotation.get_visible():
                     annotation.set_visible(False)
                     plt.draw()
+
+   def scroll_event(self, event: MouseEvent):
+      xmin, xmax = plt.xlim()
+
+      print(event.x)
+      if 'ctrl' in event.modifiers:
+         if event.button == 'down':
+            center = (xmax - xmin) / 2 + xmin
+            range = (xmax - xmin) * 1.1
+            xmin = center - range / 2
+            xmax = center + range / 2
+         else:
+            current_range = xmax - xmin
+            x_relative = (event.xdata - xmin)
+            x_factor = x_relative / current_range
+
+            range = (xmax - xmin) * 0.9
+            range_offset = range - current_range
+
+            left_offset = range_offset * x_factor
+            right_offset = range_offset - left_offset
+
+            xmin -= left_offset
+            xmax += right_offset
+
+         plt.xlim(xmin, xmax)
+
+      else:
+         xmin, xmax = plt.xlim()
+         range = xmax - xmin
+         if event.button == 'up':
+            x = xmin + range / 20
+         else:
+            x = xmin - range / 20
+
+         plt.xlim(x, x + range)
+
+      plt.draw()
