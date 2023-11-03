@@ -53,16 +53,17 @@ class GraphBuilder:
                 y = float(index)
                 scatter = ax.scatter(x, y, marker='o', c=[color_map.get(type_values[offset_index], 'gray')],
                                      s=marker_size)
-                annotation = ax.annotate(group['instruction'].iloc[idx],
+                annotation = ax.annotate("Author: " + group['author'].iloc[idx] + "\nChange Type: " + group['type'].iloc[idx].split(".")[1] + "\nInstruction: " + group['instruction'].iloc[idx],
                                          xy=(x, y),
                                          textcoords="offset points",
-                                         bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
+                                         bbox=dict(boxstyle='round,pad=0.5', fc='grey', alpha=0.8),
                                          xytext=(10, 10),
                                          ha='center',
                                          visible=False)
                 annotations.append((annotation, scatter))
                 offset_index += 1
             plot = ax.plot(x_values, y_values, linestyle='-', color='gray')
+
 
         # Configure axis labels and legend
         date_format = DateFormatter("%Y/%m/%d")
@@ -128,8 +129,7 @@ class GraphBuilder:
             if contains:
                 if not (annotation.get_visible()):
                     annotation.set_visible(True)
-                    plt.draw()
             else:
                 if annotation.get_visible():
                     annotation.set_visible(False)
-                    plt.draw()
+            plt.draw()
