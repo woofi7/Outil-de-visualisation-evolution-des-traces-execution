@@ -4,7 +4,7 @@ from view.SelectCommitWindowView import SelectCommitWindowView
 from view.TraceVisualizerView import TraceVisualizerView
 from model.LogInstructionDiffGenerator import LogInstructionDiffGenerator
 from model.LogInstructionCollectors.LogInstruction import LogInstruction
-from model.GraphBuilders.GraphManager import GraphBuilder
+from model.GraphBuilders.GraphManager import GraphManager
 from model.LogInstructionCollectors.Log4pCollector import Log4pCollector
 from model.LogInstructionCollectors.Log4jCollector import Log4jCollector
 from model.LogInstructionsFileGenerators.CsvFileGenerator import CsvFileGenerator
@@ -110,7 +110,9 @@ class TraceVisualizerController:
     def _set_view_data(self, log_instructions):
         self.trace_visualizer_view.set_log_instructions(log_instructions)
         self.strategy_generator_file = self._set_strategy_generator_file("csv")
-        self.trace_visualizer_view.set_graphic(GraphBuilder().build_graph(self.strategy_generator_file.createFile(log_instructions), -1, self.from_date, self.to_date))
+        self.trace_visualizer_view.set_graphic(
+            GraphManager().init_graph(
+                self.strategy_generator_file.createFile(log_instructions), self.from_date, self.to_date))
         
     def _filter_logs(self, filterWidget):
         types = {"Added": "ModificationType.ADD", "Deleted": "ModificationType.DELETE", "Modified": "ModificationType.MODIFY"}
@@ -132,13 +134,13 @@ class TraceVisualizerController:
                     filteredLogs.remove(log)
         else:
             raise ValueError("Invalid filter value: " + filter)
-        
-        self._set_view_data(filteredLogs)
+
+        GraphManager().set_data(self.strategy_generator_file.createFile(filteredLogs))
         self.filtered_log_instructions = filteredLogs
 
     def _highlight_graph_element(self, item):
         instruction = self.trace_visualizer_view.log_instructions_list.row(item)
-        self.trace_visualizer_view.set_graphic(GraphBuilder().build_graph(self.strategy_generator_file.createFile(self.filtered_log_instructions), instruction+1, self.from_date, self.to_date))
+        GraphManager().set_highlighted_instruction(instruction)
         
     def _save_data(self):
         file_name, _ = QFileDialog.getSaveFileName(self.trace_visualizer_view, "Save File", "./files", "JSON Files (*.json);;All Files (*)")

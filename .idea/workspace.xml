@@ -5,8 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2a1453b4-c897-4695-a31d-b28c3a4df705" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/TraceVisualizerController.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/TraceVisualizerController.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/GraphBuilders/GraphBuilder.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/GraphBuilders/GraphManager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/GraphBuilders/GraphManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/GraphBuilders/GraphManager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/repo/Outil-de-visualisation-evolution-des-traces-execution/src/controller/TraceVisualizerController.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/repo/Outil-de-visualisation-evolution-des-traces-execution/src/controller/TraceVisualizerController.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/repo/Outil-de-visualisation-evolution-des-traces-execution/src/test/controller/test_TraceVisualizerController.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/repo/Outil-de-visualisation-evolution-des-traces-execution/src/test/controller/test_TraceVisualizerController.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/repo/Outil-de-visualisation-evolution-des-traces-execution/src/test/model/GraphBuilders/test_GraphBuilder.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/repo/Outil-de-visualisation-evolution-des-traces-execution/src/test/model/GraphBuilders/test_GraphBuilder.py" afterDir="false" />
@@ -39,7 +40,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "annotationsMessage",
+    "git-widget-placeholder": "Rebasing reportView",
     "last_opened_file_path": "C:/Users/Hydra/Documents/code/Outil-de-visualisation-evolution-des-traces-execution/src/main.py",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -114,7 +115,7 @@
       <workItem from="1699299803176" duration="2724000" />
       <workItem from="1699456966536" duration="1455000" />
       <workItem from="1699458870654" duration="370000" />
-      <workItem from="1699993579994" duration="996000" />
+      <workItem from="1699993579994" duration="1455000" />
     </task>
     <servers />
   </component>
