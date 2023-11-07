@@ -4,6 +4,11 @@ import traceback
 
 
 class NewRepoView(QWidget):
+
+    def manage_line_edit_lock(self):
+        self.cloneRepo.setReadOnly(bool(self.openRepo.text()))
+        self.openRepo.setReadOnly(bool(self.cloneRepo.text()))
+
     def __init__(self):
         try:
             super().__init__()
@@ -24,6 +29,9 @@ class NewRepoView(QWidget):
             layout.addWidget(self.openRepo)
             layout.addWidget(self.openButton)
 
+            self.cloneRepo.textChanged.connect(self.manage_line_edit_lock)
+            self.openRepo.textChanged.connect(self.manage_line_edit_lock)
+
             line = QFrame()
             line.setFrameShape(QFrame.Shape.HLine)  # This creates a horizontal line
             line.setFrameShadow(QFrame.Shadow.Sunken)
@@ -38,3 +46,6 @@ class NewRepoView(QWidget):
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_info_popup("Caught Error", str(e))
+
+
+
