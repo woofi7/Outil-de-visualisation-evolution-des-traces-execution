@@ -1,5 +1,6 @@
 import traceback
 
+import git
 from PyQt6.QtWidgets import QFileDialog
 
 from view.PopupView import PopupManager
@@ -19,12 +20,18 @@ class NewRepoController:
 
     def _clone_repo(self):
         try:
-            # TODO: Handle clone and copy from view
-            repo_name = self.new_repo_view.cloneRepo.text().split("/")[-1].split(".")[0]
+            if self.new_repo_view.cloneRepo.text():
+                remote_url = self.new_repo_view.cloneRepo.text()
+            elif self.new_repo_view.openRepo.text():
+                local_project_path = self.new_repo_view.openRepo.text()
+                local_repo = git.Repo(local_project_path)
+                remote_url = local_repo.remotes.origin.url
+
+            repo_name = remote_url.split("/")[-1].split(".")[0]
             repo_path = "./repo/" + repo_name + "/"
 
             # Clone the repository using the model
-            self.repo_manager.clone_repo(self.new_repo_view.cloneRepo.text(), repo_path)
+            self.repo_manager.clone_repo(remote_url, repo_path)
 
             # Close the current view
             self.new_repo_view.close()
