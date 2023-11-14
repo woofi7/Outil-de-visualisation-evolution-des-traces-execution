@@ -93,13 +93,13 @@ class GraphManager:
                 scatter = self._ax.scatter(x, y, marker='o', c=[self.color_map.get(type_values[offset_index], 'gray')],
                                            s=marker_size)
                 annotation = self._ax.annotate("Author: " + group['author'].iloc[idx] + "\nChange Type: " + group['type'].iloc[idx].split(".")[1] + "\nInstruction: " + group['instruction'].iloc[idx],
-                                         xy=(x, y),
-                                         textcoords="offset points",
-                                         bbox=dict(boxstyle='round,pad=0.5', fc='grey', alpha=0.8),
-                                         xytext=(10, 10),
-                                         ha='center',
-                                         visible=False)
+                                               xy=(x, y),
+                                               textcoords="offset points",
+                                               bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
+                                               ha='center',
+                                               xytext=(10, 10),
                 self._annotations.append((annotation, scatter))
+                                               visible=False)
                 offset_index += 1
             plot = self._ax.plot(x_values, y_values, linestyle='-', color='gray')
         self._ax.set_yticks(list(y_labels.keys()))
