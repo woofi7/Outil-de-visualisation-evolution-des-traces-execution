@@ -13,14 +13,14 @@ from model.ReposManager import ReposManager
 FILE_TYPES = [".py"]
 
 class Log4pCollector(LogInstructionCollector):
-    def get_log_instructions(self, repo_path, from_date, to_date, path_in_directory, branch, author):
+    def get_log_instructions(self, repo_path, path_in_directory, branch, author):
         self.logs = {}
         self.deletedlogs = []
 
         repo, branch_ref = ReposManager.get_repo_branch(self, repo_path, branch)
         
         # Traverse the commits in the specified date range and branch
-        for commit in repo.iter_commits(rev=branch_ref, since=from_date, until=to_date, reverse=True):
+        for commit in repo.iter_commits(rev=branch_ref, reverse=True):
             # Filter commits by authors
             if author == '' or commit.author.name == author:
                 # Get the parent commit to calculate diffs

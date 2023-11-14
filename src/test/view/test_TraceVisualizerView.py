@@ -3,7 +3,7 @@ from model.LogInstructionCollectors.LogInstruction import LogInstruction
 from model.LogInstructionCollectors.Modification import Modification
 from unittest.mock import Mock, MagicMock
 from model.LogInstructionsFileGenerators.CsvFileGenerator import CsvFileGenerator
-from model.GraphBuilders.GraphBuilder import GraphBuilder
+from model.GraphBuilders.GraphManager import GraphManager
 from view.TraceVisualizerView import TraceVisualizerView
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from PyQt6.QtWidgets import QApplication, QFrame
