@@ -4,7 +4,7 @@ from view.SelectCommitWindowView import SelectCommitWindowView
 from view.TraceVisualizerView import TraceVisualizerView
 from model.LogInstructionDiffGenerator import LogInstructionDiffGenerator
 from model.LogInstructionCollectors.LogInstruction import LogInstruction
-from model.GraphBuilders.GraphBuilder import GraphBuilder
+from model.GraphBuilders.GraphManager import GraphBuilder
 from model.LogInstructionCollectors.Log4pCollector import Log4pCollector
 from model.LogInstructionCollectors.Log4jCollector import Log4jCollector
 from model.LogInstructionsFileGenerators.CsvFileGenerator import CsvFileGenerator

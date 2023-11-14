@@ -1,5 +1,5 @@
 import unittest
-from model.GraphBuilders.GraphBuilder import GraphBuilder
+from model.GraphBuilders.GraphManager import GraphBuilder
 from PyQt6.QtWidgets import QGraphicsView, QGraphicsScene, QApplication
 from unittest.mock import MagicMock, Mock
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas

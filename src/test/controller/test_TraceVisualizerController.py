@@ -1,7 +1,7 @@
 import unittest
 import json
 from unittest.mock import Mock, patch, MagicMock
-from model.GraphBuilders.GraphBuilder import GraphBuilder
+from model.GraphBuilders.GraphManager import GraphBuilder
 from model.LogInstructionCollectors.Modification import Modification
 from model.LogInstructionCollectors.LogInstruction import LogInstruction
 from controller.TraceVisualizerController import TraceVisualizerController
