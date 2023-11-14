@@ -48,7 +48,7 @@ class Log4pCollector(LogInstructionCollector):
                             self.logs[diff.b_path] = []
                         before_code = self.getCode(diff.a_blob)
                         after_code = self.getCode(diff.b_blob)
-                        logs, deletedlogs = self.getLogs(commit.hexsha, diff.b_path, before_code, after_code, commit.committed_datetime, self.logs[diff.b_path], diff.change_type, commit.author.name)
+                        logs, deletedlogs = self.getLogs(commit.hexsha, diff.b_path, before_code, after_code, commit.committed_datetime, self.logs[diff.b_path], diff.change_type, commit.summary, commit.author.name)
                         if deletedlogs is not None:
                             self.deletedlogs.append(deletedlogs)
                         self.logs[diff.b_path] = logs
@@ -76,23 +76,23 @@ class Log4pCollector(LogInstructionCollector):
                 return ''
 
        # Function to get the logs specific to this framework
-    def getLogs(self, hash, filename, before_code, after_code, date, logs, type, author):
+    def getLogs(self, hash, filename, before_code, after_code, date, logs, type, summary, author):
         # print(f"HASH : {hash}")
         # print(f"FILENAME : {filename}")
         if before_code is None:
             before_code = ''
         if after_code is None:
             after_code = ''
-        
+
         if "import " in after_code and "log4p" in after_code:
             beforeMatches = []
             afterMatches = []
             beforeParse = self.parse_python_code(before_code)
             afterParse = self.parse_python_code(after_code)
-            self.get_log_instructions_by_commit(beforeParse, beforeMatches, date, before_code, after_code, hash, filename, type, author)
-            self.get_log_instructions_by_commit(afterParse, afterMatches, date, before_code, after_code, hash, filename, type, author)
+            self.get_log_instructions_by_commit(beforeParse, beforeMatches, date, before_code, after_code, hash, filename, type, summary, author)
+            self.get_log_instructions_by_commit(afterParse, afterMatches, date, before_code, after_code, hash, filename, type, summary, author)
 
-            
+
             for afterMatch in afterMatches:
                     for index, beforMatch in enumerate (beforeMatches):
                         if (afterMatch.level == beforMatch.level and afterMatch.instruction == beforMatch.instruction) and len(logs) > 0:
@@ -100,25 +100,25 @@ class Log4pCollector(LogInstructionCollector):
                             logs.remove(logs[index])
                             beforeMatches.remove(beforeMatches[index])
                             break
-            
+
             for afterMatch in afterMatches:
                 for index, beforMatch in enumerate (beforeMatches):
                         if ((afterMatch.level != beforMatch.level and afterMatch.instruction == beforMatch.instruction) or (afterMatch.level == beforMatch.level and afterMatch.instruction != beforMatch.instruction)) and len(logs) > 0:
-                            modification = Modification(afterMatch.level, afterMatch.instruction, date, type, before_code, after_code, hash, filename, author)
+                            modification = Modification(afterMatch.level, afterMatch.instruction, date, type, before_code, after_code, hash, filename, summary, author)
                             afterMatch.modifications = logs[index].modifications
                             afterMatch.modifications.append(modification)
                             logs.remove(logs[index])
                             beforeMatches.remove(beforeMatches[index])
                             break
             for log in logs:
-                    modification = Modification(log.level, log.instruction, date, 'deleted', before_code, after_code, hash, filename, author)
+                    modification = Modification(log.level, log.instruction, date, 'deleted', before_code, after_code, hash, filename, summary, author)
                     log.modifications.append(modification)
             print(f"AFTER MATCHES : {afterParse}")
             return afterMatches, logs
             
         else:    
             for log in logs:
-                    modification = Modification(log.level, log.instruction, date, 'deleted', before_code, after_code, hash, filename, author)
+                    modification = Modification(log.level, log.instruction, date, 'deleted', before_code, after_code, hash, filename, summary, author)
                     log.modifications.append(modification)
             return [], logs
         
@@ -127,7 +127,7 @@ class Log4pCollector(LogInstructionCollector):
             tree = ast.parse(code)
             return tree
         
-    def get_log_instructions_by_commit(self,parseList, matcheslist, date, before_code, after_code, hash, filename, type, author):
+    def get_log_instructions_by_commit(self,parseList, matcheslist, date, before_code, after_code, hash, filename, type, summary, author):
         logPattern = ['debug','info','warn','error', 'fatal']
         if parseList is not None:
             
@@ -136,9 +136,9 @@ class Log4pCollector(LogInstructionCollector):
                         modification = Modification(node.value.func.attr, self.getArguments(node.value.args),date, type, before_code, after_code, hash, filename, author)
                         matcheslist.append(LogInstruction(node.value.func.attr, self.getArguments(node.value.args), [modification], date))
                     elif isinstance(node, FunctionDef):
-                        self.get_log_instructions_by_commit(node, matcheslist, date, before_code, after_code, hash, filename, type, author)
+                        self.get_log_instructions_by_commit(node, matcheslist, date, before_code, after_code, hash, filename, type, summary, author)
                     elif isinstance(node, While):
-                        self.get_log_instructions_by_commit(node, matcheslist, date, before_code, after_code, hash, filename, type, author)
+                        self.get_log_instructions_by_commit(node, matcheslist, date, before_code, after_code, hash, filename, type, summary, author)
     def getArguments(self, arg_list):
         arguments = ''
         for arg in arg_list:

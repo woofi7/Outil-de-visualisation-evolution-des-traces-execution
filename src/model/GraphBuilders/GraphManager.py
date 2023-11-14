@@ -92,7 +92,7 @@ class GraphManager:
                 y = float(index)
                 scatter = self._ax.scatter(x, y, marker='o', c=[self.color_map.get(type_values[offset_index], 'gray')],
                                            s=marker_size)
-                annotation = self._ax.annotate("Author: " + group['author'].iloc[idx] + "\nChange Type: " + group['type'].iloc[idx].split(".")[1] + "\nInstruction: " + group['instruction'].iloc[idx],
+                annotation = self._ax.annotate("Author: " + group['author'].iloc[idx] + "\nChange Type: " + group['type'].iloc[idx].split(".")[1] +"\nSummary: " + group['summary'].iloc[idx] + "\nInstruction: " + group['instruction'].iloc[idx],
                                                xy=(x, y),
                                                textcoords="offset points",
                                                bbox=dict(boxstyle='round,pad=0.5', fc='grey', alpha=0.5),
