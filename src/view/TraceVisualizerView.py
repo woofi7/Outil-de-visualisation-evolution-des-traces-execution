@@ -1,6 +1,10 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidget, QHBoxLayout, QComboBox, QSplitter, QFrame, QListWidgetItem, QPushButton
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidget, QHBoxLayout, QComboBox, QSplitter, QFrame, \
+    QListWidgetItem, QPushButton, QCheckBox
 from PyQt6 import QtCore,QtWidgets
 import matplotlib.pyplot as plt
+from model.GraphBuilders.GraphManager import GraphManager
+
 
 import csv
 
@@ -42,9 +46,23 @@ class TraceVisualizerView(QWidget):
             filters_label.setSizePolicy(QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Fixed)
             filters = QComboBox()
             filters.addItems(["All", "Added", "Deleted", "Modified"])
-            
             self.right_layout.addWidget(filters_label)
             self.right_layout.addWidget(filters)
+
+            checkbox_label = QLabel("Annotation Options:")
+            checkbox_label.setSizePolicy(QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Fixed)
+            checkbox_layout = QHBoxLayout()
+            checkbox_layout.addWidget(checkbox_label)
+
+            self._checkboxes = {}
+
+            for filter_name in GraphManager()._annotation_filters:
+                checkbox = QCheckBox(filter_name)
+                checkbox.setChecked(True)
+                checkbox_layout.addWidget(checkbox)
+                self._checkboxes[filter_name] = checkbox
+
+            self.right_layout.addLayout(checkbox_layout)
 
             splitter_vertical = QSplitter(QtCore.Qt.Orientation.Vertical)
             splitter_vertical.addWidget(self.right_frame)
@@ -55,6 +73,7 @@ class TraceVisualizerView(QWidget):
             self_layout.addWidget(splitter)
             
             self.show()  # Show the widget
+
 
     def handleResizeEvent(self, event):
         self.resizeGraphic()

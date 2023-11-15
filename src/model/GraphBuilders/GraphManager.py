@@ -18,6 +18,7 @@ class GraphManager:
     _highlighted_instruction = None
     _canvas = None
     _annotations: list[(Annotation, PathCollection)] = []
+    _annotation_filters = ["Author", "Date", "Type", "Summary", "Instruction", "Branch", "File"]
 
     def __new__(cls):
         if not cls._instance:
@@ -72,6 +73,10 @@ class GraphManager:
         for scatter in plt.gca().collections:
             scatter.remove()
 
+        for annotation, scatter in self._annotations:
+            annotation.remove()
+        self._annotations = []
+
         y_labels = {}
         offset_index = 0
         for index, group in self._data.groupby('index'):
@@ -92,7 +97,7 @@ class GraphManager:
                 y = float(index)
                 scatter = self._ax.scatter(x, y, marker='o', c=[self.color_map.get(type_values[offset_index], 'gray')],
                                            s=marker_size)
-                annotation = self._ax.annotate("Author: " + group['author'].iloc[idx] + "\nChange Type: " + group['type'].iloc[idx].split(".")[1] +"\nSummary: " + group['summary'].iloc[idx] + "\nInstruction: " + group['instruction'].iloc[idx],
+                annotation = self._ax.annotate(self.getAnnotationText(group, idx),
                                                xy=(x, y),
                                                textcoords="offset points",
                                                bbox=dict(boxstyle='round,pad=0.5', fc='grey', alpha=0.5),
@@ -154,3 +159,16 @@ class GraphManager:
                 if annotation.get_visible():
                     annotation.set_visible(False)
                     plt.draw()
+
+    def set_annotation_filters(self,filters):
+        self._annotation_filters = filters
+        self.update_graph()
+
+    def getAnnotationText(self, group, row):
+        annotation = ""
+        for idx, element in enumerate(self._annotation_filters):
+            annotation += element + ": " + str(group[element.lower()].iloc[row])
+            if idx != len(self._annotation_filters) - 1:
+                annotation += "\n"
+
+        return annotation
