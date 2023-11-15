@@ -26,13 +26,14 @@ class CsvFileGenerator(LogInstructionsFileGenerator):
                     'type': modification.type,
                     'file': modification.filename,
                     'summary': modification.summary,
-                    'author': modification.author
+                    'author': modification.author,
+                    'branch': modification.branch
                 })
 
         with open(path, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow(['index', 'instruction', 'date', 'type','file', 'summary', 'author'])
+            writer.writerow(['index', 'instruction', 'date', 'type','file', 'summary', 'author', 'branch'])
             for row in data:
-                writer.writerow([row['index'], row['instruction'], row['date'], row['type'], row['file'], row['summary'], row['author']])
+                writer.writerow([row['index'], row['instruction'], row['date'], row['type'], row['file'], row['summary'], row['author'], row['branch']])
 
         return path

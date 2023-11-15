@@ -51,7 +51,7 @@ class Log4jCollector(LogInstructionCollector):
                             self.logs[diff.b_path] = []
                         before_code = self.getCode(diff.a_blob)
                         after_code = self.getCode(diff.b_blob)
-                        logs, deletedlogs = self.getLogs(commit.hexsha, diff.b_path, before_code, after_code, commit.committed_datetime, self.logs[diff.b_path], diff.change_type, commit.summary, commit.author.name)
+                        logs, deletedlogs = self.getLogs(commit.hexsha, diff.b_path, before_code, after_code, commit.committed_datetime, self.logs[diff.b_path], diff.change_type, commit.summary, commit.author.name, commit.repo.active_branch)
                         if deletedlogs is not None:
                             self.deletedlogs.append(deletedlogs)
                         self.logs[diff.b_path] = logs
@@ -78,7 +78,7 @@ class Log4jCollector(LogInstructionCollector):
             except UnicodeDecodeError:
                 return ''
 
-    def getLogs(self, hash, filename, before_code, after_code, date, logs, type, summary, author):
+    def getLogs(self, hash, filename, before_code, after_code, date, logs, type, summary, author, branch):
         if before_code is None:
             before_code = ''
         if after_code is None:
@@ -92,7 +92,7 @@ class Log4jCollector(LogInstructionCollector):
 
             for _, node in afterParse:
                 if isinstance(node, MethodInvocation) and node.member in logPattern:
-                    afterMatches.append(self.get_Log_Instruction(node, date, before_code, after_code, hash, filename, summary, author))
+                    afterMatches.append(self.get_Log_Instruction(node, date, before_code, after_code, hash, filename, summary, author, branch))
 
             for afterMatch in afterMatches:
                 for index, log in enumerate (logs):
@@ -101,20 +101,20 @@ class Log4jCollector(LogInstructionCollector):
                         logs.remove(logs[index])
                         break
                     elif ((afterMatch.level != log.level and afterMatch.instruction == log.instruction) or (afterMatch.level == log.level and afterMatch.instruction != log.instruction)) and len(logs) > 0:
-                        modification = Modification(afterMatch.level, afterMatch.instruction, date, 'ModificationType.MODIFY', before_code, after_code, hash, filename, summary, author)
+                        modification = Modification(afterMatch.level, afterMatch.instruction, date, 'ModificationType.MODIFY', before_code, after_code, hash, filename, summary, author, branch)
                         afterMatch.modifications = logs[index].modifications
                         afterMatch.modifications.append(modification)
                         logs.remove(logs[index])
                         break
 
             for log in logs:
-                modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename, summary, author)
+                modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename, summary, author, branch )
                 log.modifications.append(modification)
 
             return afterMatches, logs
         else:
             for log in logs:
-                modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename, summary, author)
+                modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename, summary, author,  branch )
                 log.modifications.append(modification)
             return [], logs
 
@@ -127,9 +127,9 @@ class Log4jCollector(LogInstructionCollector):
         except javalang.tokenizer.LexerError:
             return []
 
-    def get_Log_Instruction(self, node, date, before_code, after_code, hash, filename, summary, author):
+    def get_Log_Instruction(self, node, date, before_code, after_code, hash, filename, summary, author, branch):
         instruction = self.get_instruction(node.arguments)
-        modification = Modification(node.member, instruction, date, 'ModificationType.ADD', before_code, after_code, hash, filename, summary, author)
+        modification = Modification(node.member, instruction, date, 'ModificationType.ADD', before_code, after_code, hash, filename, summary, author, branch)
         return LogInstruction(node.member, instruction, [modification], date)
 
     def get_instruction(self, arguments):
