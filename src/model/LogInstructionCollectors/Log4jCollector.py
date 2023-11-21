@@ -51,7 +51,7 @@ class Log4jCollector(LogInstructionCollector):
                             self.logs[diff.b_path] = []
                         before_code = self.getCode(diff.a_blob)
                         after_code = self.getCode(diff.b_blob)
-                        logs, deletedlogs = self.getLogs(commit.hexsha, diff.b_path, before_code, after_code, commit.committed_datetime, self.logs[diff.b_path], diff.change_type, commit.author.name)
+                        logs, deletedlogs = self.getLogs(commit.hexsha, diff.b_path, before_code, after_code, commit.committed_datetime, self.logs[diff.b_path], diff.change_type, commit.summary, commit.author.name, commit.repo.active_branch)
                         if deletedlogs is not None:
                             self.deletedlogs.append(deletedlogs)
                         self.logs[diff.b_path] = logs
@@ -78,22 +78,22 @@ class Log4jCollector(LogInstructionCollector):
             except UnicodeDecodeError:
                 return ''
 
-    def getLogs(self, hash, filename, before_code, after_code, date, logs, type, author):
+    def getLogs(self, hash, filename, before_code, after_code, date, logs, type, summary, author, branch):
         if before_code is None:
             before_code = ''
         if after_code is None:
             after_code = ''
         # Check for log4j import in the before and after code
-        
+
         if ("import " in after_code) and "log4j" in  after_code:
             logPattern = {'debug','info','warn','error','fatal'}
             afterMatches = []
             afterParse = self.parse_java_code(after_code)
-                    
+
             for _, node in afterParse:
                 if isinstance(node, MethodInvocation) and node.member in logPattern:
-                    afterMatches.append(self.get_Log_Instruction(node, date, before_code, after_code, hash, filename, type, author))
-                
+                    afterMatches.append(self.get_Log_Instruction(node, date, before_code, after_code, hash, filename, summary, author, branch))
+
             for afterMatch in afterMatches:
                 for index, log in enumerate (logs):
                     if (afterMatch.level == log.level and afterMatch.instruction == log.instruction) and len(logs) > 0:
@@ -101,23 +101,23 @@ class Log4jCollector(LogInstructionCollector):
                         logs.remove(logs[index])
                         break
                     elif ((afterMatch.level != log.level and afterMatch.instruction == log.instruction) or (afterMatch.level == log.level and afterMatch.instruction != log.instruction)) and len(logs) > 0:
-                        modification = Modification(afterMatch.level, afterMatch.instruction, date, 'ModificationType.MODIFY', before_code, after_code, hash, filename, author)
+                        modification = Modification(afterMatch.level, afterMatch.instruction, date, 'ModificationType.MODIFY', before_code, after_code, hash, filename, summary, author, branch)
                         afterMatch.modifications = logs[index].modifications
                         afterMatch.modifications.append(modification)
                         logs.remove(logs[index])
                         break
-                    
+
             for log in logs:
-                modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename, author)
+                modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename, summary, author, branch )
                 log.modifications.append(modification)
 
             return afterMatches, logs
         else:
             for log in logs:
-                modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename, author)
+                modification = Modification(log.level, log.instruction, date, 'ModificationType.DELETE', before_code, after_code, hash, filename, summary, author,  branch )
                 log.modifications.append(modification)
             return [], logs
-      
+
 
     def parse_java_code(self, code):
         try:
@@ -126,10 +126,10 @@ class Log4jCollector(LogInstructionCollector):
             return []
         except javalang.tokenizer.LexerError:
             return []
-    
-    def get_Log_Instruction(self, node, date, before_code, after_code, hash, filename, type, author):
+
+    def get_Log_Instruction(self, node, date, before_code, after_code, hash, filename, summary, author, branch):
         instruction = self.get_instruction(node.arguments)
-        modification = Modification(node.member, instruction, date, 'ModificationType.ADD', before_code, after_code, hash, filename, author)
+        modification = Modification(node.member, instruction, date, 'ModificationType.ADD', before_code, after_code, hash, filename, summary, author, branch)
         return LogInstruction(node.member, instruction, [modification], date)
 
     def get_instruction(self, arguments):

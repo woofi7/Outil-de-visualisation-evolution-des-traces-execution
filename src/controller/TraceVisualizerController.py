@@ -16,9 +16,12 @@ import traceback
 REPO_FOLDER = "./repo/"
 
 class TraceVisualizerController:
+    annotationFilters = GraphManager._annotation_filters
     log_instruction_collector = None
 
     def __init__(self, all_log_instructions):
+
+
         try:
             self.all_log_instructions = all_log_instructions
             self.trace_visualizer_view = TraceVisualizerView()
@@ -39,7 +42,10 @@ class TraceVisualizerController:
             
             # Connect to go back to home
             self.trace_visualizer_view.home_button.clicked.connect(self._navigate_to_home)
-            
+
+            for checkbox in self.annotationFilters:
+                self.trace_visualizer_view._checkboxes[checkbox].stateChanged.connect(self._checkbox_state_changed)
+
             # Connect the filters to the data
             filterWidget = self.trace_visualizer_view.right_layout.itemAt(1).widget()
             filterWidget.currentTextChanged.connect(lambda: self._filter_logs(filterWidget))
@@ -47,6 +53,14 @@ class TraceVisualizerController:
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_info_popup("Caught Error", str(e))
+
+    def _checkbox_state_changed(self,state):
+        # 2 is the checked state for a checkbox
+        if state is 2:
+            self.annotationFilters.append(self.trace_visualizer_view.sender().text())
+        else:
+            self.annotationFilters.remove(self.trace_visualizer_view.sender().text())
+        GraphManager().set_annotation_filters(self.annotationFilters)
     @classmethod
     def fromArgs(cls, frameworks, from_date, to_date, repo_path, searched_path, searched_branch, searched_author):
         try:
