@@ -1,4 +1,6 @@
-from controller.NewRepoController import NewRepoController
+import os
+
+import git
 from view.PopupView import PopupManager
 from controller.TraceVisualizerController import TraceVisualizerController
 from model.ReposManager import ReposManager
@@ -26,6 +28,9 @@ class HomeController:
         self.home_view.deleteRepoButton.clicked.connect(self._delete_repo_button_clicked)
         self.home_view.repoList.currentTextChanged.connect(self._update_branch_list)
         self.home_view.load_from_csv_button.clicked.connect(self.load_csv_file)
+
+        self.home_view.openButton.clicked.connect(self._open_file_dialog)
+        self.home_view.cloneButton.clicked.connect(self._clone_repo)
 
     def _search_button_clicked(self):
             # Retrieve selected dates and repository name from the view
@@ -63,8 +68,8 @@ class HomeController:
                 self.home_view.setBranches(self.repos_manager.get_branches(repo_path))
 
     def _new_repo_button_clicked(self):
-            self.new_repo_controller = NewRepoController(self.home_view)
-
+        pass
+    
     def _delete_repo_button_clicked(self):
         try:
             repo_name = self.home_view.repoList.currentText()
@@ -82,3 +87,32 @@ class HomeController:
         print("File name: " + file_name)
         self.trace_visualizer_controller = TraceVisualizerController.fromFile(file_name)
         self.home_view.close()
+
+    def _clone_repo(self):
+        try:
+            if os.path.isdir(self.home_view.cloneRepo.text()):
+                local_project_path = self.home_view.cloneRepo.text()
+                local_repo = git.Repo(local_project_path)
+                remote_url = local_repo.remotes.origin.url
+            else:
+                remote_url = self.home_view.cloneRepo.text()
+
+            repo_name = remote_url.split("/")[-1].split(".")[0]
+            repo_path = "./repo/" + repo_name + "/"
+
+            # Clone the repository using the model
+            self.repos_manager.clone_repo(remote_url, repo_path)
+
+            # Clear the text
+            self.home_view.cloneRepo.clear()
+
+            # Update the repository list in the home controller
+            self.home_view.setRepos(self.repos_manager.get_repos("./repo/"))
+        except Exception as e:
+            traceback.print_exc()
+            PopupManager.show_info_popup("Caught Error", str(e))
+
+    def _open_file_dialog(self):
+        folder_path = QFileDialog.getExistingDirectory()
+        if folder_path:
+            self.home_view.cloneRepo.setText(folder_path)
