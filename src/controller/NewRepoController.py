@@ -1,6 +1,7 @@
 import traceback
 
 import git
+import os
 from PyQt6.QtWidgets import QFileDialog
 
 from view.PopupView import PopupManager
@@ -20,12 +21,12 @@ class NewRepoController:
 
     def _clone_repo(self):
         try:
-            if self.new_repo_view.cloneRepo.text():
-                remote_url = self.new_repo_view.cloneRepo.text()
-            elif self.new_repo_view.openRepo.text():
-                local_project_path = self.new_repo_view.openRepo.text()
+            if os.path.isdir(self.new_repo_view.cloneRepo.text()):
+                local_project_path = self.new_repo_view.cloneRepo.text()
                 local_repo = git.Repo(local_project_path)
                 remote_url = local_repo.remotes.origin.url
+            else:
+                remote_url = self.new_repo_view.cloneRepo.text()
 
             repo_name = remote_url.split("/")[-1].split(".")[0]
             repo_path = "./repo/" + repo_name + "/"
@@ -48,4 +49,4 @@ class NewRepoController:
     def _open_file_dialog(self):
         folder_path = QFileDialog.getExistingDirectory()
         if folder_path:
-            self.new_repo_view.openRepo.setText(folder_path)
+            self.new_repo_view.cloneRepo.setText(folder_path)

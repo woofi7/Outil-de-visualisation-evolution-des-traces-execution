@@ -5,10 +5,6 @@ import traceback
 
 class NewRepoView(QWidget):
 
-    def manage_line_edit_lock(self):
-        self.cloneRepo.setReadOnly(bool(self.openRepo.text()))
-        self.openRepo.setReadOnly(bool(self.cloneRepo.text()))
-
     def __init__(self):
         try:
             super().__init__()
@@ -18,19 +14,12 @@ class NewRepoView(QWidget):
             layout = QGridLayout(self)
 
             # Clone remote
-            layout.addWidget(QLabel("Clone an external repository"))
+            layout.addWidget(QLabel("Clone an external or local repository"))
             self.cloneRepo = QLineEdit(self)
             layout.addWidget(self.cloneRepo)
 
-            # Open local
-            layout.addWidget(QLabel("Open a local repository"))
-            self.openRepo = QLineEdit(self)
             self.openButton = QPushButton("Select Folder")
-            layout.addWidget(self.openRepo)
             layout.addWidget(self.openButton)
-
-            self.cloneRepo.textChanged.connect(self.manage_line_edit_lock)
-            self.openRepo.textChanged.connect(self.manage_line_edit_lock)
 
             line = QFrame()
             line.setFrameShape(QFrame.Shape.HLine)  # This creates a horizontal line
