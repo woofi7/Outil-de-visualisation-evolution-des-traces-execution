@@ -113,6 +113,7 @@ class GraphManager:
 
     def scroll_event(self, event: MouseEvent):
         xmin, xmax = plt.xlim()
+        ymin, ymax = plt.ylim()
 
         if 'ctrl' in event.modifiers:
             if event.button == 'down':
@@ -135,7 +136,16 @@ class GraphManager:
                 xmax += right_offset
 
             plt.xlim(xmin, xmax)
+        elif 'shift' in event.modifiers:
+            current_range = ymax - ymin
+            if event.button == 'down':
+                ymin -= 1
+                ymax -= 1
+            else:
+                ymin += 1
+                ymax += 1
 
+            plt.ylim(ymin, ymax)
         else:
             xmin, xmax = plt.xlim()
             range = xmax - xmin
