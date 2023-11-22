@@ -48,7 +48,7 @@ class Log4pCollector(LogInstructionCollector):
                             self.logs[diff.b_path] = []
                         before_code = self.getCode(diff.a_blob)
                         after_code = self.getCode(diff.b_blob)
-                        logs, deletedlogs = self.getLogs(commit.hexsha, diff.b_path, before_code, after_code, commit.committed_datetime, self.logs[diff.b_path], diff.change_type, commit.summary, commit.author.name)
+                        logs, deletedlogs = self.getLogs(commit.hexsha, diff.b_path, before_code, after_code, commit.committed_datetime, self.logs[diff.b_path], diff.change_type, commit.summary, commit.author.name, commit.repo.active_branch)
                         if deletedlogs is not None:
                             self.deletedlogs.append(deletedlogs)
                         self.logs[diff.b_path] = logs
@@ -84,7 +84,7 @@ class Log4pCollector(LogInstructionCollector):
         if after_code is None:
             after_code = ''
 
-        if "import " in after_code and "log4p" in after_code:
+        if "import " in after_code and "log4p" in after_code and ".md" not in filename:
             beforeMatches = []
             afterMatches = []
             beforeParse = self.parse_python_code(before_code)
