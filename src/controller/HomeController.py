@@ -30,6 +30,9 @@ class HomeController:
         self.home_view.repoList.currentTextChanged.connect(self._update_branch_list)
         self.home_view.load_from_csv_button.clicked.connect(self.load_csv_file)
 
+        self.home_view.openButton.clicked.connect(self._open_file_dialog)
+        self.home_view.cloneButton.clicked.connect(self._clone_repo)
+
     def _search_button_clicked(self):
             # Retrieve selected dates and repository name from the view
             from_date = datetime.strptime(self.home_view.from_calendar.selectedDate().toString(Qt.DateFormat.ISODate), '%Y-%m-%d')
@@ -85,8 +88,8 @@ class HomeController:
                 self.home_view.setBranches(self.repos_manager.get_branches(repo_path))
 
     def _new_repo_button_clicked(self):
-            self.new_repo_controller = NewRepoController(self.home_view)
-
+        pass
+    
     def _delete_repo_button_clicked(self):
         try:
             repo_name = self.home_view.repoList.currentText()
