@@ -121,3 +121,5 @@ class HomeView(QWidget):
     
     def popupError(self,title,  message):
        PopupManager.show_info_popup(title, message)
+
+

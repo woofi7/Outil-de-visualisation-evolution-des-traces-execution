@@ -67,12 +67,12 @@ class TraceVisualizerView(QWidget):
             splitter_vertical = QSplitter(QtCore.Qt.Orientation.Vertical)
             splitter_vertical.addWidget(self.right_frame)
             splitter = QSplitter(QtCore.Qt.Orientation.Horizontal)
-            splitter.addWidget(left_frame)
             splitter.addWidget(self.right_frame)
+            splitter.addWidget(left_frame)
+
             splitter.setStretchFactor(1, 1)
             self_layout.addWidget(splitter)
-            
-            self.show()  # Show the widget
+
 
 
     def handleResizeEvent(self, event):

@@ -2,12 +2,14 @@ import collections
 import os
 
 import git
+from PyQt6 import QtCore
+
 from view.PopupView import PopupManager
 from controller.TraceVisualizerController import TraceVisualizerController
 from model.ReposManager import ReposManager
 from datetime import datetime
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QFileDialog, QListWidgetItem
+from PyQt6.QtWidgets import QFileDialog, QListWidgetItem, QHBoxLayout, QSplitter, QWidget
 from functools import partial
 from view.HomeView import HomeView
 import traceback
@@ -21,6 +23,7 @@ class HomeController:
         self.home_view.setRepos(self.repos_manager.get_repos(REPO_FOLDER))
         self._update_branch_list(self.home_view.repoList.currentText())
 
+
         # Connect button click events to corresponding functions
         self.home_view.newRepoButton.clicked.connect(partial(self._new_repo_button_clicked))
         self.home_view.searchButton.clicked.connect(self._search_button_clicked)
@@ -32,6 +35,9 @@ class HomeController:
 
         self.home_view.openButton.clicked.connect(self._open_file_dialog)
         self.home_view.cloneButton.clicked.connect(self._clone_repo)
+
+
+
 
     def _search_button_clicked(self):
             # Retrieve selected dates and repository name from the view
@@ -46,13 +52,38 @@ class HomeController:
 
             if len(frameworks) >= 1:
                 self.repos_manager.git_pull(repo_path)
+                self.trace_visualizer_controller = None
+                # Check if the splitter exists
+                if hasattr(self, 'splitter') and self.splitter is not None:
+                    self.trace_visualizer_controller = TraceVisualizerController.fromArgs(frameworks, from_date,
+                                                                                          to_date,
+                                                                                          repo_path, searched_path,
+                                                                                          searched_branch,
+                                                                                          searched_author)
 
-                # Create a new TraceVisualizerView and pass the retrieved commits to it
-                self.trace_visualizer_controller = TraceVisualizerController.fromArgs(frameworks, from_date, to_date,
-                                                                                      repo_path, searched_path,
-                                                                                      searched_branch, searched_author)
+                    # Show the splitter instead of the home view
+                    self.splitter.replaceWidget(1, self.trace_visualizer_controller.trace_visualizer_view)
+                else:
+                    # The splitter doesn't exist, create it and show
+                    # Create a new TraceVisualizerView and pass the retrieved commits to it
+                    self.trace_visualizer_controller = TraceVisualizerController.fromArgs(frameworks, from_date,
+                                                                                          to_date,
+                                                                                          repo_path, searched_path,
+                                                                                          searched_branch,
+                                                                                          searched_author)
+                    self.splitter = QSplitter(QtCore.Qt.Orientation.Horizontal)
+                    self.splitter.addWidget(self.home_view)
+                    self.splitter.addWidget(self.trace_visualizer_controller.trace_visualizer_view)
+                    #self.splitter.setSizes([400, 1000])
                 # Close the current view
-                self.home_view.close()
+                self.splitter.show()
+
+                # self.home_view.close()
+                if hasattr(self, 'splitter') and self.splitter is not None:
+                    for i in range(self.splitter.count()):
+                        widget = self.splitter.widget(i)
+                        print(f"Widget at index {i}: {widget}")
+
             else:
                 self.home_view.popupError("No Framework Selected",
                                           "Please select a Framework before continuing")
