@@ -119,6 +119,9 @@ class TraceVisualizerView(QWidget):
         # Highlight the log instructions
         self.graphic.mpl_connect('motion_notify_event', lambda event: self.highlight_log(event, self.log_instructions_list))
 
+        self.graphic.figure.set_size_inches(8, 6)
+        self.graphic.figure.tight_layout()
+
     def resizeGraphic(self):
         frameSize = self.right_layout.parent().size()
 
