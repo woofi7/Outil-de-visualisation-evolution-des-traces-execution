@@ -39,9 +39,6 @@ class TraceVisualizerController:
             
             # Connect to save data button
             self.trace_visualizer_view.save_data_button.clicked.connect(self._save_data)
-            
-            # Connect to go back to home
-            self.trace_visualizer_view.home_button.clicked.connect(self._navigate_to_home)
 
             for checkbox in self.annotationFilters:
                 self.trace_visualizer_view._checkboxes[checkbox].stateChanged.connect(self._checkbox_state_changed)
@@ -167,25 +164,3 @@ class TraceVisualizerController:
         msg.setIcon(QMessageBox.Icon.Information)
         msg.exec()
 
-    def _navigate_to_home(self):
-        from controller.HomeController import HomeController
-        self.trace_visualizer_view.close()
-        HomeController()
-
-    def update_view(self, frameworks, from_date, to_date, repo_path, searched_path, searched_branch, searched_author):
-        try:
-            all_log_instructions = []
-
-            # Retrieve commits based on the selected dates using the model
-            for framework in frameworks:
-                self.log_instruction_collector = self._set_strategy_collector(framework.text())
-                framework_logs = self.log_instruction_collector.get_log_instructions(repo_path, searched_path, searched_branch, searched_author)
-                all_log_instructions.extend(framework_logs)
-
-            # Update the existing view with the new log instructions
-            self.all_log_instructions = all_log_instructions
-            self._set_view_data(all_log_instructions)
-
-        except Exception as e:
-            traceback.print_exc()
-            PopupManager.show_info_popup("Caught Error", str(e))

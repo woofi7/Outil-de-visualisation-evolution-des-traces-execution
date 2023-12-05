@@ -18,10 +18,8 @@ class TraceVisualizerView(QWidget):
 
             main_layout = QVBoxLayout(self)
             top_button_layout = QHBoxLayout()
-            self.home_button = QPushButton("Home", self)
             self.save_data_button = QPushButton("Save data", self)
             
-            top_button_layout.addWidget(self.home_button)
             top_button_layout.addStretch(1)
             top_button_layout.addWidget(self.save_data_button)
             main_layout.addLayout(top_button_layout)

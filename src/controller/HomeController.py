@@ -52,7 +52,6 @@ class HomeController:
 
             if len(frameworks) >= 1:
                 self.repos_manager.git_pull(repo_path)
-                self.trace_visualizer_controller = None
                 # Check if the splitter exists
                 if hasattr(self, 'splitter') and self.splitter is not None:
                     self.trace_visualizer_controller = TraceVisualizerController.fromArgs(frameworks, from_date,
@@ -64,8 +63,6 @@ class HomeController:
                     # Show the splitter instead of the home view
                     self.splitter.replaceWidget(1, self.trace_visualizer_controller.trace_visualizer_view)
                 else:
-                    # The splitter doesn't exist, create it and show
-                    # Create a new TraceVisualizerView and pass the retrieved commits to it
                     self.trace_visualizer_controller = TraceVisualizerController.fromArgs(frameworks, from_date,
                                                                                           to_date,
                                                                                           repo_path, searched_path,
@@ -74,16 +71,7 @@ class HomeController:
                     self.splitter = QSplitter(QtCore.Qt.Orientation.Horizontal)
                     self.splitter.addWidget(self.home_view)
                     self.splitter.addWidget(self.trace_visualizer_controller.trace_visualizer_view)
-                    #self.splitter.setSizes([400, 1000])
-                # Close the current view
                 self.splitter.show()
-
-                # self.home_view.close()
-                if hasattr(self, 'splitter') and self.splitter is not None:
-                    for i in range(self.splitter.count()):
-                        widget = self.splitter.widget(i)
-                        print(f"Widget at index {i}: {widget}")
-
             else:
                 self.home_view.popupError("No Framework Selected",
                                           "Please select a Framework before continuing")
