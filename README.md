@@ -1,5 +1,10 @@
 # Outil-de-visualisation-evolution-des-traces-execution
 
+## Objective
+ The objective is to allow users to follow the evolution of the logging instructions in their projects.
+ This allows to easily see the information related to a log instruction weather it be when it was added,
+ when it's edited or when it is removed from the code.
+
 ## Requirements
 
 - Git
@@ -32,6 +37,14 @@ git clone https://github.com/Projet-de-fin-etudes/Outil-de-visualisation-evoluti
     ```
 
 Note: Ensure that you have the necessary permissions to execute the program. The provided instructions are applicable to the respective operating systems: Windows, macOS, and Linux
+
+## Usage
+1. Add a repository either by pulling it from a git repository or by opening a local repository or choose one that was already added to the application. 
+2. You will then have to choose which branch you want to analyse. 
+3. The app will automatically select the frameworks that would work with the repository. You and add or remove some of the selected.
+4. You will then have to choose the dates you would like the analysis to be held between.
+5. Once that is done click on the search button.
+6. The app will then display the log instructions and the relevant information to these logs. 
 
 ## How to Contribute
 
