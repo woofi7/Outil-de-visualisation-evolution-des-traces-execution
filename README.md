@@ -46,6 +46,10 @@ Note: Ensure that you have the necessary permissions to execute the program. The
 5. Once that is done click on the search button.
 6. The app will then display the log instructions and the relevant information to these logs. 
 
+## Artefact generation
+To have an artefect generated and published on Github, simply create a tag in the project and publish it to Github. 
+Once that has been done the workflow will take care of the rest.
+
 ## How to Contribute
 
 1. **Familiarize Yourself with the Project**: Start by exploring the project's repository, reading through the codebase, and getting acquainted with the existing issues and pull requests. Understand the project's coding standards and guidelines.
