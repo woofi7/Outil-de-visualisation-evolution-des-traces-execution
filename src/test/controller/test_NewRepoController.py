@@ -18,7 +18,7 @@ class test_NewRepoController(unittest.TestCase):
         newRepoController = NewRepoController(view)
         newRepoController.repo_manager.get_repos = Mock()
         newRepoController.repo_manager.clone_repo = Mock()
-        newRepoController._ok_button_clicked()
+        newRepoController._clone_repo()
         newRepoController.repo_manager.clone_repo.assert_called_once()
         view.setRepos.assert_called_once()
 

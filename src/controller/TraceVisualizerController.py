@@ -4,7 +4,7 @@ from view.SelectCommitWindowView import SelectCommitWindowView
 from view.TraceVisualizerView import TraceVisualizerView
 from model.LogInstructionDiffGenerator import LogInstructionDiffGenerator
 from model.LogInstructionCollectors.LogInstruction import LogInstruction
-from model.GraphBuilders.GraphBuilder import GraphBuilder
+from model.GraphBuilders.GraphManager import GraphManager
 from model.LogInstructionCollectors.Log4pCollector import Log4pCollector
 from model.LogInstructionCollectors.Log4jCollector import Log4jCollector
 from model.LogInstructionsFileGenerators.CsvFileGenerator import CsvFileGenerator
@@ -16,7 +16,12 @@ import traceback
 REPO_FOLDER = "./repo/"
 
 class TraceVisualizerController:
+    annotationFilters = GraphManager._annotation_filters
+    log_instruction_collector = None
+
     def __init__(self, all_log_instructions):
+
+
         try:
             self.all_log_instructions = all_log_instructions
             self.trace_visualizer_view = TraceVisualizerView()
@@ -34,10 +39,10 @@ class TraceVisualizerController:
             
             # Connect to save data button
             self.trace_visualizer_view.save_data_button.clicked.connect(self._save_data)
-            
-            # Connect to go back to home
-            self.trace_visualizer_view.home_button.clicked.connect(self._navigate_to_home)
-            
+
+            for checkbox in self.annotationFilters:
+                self.trace_visualizer_view._checkboxes[checkbox].stateChanged.connect(self._checkbox_state_changed)
+
             # Connect the filters to the data
             filterWidget = self.trace_visualizer_view.right_layout.itemAt(1).widget()
             filterWidget.currentTextChanged.connect(lambda: self._filter_logs(filterWidget))
@@ -45,15 +50,25 @@ class TraceVisualizerController:
         except Exception as e:
             traceback.print_exc()
             PopupManager.show_info_popup("Caught Error", str(e))
+
+    def _checkbox_state_changed(self,state):
+        # 2 is the checked state for a checkbox
+        if state is 2:
+            self.annotationFilters.append(self.trace_visualizer_view.sender().text())
+        else:
+            self.annotationFilters.remove(self.trace_visualizer_view.sender().text())
+        GraphManager().set_annotation_filters(self.annotationFilters)
     @classmethod
     def fromArgs(cls, frameworks, from_date, to_date, repo_path, searched_path, searched_branch, searched_author):
         try:
             all_log_instructions = []
 
+            cls.from_date = from_date
+            cls.to_date = to_date
             # Retrieve commits based on the selected dates using the model
             for framework in frameworks:
                 cls.log_instruction_collector = cls._set_strategy_collector(framework.text())
-                framework_logs = cls.log_instruction_collector.get_log_instructions(repo_path, from_date, to_date, searched_path, searched_branch, searched_author)
+                framework_logs = cls.log_instruction_collector.get_log_instructions(repo_path, searched_path, searched_branch, searched_author)
                 all_log_instructions.extend(framework_logs)
                 
             return cls(all_log_instructions)
@@ -106,7 +121,9 @@ class TraceVisualizerController:
     def _set_view_data(self, log_instructions):
         self.trace_visualizer_view.set_log_instructions(log_instructions)
         self.strategy_generator_file = self._set_strategy_generator_file("csv")
-        self.trace_visualizer_view.set_graphic(GraphBuilder().build_graph(self.strategy_generator_file.createFile(log_instructions)))
+        self.trace_visualizer_view.set_graphic(
+            GraphManager().init_graph(
+                self.strategy_generator_file.createFile(log_instructions), self.from_date, self.to_date))
         
     def _filter_logs(self, filterWidget):
         types = {"Added": "ModificationType.ADD", "Deleted": "ModificationType.DELETE", "Modified": "ModificationType.MODIFY"}
@@ -128,13 +145,13 @@ class TraceVisualizerController:
                     filteredLogs.remove(log)
         else:
             raise ValueError("Invalid filter value: " + filter)
-        
-        self._set_view_data(filteredLogs)
+
+        GraphManager().set_data(self.strategy_generator_file.createFile(filteredLogs))
         self.filtered_log_instructions = filteredLogs
 
     def _highlight_graph_element(self, item):
         instruction = self.trace_visualizer_view.log_instructions_list.row(item)
-        self.trace_visualizer_view.set_graphic(GraphBuilder().build_graph(self.strategy_generator_file.createFile(self.filtered_log_instructions), instruction+1))
+        GraphManager().set_highlighted_instruction(instruction)
         
     def _save_data(self):
         file_name, _ = QFileDialog.getSaveFileName(self.trace_visualizer_view, "Save File", "./files", "JSON Files (*.json);;All Files (*)")
@@ -147,7 +164,3 @@ class TraceVisualizerController:
         msg.setIcon(QMessageBox.Icon.Information)
         msg.exec()
 
-    def _navigate_to_home(self):
-        from controller.HomeController import HomeController
-        self.trace_visualizer_view.close()
-        HomeController()

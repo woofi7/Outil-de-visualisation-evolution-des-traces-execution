@@ -1,6 +1,10 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidget, QHBoxLayout, QComboBox, QSplitter, QFrame, QListWidgetItem, QPushButton
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidget, QHBoxLayout, QComboBox, QSplitter, QFrame, \
+    QListWidgetItem, QPushButton, QCheckBox
 from PyQt6 import QtCore,QtWidgets
 import matplotlib.pyplot as plt
+from model.GraphBuilders.GraphManager import GraphManager
+
 
 import csv
 
@@ -14,10 +18,8 @@ class TraceVisualizerView(QWidget):
 
             main_layout = QVBoxLayout(self)
             top_button_layout = QHBoxLayout()
-            self.home_button = QPushButton("Home", self)
             self.save_data_button = QPushButton("Save data", self)
             
-            top_button_layout.addWidget(self.home_button)
             top_button_layout.addStretch(1)
             top_button_layout.addWidget(self.save_data_button)
             main_layout.addLayout(top_button_layout)
@@ -42,19 +44,34 @@ class TraceVisualizerView(QWidget):
             filters_label.setSizePolicy(QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Fixed)
             filters = QComboBox()
             filters.addItems(["All", "Added", "Deleted", "Modified"])
-            
             self.right_layout.addWidget(filters_label)
             self.right_layout.addWidget(filters)
+
+            checkbox_label = QLabel("Annotation Options:")
+            checkbox_label.setSizePolicy(QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Fixed)
+            checkbox_layout = QHBoxLayout()
+            checkbox_layout.addWidget(checkbox_label)
+
+            self._checkboxes = {}
+
+            for filter_name in GraphManager()._annotation_filters:
+                checkbox = QCheckBox(filter_name)
+                checkbox.setChecked(True)
+                checkbox_layout.addWidget(checkbox)
+                self._checkboxes[filter_name] = checkbox
+
+            self.right_layout.addLayout(checkbox_layout)
 
             splitter_vertical = QSplitter(QtCore.Qt.Orientation.Vertical)
             splitter_vertical.addWidget(self.right_frame)
             splitter = QSplitter(QtCore.Qt.Orientation.Horizontal)
-            splitter.addWidget(left_frame)
             splitter.addWidget(self.right_frame)
+            splitter.addWidget(left_frame)
+
             splitter.setStretchFactor(1, 1)
             self_layout.addWidget(splitter)
-            
-            self.show()  # Show the widget
+
+
 
     def handleResizeEvent(self, event):
         self.resizeGraphic()
@@ -101,6 +118,9 @@ class TraceVisualizerView(QWidget):
         
         # Highlight the log instructions
         self.graphic.mpl_connect('motion_notify_event', lambda event: self.highlight_log(event, self.log_instructions_list))
+
+        self.graphic.figure.set_size_inches(8, 6)
+        self.graphic.figure.tight_layout()
 
     def resizeGraphic(self):
         frameSize = self.right_layout.parent().size()

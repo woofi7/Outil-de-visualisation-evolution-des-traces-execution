@@ -1,5 +1,5 @@
 import unittest
-from model.GraphBuilders.GraphBuilder import GraphBuilder
+from model.GraphBuilders.GraphManager import GraphManager
 from PyQt6.QtWidgets import QGraphicsView, QGraphicsScene, QApplication
 from unittest.mock import MagicMock, Mock
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -12,11 +12,11 @@ class test_GraphBuilder(unittest.TestCase):
         
     @classmethod
     def setUpClass(cls):
-        cls.gen = GraphBuilder()
+        cls.gen = GraphManager()
         cls.app = QApplication([])
 
     def test_build_graph(self):
-        self.gen = GraphBuilder()
+        self.gen = GraphManager()
         figMock = Mock()
         axesMock = Mock()
         axesMock.legend().remove = Mock()
@@ -25,7 +25,7 @@ class test_GraphBuilder(unittest.TestCase):
         plt.subplots = MagicMock(return_value = (figMock, axesMock))
         plt.xticks = Mock()
         sns.lineplot = Mock()
-        view =self.gen.build_graph('./files/graphData.csv')
+        view =self.gen.init_graph('./files/graphData.csv')
         self.assertIsNotNone(view)
         plt.subplots.assert_called_once()
 

@@ -18,7 +18,7 @@ class LogInstruction:
     def copy(self):
         logInstructionCopy = LogInstruction(self.level, self.instruction, [], self.date)
         for modification in self.modifications:
-            logInstructionCopy.add_modification(Modification(modification.level, modification.instruction, modification.date, modification.type, modification.beforeCode, modification.afterCode, modification.hash, modification.filename, modification.author))
+            logInstructionCopy.add_modification(Modification(modification.level, modification.instruction, modification.date, modification.type, modification.beforeCode, modification.afterCode, modification.hash, modification.filename,modification.summary, modification.author))
         return logInstructionCopy
     
     def to_dict(self):

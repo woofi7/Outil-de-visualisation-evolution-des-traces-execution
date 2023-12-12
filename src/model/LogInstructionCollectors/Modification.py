@@ -1,7 +1,7 @@
 from dateutil.parser import parse
 
 class Modification:
-    def __init__(self, level, instruction, date, type, beforeCode, afterCode, hash, filename, author):
+    def __init__(self, level, instruction, date, type, beforeCode, afterCode, hash, filename, summary, author, branch):
         self.level = level
         self.instruction = instruction
         self.date = date
@@ -10,7 +10,9 @@ class Modification:
         self.afterCode = afterCode
         self.hash = hash
         self.filename = filename
+        self.summary = summary
         self.author = author
+        self.branch = branch
 
     def get_commit_hash(self):
         return self.hash
@@ -28,9 +30,11 @@ class Modification:
             'afterCode': self.afterCode,
             'hash': self.hash,
             'filename': self.filename,
-            'author': self.author
+            'summary': self.summary,
+            'author': self.author,
+            'branch': self.branch
         }
 
     @staticmethod
     def from_dict(d):
-        return Modification(d['level'], d['instruction'], parse(d['date']), d['type'], d['beforeCode'], d['afterCode'], d['hash'], d['filename'], d['author'])
+        return Modification(d['level'], d['instruction'], parse(d['date']), d['type'], d['beforeCode'], d['afterCode'], d['hash'], d['filename'],d['summary'], d['author'], d['branch'])
